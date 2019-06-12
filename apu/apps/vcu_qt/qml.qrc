@@ -1,0 +1,41 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml.qrc</file>
+        <file>images/dropdown.png</file>
+        <file>images/sampleImg.png</file>
+        <file>font/luxisr.ttf</file>
+        <file>images/folder.png</file>
+        <file>images/zynqLogo.png</file>
+        <file>images/downArrow.png</file>
+        <file>images/upArrow.png</file>
+        <file>images/play_arrow.png</file>
+        <file>images/fullScreen.png</file>
+        <file>images/backFolder.png</file>
+        <file>images/textFile.png</file>
+        <file>qml/ControlVu.qml</file>
+        <file>qml/EncDecPanel.qml</file>
+        <file>qml/ErrorMessage.qml</file>
+        <file>qml/FileListVu.qml</file>
+        <file>qml/main.qml</file>
+        <file>qml/OptionsScrollVu.qml</file>
+        <file>images/close.png</file>
+        <file>images/error.png</file>
+        <file>images/pause.png</file>
+        <file>qml/PresetProperties.qml</file>
+        <file>images/xilinxLogo.png</file>
+        <file>qml/OutputDropDown.qml</file>
+        <file>qml/EncParamTab.qml</file>
+        <file>qml/FileTab.qml</file>
+        <file>qml/StreamOutTab.qml</file>
+        <file>qml/ConfigProperty.qml</file>
+        <file>qml/NumberKeyPad.qml</file>
+        <file>qml/CodecDropDown.qml</file>
+        <file>qml/NumSrcVu.qml</file>
+        <file>qml/InputSettingsPopup.qml</file>
+        <file>qml/StatusView.qml</file>
+        <file>qml/QuadrantView.qml</file>
+        <file>qml/KeypadPopup.qml</file>
+        <file>qml/StreaminPopup.qml</file>
+        <file>qml/AudioSettingsTab.qml</file>
+    </qresource>
+</RCC>
