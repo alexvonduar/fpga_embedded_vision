@@ -44,7 +44,7 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 set list_projs [get_projects -quiet]
 if { $list_projs eq "" } {
    create_project project_1 myproj -part xczu7ev-ffvc1156-2-e
-   set_property BOARD_PART xilinx.com:zcu106:part0:2.3 [current_project]
+   set_property BOARD_PART xilinx.com:zcu104:part0:1.1 [current_project]
 }
 
 
@@ -3377,10 +3377,10 @@ proc create_root_design { parentCell } {
 
   set sensor_iic [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:iic_rtl:1.0 sensor_iic ]
 
-  set si570_user [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_clock_rtl:1.0 si570_user ]
+  set CLK_300_C_P [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:diff_clock_rtl:1.0 CLK_300_C_P ]
   set_property -dict [ list \
    CONFIG.FREQ_HZ {300000000} \
-   ] $si570_user
+   ] $CLK_300_C_P
 
 
   # Create ports
@@ -3394,12 +3394,12 @@ proc create_root_design { parentCell } {
   set HDMI_TX_DAT_P [ create_bd_port -dir O -from 2 -to 0 HDMI_TX_DAT_P ]
   set LED0 [ create_bd_port -dir O LED0 ]
   set LED1 [ create_bd_port -dir O -from 0 -to 0 LED1 ]
-  set LED2 [ create_bd_port -dir O -from 0 -to 0 LED2 ]
-  set LED3 [ create_bd_port -dir O -from 0 -to 0 LED3 ]
-  set LED4 [ create_bd_port -dir O -from 0 -to 0 LED4 ]
-  set LED5 [ create_bd_port -dir O -from 0 -to 0 LED5 ]
-  set LED6 [ create_bd_port -dir O LED6 ]
-  set LED7 [ create_bd_port -dir O LED7 ]
+  #set LED2 [ create_bd_port -dir O -from 0 -to 0 LED2 ]
+  #set LED3 [ create_bd_port -dir O -from 0 -to 0 LED3 ]
+  #set LED4 [ create_bd_port -dir O -from 0 -to 0 LED4 ]
+  #set LED5 [ create_bd_port -dir O -from 0 -to 0 LED5 ]
+  set LED2 [ create_bd_port -dir O LED2 ]
+  set LED3 [ create_bd_port -dir O LED3 ]
   set RX_DET [ create_bd_port -dir I RX_DET ]
   set RX_HPD [ create_bd_port -dir O -from 0 -to 0 RX_HPD ]
   set RX_REFCLK_N [ create_bd_port -dir O RX_REFCLK_N ]
@@ -3614,8 +3614,8 @@ proc create_root_design { parentCell } {
   # Create instance: vid_phy_controller, and set properties
   set vid_phy_controller [ create_bd_cell -type ip -vlnv xilinx.com:ip:vid_phy_controller:2.2 vid_phy_controller ]
   set_property -dict [ list \
-   CONFIG.CHANNEL_ENABLE {X0Y0 X0Y1 X0Y2} \
-   CONFIG.CHANNEL_SITE {X0Y0} \
+   CONFIG.CHANNEL_ENABLE {X0Y16 X0Y17 X0Y18} \
+   CONFIG.CHANNEL_SITE {X0Y16} \
    CONFIG.C_FOR_UPGRADE_ARCHITECTURE {placeholder} \
    CONFIG.C_FOR_UPGRADE_DEVICE {placeholder} \
    CONFIG.C_FOR_UPGRADE_MAXOPTVOL {0.00} \
@@ -3626,7 +3626,7 @@ proc create_root_design { parentCell } {
    CONFIG.C_INPUT_PIXELS_PER_CLOCK {2} \
    CONFIG.C_INT_HDMI_VER_CMPTBLE {3} \
    CONFIG.C_NIDRU {true} \
-   CONFIG.C_NIDRU_REFCLK_SEL {5} \
+   CONFIG.C_NIDRU_REFCLK_SEL {3} \
    CONFIG.C_RX_PLL_SELECTION {0} \
    CONFIG.C_RX_REFCLK_SEL {1} \
    CONFIG.C_Rx_No_Of_Channels {3} \
@@ -3654,7 +3654,7 @@ proc create_root_design { parentCell } {
  ] $vid_phy_controller
 
   # Create interface connections
-  connect_bd_intf_net -intf_net CLK_IN1_D_0_2 [get_bd_intf_ports si570_user] [get_bd_intf_pins clk_wiz_1/CLK_IN1_D]
+  connect_bd_intf_net -intf_net CLK_IN1_D_0_2 [get_bd_intf_ports CLK_300_C_P] [get_bd_intf_pins clk_wiz_1/CLK_IN1_D]
   connect_bd_intf_net -intf_net DRU_CLK [get_bd_intf_ports DRU_CLK] [get_bd_intf_pins gt_refclk_buf/CLK_IN_D]
   connect_bd_intf_net -intf_net RX_DDC [get_bd_intf_ports RX_DDC] [get_bd_intf_pins hdmi_input/DDC]
   connect_bd_intf_net -intf_net S00_AXI_2 [get_bd_intf_pins axi_interconnect_4/S00_AXI] [get_bd_intf_pins hdmi_input/M_AXI2]
@@ -3738,8 +3738,8 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets vid_phy_controller_vid_phy_statu
   connect_bd_net -net HDMI_TX_DAT_N [get_bd_ports HDMI_TX_DAT_N] [get_bd_pins vid_phy_controller/phy_txn_out]
   connect_bd_net -net HDMI_TX_DAT_P [get_bd_ports HDMI_TX_DAT_P] [get_bd_pins vid_phy_controller/phy_txp_out]
   connect_bd_net -net LED0 [get_bd_ports LED0] [get_bd_pins hdmi_output/locked]
-  connect_bd_net -net LED6 [get_bd_ports LED6] [get_bd_pins tx_hdmi_hb_0/hdmi_hb]
-  connect_bd_net -net LED7 [get_bd_ports LED7] [get_bd_pins rx_hdmi_hb_0/hdmi_hb]
+  connect_bd_net -net LED2 [get_bd_ports LED2] [get_bd_pins tx_hdmi_hb_0/hdmi_hb]
+  connect_bd_net -net LED3 [get_bd_ports LED3] [get_bd_pins rx_hdmi_hb_0/hdmi_hb]
   connect_bd_net -net Net [get_bd_pins axi_intc_0/s_axi_aclk] [get_bd_pins axi_interconnect_0/ACLK] [get_bd_pins axi_interconnect_0/M00_ACLK] [get_bd_pins axi_interconnect_0/S00_ACLK] [get_bd_pins axi_interconnect_0/S01_ACLK] [get_bd_pins axi_interconnect_0/S02_ACLK] [get_bd_pins axi_interconnect_0/S03_ACLK] [get_bd_pins axi_interconnect_0/S04_ACLK] [get_bd_pins axi_interconnect_0/S05_ACLK] [get_bd_pins axi_interconnect_0/S06_ACLK] [get_bd_pins axi_interconnect_0/S07_ACLK] [get_bd_pins axi_interconnect_0/S08_ACLK] [get_bd_pins axi_interconnect_0/S09_ACLK] [get_bd_pins axi_interconnect_1/ACLK] [get_bd_pins axi_interconnect_1/M00_ACLK] [get_bd_pins axi_interconnect_1/S00_ACLK] [get_bd_pins axi_interconnect_1/S01_ACLK] [get_bd_pins axi_interconnect_2/ACLK] [get_bd_pins axi_interconnect_2/M00_ACLK] [get_bd_pins axi_interconnect_2/S00_ACLK] [get_bd_pins axi_interconnect_2/S01_ACLK] [get_bd_pins axi_interconnect_4/ACLK] [get_bd_pins axi_interconnect_4/M00_ACLK] [get_bd_pins axi_interconnect_4/S00_ACLK] [get_bd_pins axi_interconnect_4/S01_ACLK] [get_bd_pins axi_interconnect_4/S03_ACLK] [get_bd_pins axi_interconnect_4/S04_ACLK] [get_bd_pins axi_interconnect_4/S05_ACLK] [get_bd_pins axi_interconnect_4/S06_ACLK] [get_bd_pins axi_interconnect_4/S07_ACLK] [get_bd_pins axi_interconnect_4/S08_ACLK] [get_bd_pins axi_interconnect_5/ACLK] [get_bd_pins axi_interconnect_5/M00_ACLK] [get_bd_pins axi_interconnect_5/S00_ACLK] [get_bd_pins clk_wiz_1/clk_out2] [get_bd_pins hdmi_input/clk_300M] [get_bd_pins hdmi_output/clk_300M] [get_bd_pins mpsoc_ss/s_axi_hpc0_fpd_aclk] [get_bd_pins proc_sys_reset_1/slowest_sync_clk] [get_bd_pins tpg_input/clk_in_1_0] [get_bd_pins tpg_input/m_axi_s2mm_aclk] [get_bd_pins v_scenechange_0/ap_clk] [get_bd_pins vcu_0/m_axi_dec_aclk] [get_bd_pins vcu_0/m_axi_enc_aclk] [get_bd_pins vcu_0/m_axi_mcu_aclk]
   connect_bd_net -net RX_DET [get_bd_ports RX_DET] [get_bd_pins hdmi_input/cable_detect]
   connect_bd_net -net RX_HPD [get_bd_ports RX_HPD] [get_bd_pins hdmi_input/hpd]
@@ -3758,12 +3758,13 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets vid_phy_controller_vid_phy_statu
   connect_bd_net -net clk_wiz_1_clk_out1 [get_bd_pins clk_wiz_1/clk_out1] [get_bd_pins vcu_0/pll_ref_clk]
   connect_bd_net -net clk_wiz_1_locked [get_bd_pins clk_wiz_1/locked] [get_bd_pins proc_sys_reset_1/dcm_locked]
   connect_bd_net -net dphy_clk_200M_1 [get_bd_pins clk_wiz_1/clk_out3] [get_bd_pins mipi_csi2_rx/dphy_clk_200M]
-  connect_bd_net -net gnd [get_bd_ports LED1] [get_bd_ports LED2] [get_bd_ports LED3] [get_bd_ports LED4] [get_bd_ports LED5] [get_bd_pins gnd_const/dout]
+  #connect_bd_net -net gnd [get_bd_ports LED1] [get_bd_ports LED2] [get_bd_ports LED3] [get_bd_ports LED4] [get_bd_ports LED5] [get_bd_pins gnd_const/dout]
+  connect_bd_net -net gnd [get_bd_ports LED1] [get_bd_pins gnd_const/dout]
   connect_bd_net -net gpio_0 [get_bd_pins gpio_aresetn/gpio_0] [get_bd_pins hdmi_input/frmbuf_aresetn]
   connect_bd_net -net gpio_1 [get_bd_pins gpio_aresetn/gpio_1] [get_bd_pins hdmi_output/frmbuf_aresetn]
   connect_bd_net -net gpio_aresetn_Dout [get_bd_pins gpio_aresetn/Dout] [get_bd_pins v_scenechange_0/ap_rst_n]
-  connect_bd_net -net gt_efclk_buf_BUFG_GT_O [get_bd_pins gt_refclk_buf/BUFG_GT_O] [get_bd_pins vid_phy_controller/gtsouthrefclk1_odiv2_in]
-  connect_bd_net -net gt_efclk_buf_IBUF_OUT [get_bd_pins gt_refclk_buf/IBUF_OUT] [get_bd_pins vid_phy_controller/gtsouthrefclk1_in]
+  connect_bd_net -net gt_efclk_buf_BUFG_GT_O [get_bd_pins gt_refclk_buf/BUFG_GT_O] [get_bd_pins vid_phy_controller/gtnorthrefclk1_odiv2_in]
+  connect_bd_net -net gt_efclk_buf_IBUF_OUT [get_bd_pins gt_refclk_buf/IBUF_OUT] [get_bd_pins vid_phy_controller/gtnorthrefclk1_in]
   connect_bd_net -net hdmi_input_dout [get_bd_pins axi_intc_0/intr] [get_bd_pins hdmi_input/dout]
   connect_bd_net -net hdmi_input_irq [get_bd_pins hdmi_input/irq] [get_bd_pins interrupts/In2]
   connect_bd_net -net hdmi_output_interrupt [get_bd_pins hdmi_output/interrupt_frm_rd] [get_bd_pins interrupts/In0]
