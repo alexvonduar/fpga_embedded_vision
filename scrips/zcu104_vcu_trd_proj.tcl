@@ -30,10 +30,10 @@ regenerate_bd_layout -layout_file $scripts_dir/bd_layout.tcl
 assign_bd_address
 
 # add hdl sources to project
-make_wrapper -files [get_files ./$project_dir/vcu_trd.srcs/sources_1/bd/vcu_trd/vcu_trd.bd] -top
+make_wrapper -files [get_files ./$project_dir/$design_name.srcs/sources_1/bd/$design_name/$design_name.bd] -top
 
-add_files -norecurse ./$project_dir/vcu_trd.srcs/sources_1/bd/vcu_trd/hdl/vcu_trd_wrapper.v
-set_property top vcu_trd_wrapper [current_fileset]
+add_files -norecurse ./$project_dir/$design_name.srcs/sources_1/bd/$design_name/hdl/$design_name\_wrapper.v
+set_property top $design_name\_wrapper [current_fileset]
 add_files -fileset constrs_1 -norecurse $constrs_dir/zcu104_vcu_trd.xdc
 add_files -fileset constrs_1 -norecurse $constrs_dir/zcu104_vcu_trd_async.xdc
 set_property used_in_synthesis false [get_files  zcu104_vcu_trd_async.xdc]
