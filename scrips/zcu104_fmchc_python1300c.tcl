@@ -25,7 +25,7 @@ puts "
 *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
 # fetch the required Vivado Board Definition File (BDF) from the bdf git repo
-set bdf_path [file normalize [pwd]/../../bdf]
+set bdf_path [file normalize ${scriptdir}/../bdf]
 set_param board.repoPaths $bdf_path
 puts "\nBDF path set to $bdf_path \n\n"
 
@@ -179,11 +179,11 @@ if {[string match -nocase "init" $project]} {
 
 
 # create variables with absolute folders for all necessary folders
-set boards_folder [file normalize [pwd]/Boards]
-set ip_folder [file normalize [pwd]/IP]
-set projects_folder [file normalize [pwd]/projects/${project}/${board}_${vivado_ver}]
-set scripts_folder [file normalize [pwd]]
-set repo_folder [file normalize [pwd]]
+set boards_folder [file normalize ${scriptdir}/../avnet/Boards]
+set ip_folder [file normalize ${scriptdir}/../avnet/IP]
+set projects_folder [file normalize ${scriptdir}/../projects/${project}/${board}_${vivado_ver}]
+set scripts_folder [file normalize ${scriptdir}]
+set repo_folder [file normalize ${scriptdir}]
 
 # IF tagging - check for modified files
 set GUI $rdi::mode
@@ -288,10 +288,10 @@ puts "***** Generating IP..."
 
 proc avnet_generate_ip {ip_name} {
    puts "Making $ip_name..."
-   source ../IP/$ip_name/$ip_name.tcl -notrace
-   cd ../IP/$ip_name
+   source ${scriptdir}/../IP/$ip_name/$ip_name.tcl -notrace
+   cd ${scriptdir}/../IP/$ip_name
    make_ip $ip_name
-   cd ../../Scripts
+   cd ${scriptdir}
 }
 
 # Create Vivado project
@@ -310,7 +310,7 @@ create_project $project $projects_folder -part xczu7ev-ffvc1156-2-e -force
 remove_files -fileset constrs_1 *.xdc
 
 set_property board_part xilinx.com:zcu104:part0:1.1 [current_project]
-add_files -fileset constrs_1 -norecurse ${scriptdir}/zcu104_fmchc_python1300c/zcu104_fmchc_python1300c.xdc
+add_files -fileset constrs_1 -norecurse ${scriptdir}/zcu104_fmchc_python1300c.xdc
 
 # Add Avnet IP Repository
 puts "***** Updating Vivado to include IP Folder"
@@ -1642,7 +1642,7 @@ launch_runs impl_1 -to_step write_bitstream -j 4
 
 if {[string match -nocase "no" $jtag]} {
    puts "Generating Binary..."
-   source ./bin_helper.tcl -notrace
+   source ${scriptdir}/../avnet/Scripts/bin_helper.tcl -notrace
 
    # if using for development, can set this to yes to just use the script
    # to build your project in Vivado
@@ -1665,11 +1665,11 @@ if {[string match -nocase "no" $jtag]} {
       cd ${projects_folder}
       # Change starting with 2018.2 (Ultra96v2 validation test, Nov 2018) to use xsct instead of xsdk
       # https://www.xilinx.com/html_docs/xilinx2018_2/SDK_Doc/xsct/use_cases/xsct_howtoruntclscriptfiles.html
-      exec >@stdout 2>@stderr xsct ${scripts_folder}/software/$project\_sdk.tcl -notrace
+      exec >@stdout 2>@stderr xsct ${scripts_folder}/../avnet/Projects/${projects}/software/zcu104_$project\_sdk.tcl -notrace
       # Build a BOOT.bin file only if a BIF file exists for the project.
-      if {[file exists ${scripts_folder}/software/$project\_sd.bif]} {
+      if {[file exists ${scripts_folder}/../avnet/Projects/${projects}/software/zcu104_$project\_sd.bif]} {
          puts "Generating BOOT.BIN..."
-         exec >@stdout 2>@stderr bootgen -arch $dev_arch -image ${scripts_folder}/software/$project\_sd.bif -w -o BOOT.bin
+         exec >@stdout 2>@stderr bootgen -arch $dev_arch -image ${scripts_folder}/../avnet/Projects/${projects}/software/zcu104_$project\_sd.bif -w -o BOOT.bin
       }
       cd ${scripts_folder}
    }
