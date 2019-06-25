@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+	<storageModule moduleId="org.eclipse.cdt.core.settings">
+		<cconfiguration id="xilinx.gnu.arm.a53.linux.exe.debug.657666569">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="xilinx.gnu.arm.a53.linux.exe.debug.657666569" moduleId="org.eclipse.cdt.core.settings" name="Debug">
+				<externalSettings/>
+				<extensions>
+					<extension id="com.xilinx.sdk.managedbuilder.XELF.arm.a53.linux" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactExtension="" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.debug" cleanCommand="rm -rf" description="" id="xilinx.gnu.arm.a53.linux.exe.debug.657666569" name="Debug" parent="xilinx.gnu.arm.a53.linux.exe.debug">
+					<folderInfo id="xilinx.gnu.arm.a53.linux.exe.debug.657666569." name="/" resourcePath="">
+						<toolChain id="xilinx.gnu.arm.a53.linux.exe.debug.toolchain.1857229594" name="Xilinx ARM v8 GNU/Linux Toolchain" superClass="xilinx.gnu.arm.a53.linux.exe.debug.toolchain">
+							<targetPlatform binaryParser="com.xilinx.sdk.managedbuilder.XELF.arm.a53.linux" id="xilinx.arm.a53.linux.target.gnu.base.debug.362901996" isAbstract="false" name="Debug Platform" superClass="xilinx.arm.a53.linux.target.gnu.base.debug"/>
+							<builder buildPath="${workspace_loc:/pcie_transcode}/Debug" enableAutoBuild="true" id="xilinx.gnu.arm.a53.linux.toolchain.builder.debug.599028816" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="GNU make" superClass="xilinx.gnu.arm.a53.linux.toolchain.builder.debug"/>
+							<tool id="xilinx.gnu.arm.a53.linux.c.toolchain.assembler.debug.1589609275" name="ARM v8 Linux gcc assembler" superClass="xilinx.gnu.arm.a53.linux.c.toolchain.assembler.debug">
+								<inputType id="xilinx.gnu.assembler.input.1379630680" superClass="xilinx.gnu.assembler.input"/>
+							</tool>
+							<tool id="xilinx.gnu.arm.a53.linux.c.toolchain.compiler.debug.1681486083" name="ARM v8 Linux gcc compiler" superClass="xilinx.gnu.arm.a53.linux.c.toolchain.compiler.debug">
+								<option defaultValue="gnu.c.optimization.level.none" id="xilinx.gnu.compiler.option.optimization.level.1170145056" name="Optimization Level" superClass="xilinx.gnu.compiler.option.optimization.level" valueType="enumerated"/>
+								<option id="xilinx.gnu.compiler.option.debugging.level.1296873003" name="Debug Level" superClass="xilinx.gnu.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
+								<option id="xilinx.gnu.compiler.dircategory.includes.1560525657" name="Include Paths" superClass="xilinx.gnu.compiler.dircategory.includes" valueType="includePath">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pcie_lib/include}&quot;"/>
+									<listOptionValue builtIn="false" value="=/usr/lib/glib-2.0/include"/>
+									<listOptionValue builtIn="false" value="=/usr/include/glib-2.0"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/include}&quot;"/>
+									<listOptionValue builtIn="false" value="=/usr/include/gstreamer-1.0"/>
+									<listOptionValue builtIn="false" value="=/usr/include/"/>
+								</option>
+								<option id="xilinx.gnu.compiler.misc.other.722874956" name="Other flags" superClass="xilinx.gnu.compiler.misc.other" value="-c -fmessage-length=0 -MT&quot;$@&quot; --sysroot=${SDKTARGETSYSROOT}" valueType="string"/>
+								<inputType id="xilinx.gnu.arm.a53.linux.c.compiler.input.1645021671" name="C source files" superClass="xilinx.gnu.arm.a53.linux.c.compiler.input"/>
+							</tool>
+							<tool id="xilinx.gnu.arm.a53.linux.cxx.toolchain.compiler.debug.2032373238" name="ARM v8 Linux g++ compiler" superClass="xilinx.gnu.arm.a53.linux.cxx.toolchain.compiler.debug">
+								<option defaultValue="gnu.c.optimization.level.none" id="xilinx.gnu.compiler.option.optimization.level.1499508616" name="Optimization Level" superClass="xilinx.gnu.compiler.option.optimization.level" valueType="enumerated"/>
+								<option id="xilinx.gnu.compiler.option.debugging.level.226058621" name="Debug Level" superClass="xilinx.gnu.compiler.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
+							</tool>
+							<tool id="xilinx.gnu.arm.a53.linux.toolchain.archiver.1397141626" name="ARM v8 Linux archiver" superClass="xilinx.gnu.arm.a53.linux.toolchain.archiver"/>
+							<tool id="xilinx.gnu.arm.a53.linux.c.toolchain.linker.debug.1536460302" name="ARM v8 Linux gcc linker" superClass="xilinx.gnu.arm.a53.linux.c.toolchain.linker.debug">
+								<option id="xilinx.gnu.c.link.option.libs.10888407" name="Libraries (-l)" superClass="xilinx.gnu.c.link.option.libs" valueType="libs">
+									<listOptionValue builtIn="false" value="pcie_lib"/>
+									<listOptionValue builtIn="false" value="gobject-2.0"/>
+									<listOptionValue builtIn="false" value="glib-2.0"/>
+									<listOptionValue builtIn="false" value="gstreamer-1.0"/>
+									<listOptionValue builtIn="false" value="gstvideo-1.0"/>
+								</option>
+								<option id="xilinx.gnu.c.link.option.paths.37497332" name="Library search path (-L)" superClass="xilinx.gnu.c.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/pcie_lib/Debug}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;=/usr/lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;=${SYSROOT}/usr/lib&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;=${SYSROOT}/usr/lib/gstreamer-1.0&quot;"/>
+								</option>
+								<option id="xilinx.gnu.c.link.option.ldflags.1039390211" name="Linker Flags" superClass="xilinx.gnu.c.link.option.ldflags" value="--sysroot=${SDKTARGETSYSROOT}" valueType="string"/>
+								<inputType id="xilinx.gnu.linker.input.1905394711" superClass="xilinx.gnu.linker.input">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+								<inputType id="xilinx.gnu.linker.input.lscript.1157341794" name="Linker Script" superClass="xilinx.gnu.linker.input.lscript"/>
+							</tool>
+							<tool id="xilinx.gnu.arm.a53.linux.cxx.toolchain.linker.debug.1415872664" name="ARM v8 Linux g++ linker" superClass="xilinx.gnu.arm.a53.linux.cxx.toolchain.linker.debug"/>
+							<tool id="xilinx.gnu.arm.a53.linux.size.debug.731179181" name="ARM v8 Linux Print Size" superClass="xilinx.gnu.arm.a53.linux.size.debug"/>
+						</toolChain>
+					</folderInfo>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+			<storageModule moduleId="ilg.gnuarmeclipse.managedbuild.packs"/>
+		</cconfiguration>
+		<cconfiguration id="xilinx.gnu.arm.a53.linux.exe.release.1411868553">
+			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="xilinx.gnu.arm.a53.linux.exe.release.1411868553" moduleId="org.eclipse.cdt.core.settings" name="Release">
+				<externalSettings/>
+				<extensions>
+					<extension id="com.xilinx.sdk.managedbuilder.XELF.arm.a53.linux" point="org.eclipse.cdt.core.BinaryParser"/>
+					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+				</extensions>
+			</storageModule>
+			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+				<configuration artifactExtension="elf" artifactName="${ProjName}" buildArtefactType="org.eclipse.cdt.build.core.buildArtefactType.exe" buildProperties="org.eclipse.cdt.build.core.buildArtefactType=org.eclipse.cdt.build.core.buildArtefactType.exe,org.eclipse.cdt.build.core.buildType=org.eclipse.cdt.build.core.buildType.release" cleanCommand="rm -rf" description="" id="xilinx.gnu.arm.a53.linux.exe.release.1411868553" name="Release" parent="xilinx.gnu.arm.a53.linux.exe.release">
+					<folderInfo id="xilinx.gnu.arm.a53.linux.exe.release.1411868553." name="/" resourcePath="">
+						<toolChain id="xilinx.gnu.arm.a53.linux.exe.release.toolchain.1171581546" name="Xilinx ARM v8 GNU/Linux Toolchain" superClass="xilinx.gnu.arm.a53.linux.exe.release.toolchain">
+							<targetPlatform binaryParser="com.xilinx.sdk.managedbuilder.XELF.arm.a53.linux" id="xilinx.arm.a53.linux.target.gnu.base.release.583853733" isAbstract="false" name="Release Platform" superClass="xilinx.arm.a53.linux.target.gnu.base.release"/>
+							<builder buildPath="${workspace_loc:/pcie_transcode}/Release" enableAutoBuild="true" id="xilinx.gnu.arm.a53.linux.toolchain.builder.release.1985481031" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="GNU make" superClass="xilinx.gnu.arm.a53.linux.toolchain.builder.release"/>
+							<tool id="xilinx.gnu.arm.a53.linux.c.toolchain.assembler.release.369642154" name="ARM v8 Linux gcc assembler" superClass="xilinx.gnu.arm.a53.linux.c.toolchain.assembler.release">
+								<inputType id="xilinx.gnu.assembler.input.591371392" superClass="xilinx.gnu.assembler.input"/>
+							</tool>
+							<tool id="xilinx.gnu.arm.a53.linux.c.toolchain.compiler.release.1955769117" name="ARM v8 Linux gcc compiler" superClass="xilinx.gnu.arm.a53.linux.c.toolchain.compiler.release">
+								<option defaultValue="gnu.c.optimization.level.more" id="xilinx.gnu.compiler.option.optimization.level.414469604" name="Optimization Level" superClass="xilinx.gnu.compiler.option.optimization.level" valueType="enumerated"/>
+								<option id="xilinx.gnu.compiler.option.debugging.level.2107549303" name="Debug Level" superClass="xilinx.gnu.compiler.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
+								<inputType id="xilinx.gnu.arm.a53.linux.c.compiler.input.1213934727" name="C source files" superClass="xilinx.gnu.arm.a53.linux.c.compiler.input"/>
+							</tool>
+							<tool id="xilinx.gnu.arm.a53.linux.cxx.toolchain.compiler.release.940757476" name="ARM v8 Linux g++ compiler" superClass="xilinx.gnu.arm.a53.linux.cxx.toolchain.compiler.release">
+								<option defaultValue="gnu.c.optimization.level.more" id="xilinx.gnu.compiler.option.optimization.level.83871766" name="Optimization Level" superClass="xilinx.gnu.compiler.option.optimization.level" valueType="enumerated"/>
+								<option id="xilinx.gnu.compiler.option.debugging.level.8025435" name="Debug Level" superClass="xilinx.gnu.compiler.option.debugging.level" value="gnu.c.debugging.level.none" valueType="enumerated"/>
+							</tool>
+							<tool id="xilinx.gnu.arm.a53.linux.toolchain.archiver.270767079" name="ARM v8 Linux archiver" superClass="xilinx.gnu.arm.a53.linux.toolchain.archiver"/>
+							<tool id="xilinx.gnu.arm.a53.linux.c.toolchain.linker.release.560009944" name="ARM v8 Linux gcc linker" superClass="xilinx.gnu.arm.a53.linux.c.toolchain.linker.release">
+								<inputType id="xilinx.gnu.linker.input.556387786" superClass="xilinx.gnu.linker.input">
+									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
+									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
+								</inputType>
+								<inputType id="xilinx.gnu.linker.input.lscript.18875853" name="Linker Script" superClass="xilinx.gnu.linker.input.lscript"/>
+							</tool>
+							<tool id="xilinx.gnu.arm.a53.linux.cxx.toolchain.linker.release.1354714096" name="ARM v8 Linux g++ linker" superClass="xilinx.gnu.arm.a53.linux.cxx.toolchain.linker.release"/>
+							<tool id="xilinx.gnu.arm.a53.linux.size.release.1098281834" name="ARM v8 Linux Print Size" superClass="xilinx.gnu.arm.a53.linux.size.release"/>
+						</toolChain>
+					</folderInfo>
+				</configuration>
+			</storageModule>
+			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
+		</cconfiguration>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
+		<project id="pcie_transcode.xilinx.gnu.arm.a53.linux.exe.761205611" name="Xilinx ARM v8 Linux Executable" projectType="xilinx.gnu.arm.a53.linux.exe"/>
+	</storageModule>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="xilinx.gnu.arm.a53.linux.exe.release.1411868553;xilinx.gnu.arm.a53.linux.exe.release.1411868553.">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.xilinx.managedbuilder.ui.ARMA53LinuxGCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="xilinx.gnu.arm.a53.linux.exe.debug.657666569;xilinx.gnu.arm.a53.linux.exe.debug.657666569.">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.xilinx.managedbuilder.ui.ARMA53LinuxGCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="xilinx.gnu.arm.a53.linux.exe.release.1411868553;xilinx.gnu.arm.a53.linux.exe.release.1411868553.;xilinx.gnu.arm.a53.linux.c.toolchain.compiler.release.1955769117;xilinx.gnu.arm.a53.linux.c.compiler.input.1213934727">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.xilinx.managedbuilder.ui.ARMA53LinuxGCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="xilinx.gnu.arm.a53.linux.exe.debug.657666569;xilinx.gnu.arm.a53.linux.exe.debug.657666569.;xilinx.gnu.arm.a53.linux.c.toolchain.compiler.debug.1681486083;xilinx.gnu.arm.a53.linux.c.compiler.input.1645021671">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="com.xilinx.managedbuilder.ui.ARMA53LinuxGCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/pcie_transcode"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/pcie_transcode"/>
+		</configuration>
+	</storageModule>
+</cproject>
