@@ -3,15 +3,15 @@ set ::platform "zcu104"
 set ::silicon "e"
 
 # local variables
-set project_dir "zcu104_vcu_trd"
-set ip_dir "srcs/ip"
-set constrs_dir "constrs"
-set scripts_dir "scripts"
+set project_dir "../projects/zcu104_vcu_trd"
+set ip_dir "../zcu106_vcu_trd/pl/srcs/ip"
+set constrs_dir "../zcu106_vcu_trd/pl/constrs"
+set scripts_dir "../zcu106_vcu_trd/pl/scripts"
 
 # set variable names
 set part "xczu7ev-ffvc1156-2-${::silicon}"
 set pin_xdc_file "pin_${::platform}_${::silicon}.xdc"
-set design_name "vcu_trd"
+set design_name "zcu104_vcu_trd"
 puts "INFO: Target part selected: '$part'"
 
 # set up project
@@ -24,7 +24,7 @@ update_ip_catalog -rebuild
 
 # set up bd design
 create_bd_design $design_name
-source $scripts_dir/zcu104_vcu_trd_bd.tcl
+source zcu104_vcu_trd_bd.tcl
 
 regenerate_bd_layout -layout_file $scripts_dir/bd_layout.tcl
 assign_bd_address
