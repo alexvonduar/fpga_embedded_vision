@@ -7,7 +7,7 @@
 * LI-IMX274-FMC
 ## Reference Designs
 1. [AVNET Reference Design](https://github.com/Avnet/hdl) [Picozed Zynq  7030 SOM + Onsemi PYTHON1300 FMC + Picozed FMC carrier board v2]
-2. ZCU106 VCU TRD
+2. [ZCU106 VCU TRD](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/112230447/Zynq+UltraScale+MPSoC+VCU+TRD+2019.1)
 3. [Xilinx reVision](https://github.com/Xilinx/reVISION-Getting-Started-Guide)
 ## Create HW & SW Projects
 1. Onsemi PYTHON1300 FMC card + ZCU104
