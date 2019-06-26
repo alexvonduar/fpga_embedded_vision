@@ -516,7 +516,7 @@ proc create_hier_cell_mpsoc_ss { parentCell nameHier } {
   set proc_sys_reset_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 proc_sys_reset_1 ]
 
   # Create instance: zynq_ultra_ps_e_0, and set properties
-  source zcu104_ps.tcl -notrace
+  source zcu104_vcu_trd_ps.tcl -notrace
   add_ps_preset "zynq_ultra_ps_e_0"
 
   # Create interface connections
