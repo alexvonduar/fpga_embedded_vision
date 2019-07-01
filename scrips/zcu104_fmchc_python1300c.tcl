@@ -12,6 +12,7 @@ set version_override "yes"
 set found "false"
 set ok_to_tag_public "false"
 set sdk "yes"
+set bs "yes"
 set jtag "no"
 set dev_arch "zynqmp"
 set vivado_ver "2019_1"
@@ -45,6 +46,7 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
       puts "Parameters are:"
       puts "board=<board_name>\n boards are listed in the /Boards folder"
       puts "project=<project_name>\n project names are listed in the /Scripts/ProjectScripts folder"
+      puts "bs=\n 'yes' will attempt to regenterate bitstream"
       puts "sdk=\n 'yes' will attempt to execute:\n ../software/<project_name>_sdk.tcl"
       puts " in order to build the SDK portion of the project (prior to tagging request)"
       puts "tag=\n 'yes' will tag locally\n this will attempt to tag based on that flag"
@@ -101,6 +103,15 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
          append printmessage " "
       }
       append build_params "| Tag              |     $printmessage |\n"
+   }
+   # check for regenerate bitstream parameter
+   if {[string match -nocase "bs=*" [lindex $argv $i]]} {
+      set bs [string range [lindex $argv $i] 4 end]
+      set printmessage $bs
+      for {set j 0} {$j < [expr $chart_wdith - [string length $bs]]} {incr j} {
+         append printmessage " "
+      }
+      append build_params "| Bitstream        |     $printmessage |\n"
    }
    # check for SDK parameter
    if {[string match -nocase "sdk=*" [lindex $argv $i]]} {
@@ -294,6 +305,10 @@ proc avnet_generate_ip {ip_name} {
    cd ${scriptdir}
 }
 
+if {[file exists $projects_folder/${project}.runs/impl_1/${project}_wrapper.sysdef] && [file exists ${projects_folder}/fmchc_python1300c.xpr]} {
+   open_project ${projects_folder}/fmchc_python1300c.xpr
+} else {
+
 # Create Vivado project
 puts "***** Creating Vivado Project..."
 #source ../Boards/$board/[string tolower $board].tcl -notrace
@@ -372,10 +387,10 @@ set current_vivado_version [version -short]
 set errMsg ""
 set nRet 0
 
-  variable script_folder
+variable script_folder
 
  
-     set parentCell [get_bd_cells /]
+set parentCell [get_bd_cells /]
 
 
   # Get object for parentCell
@@ -841,12 +856,18 @@ cd $scripts_folder
 update_compile_order -fileset sources_1
 update_compile_order -fileset sim_1
 save_bd_design
-launch_runs impl_1 -to_step write_bitstream -j 4
 
+if {[string match -nocase "yes" $bs]} {
+   puts "Generating bitstream..."
+   #launch_runs synth_1 -jobs 4
+   launch_runs impl_1 -to_step write_bitstream -j 4
+   puts "Waiting Generation..."
+   source ${scriptdir}/../avnet/Scripts/bin_helper.tcl -notrace
+}
+
+}
 
 if {[string match -nocase "no" $jtag]} {
-   puts "Generating Binary..."
-   source ${scriptdir}/../avnet/Scripts/bin_helper.tcl -notrace
 
    # if using for development, can set this to yes to just use the script
    # to build your project in Vivado
@@ -869,11 +890,11 @@ if {[string match -nocase "no" $jtag]} {
       cd ${projects_folder}
       # Change starting with 2018.2 (Ultra96v2 validation test, Nov 2018) to use xsct instead of xsdk
       # https://www.xilinx.com/html_docs/xilinx2018_2/SDK_Doc/xsct/use_cases/xsct_howtoruntclscriptfiles.html
-      exec >@stdout 2>@stderr xsct ${scripts_folder}/../avnet/Projects/${projects}/software/zcu104_$project\_sdk.tcl -notrace
+      exec >@stdout 2>@stderr xsct ${scripts_folder}/../avnet/Projects/${project}/software/zcu104_$project\_sdk.tcl -notrace
       # Build a BOOT.bin file only if a BIF file exists for the project.
-      if {[file exists ${scripts_folder}/../avnet/Projects/${projects}/software/zcu104_$project\_sd.bif]} {
+      if {[file exists ${scripts_folder}/../avnet/Projects/${project}/software/zcu104_$project\_sd.bif]} {
          puts "Generating BOOT.BIN..."
-         exec >@stdout 2>@stderr bootgen -arch $dev_arch -image ${scripts_folder}/../avnet/Projects/${projects}/software/zcu104_$project\_sd.bif -w -o BOOT.bin
+         exec >@stdout 2>@stderr bootgen -arch $dev_arch -image ${scripts_folder}/../avnet/Projects/${project}/software/zcu104_$project\_sd.bif -w -o BOOT.bin
       }
       cd ${scripts_folder}
    }
