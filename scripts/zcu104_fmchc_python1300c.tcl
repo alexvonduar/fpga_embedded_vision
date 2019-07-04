@@ -13,6 +13,7 @@ set found "false"
 set ok_to_tag_public "false"
 set sdk "yes"
 set bs "yes"
+set bd "no"
 set jtag "no"
 set dev_arch "zynqmp"
 set vivado_ver "2019_1"
@@ -46,7 +47,8 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
       puts "Parameters are:"
       puts "board=<board_name>\n boards are listed in the /Boards folder"
       puts "project=<project_name>\n project names are listed in the /Scripts/ProjectScripts folder"
-      puts "bs=\n 'yes' will attempt to regenterate bitstream"
+      puts "bd=\n 'yes' will attempt to regenerate board hdl design"
+      puts "bs=\n 'yes' will attempt to regenerate bitstream"
       puts "sdk=\n 'yes' will attempt to execute:\n ../software/<project_name>_sdk.tcl"
       puts " in order to build the SDK portion of the project (prior to tagging request)"
       puts "tag=\n 'yes' will tag locally\n this will attempt to tag based on that flag"
@@ -112,6 +114,15 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
          append printmessage " "
       }
       append build_params "| Bitstream        |     $printmessage |\n"
+   }
+   # check for regenerate board hdl design parameter
+   if {[string match -nocase "bd=*" [lindex $argv $i]]} {
+      set bd [string range [lindex $argv $i] 4 end]
+      set printmessage $bd
+      for {set j 0} {$j < [expr $chart_wdith - [string length $bd]]} {incr j} {
+         append printmessage " "
+      }
+      append build_params "| Board HDL        |     $printmessage |\n"
    }
    # check for SDK parameter
    if {[string match -nocase "sdk=*" [lindex $argv $i]]} {
@@ -305,7 +316,7 @@ proc avnet_generate_ip {ip_name} {
    cd ${scriptdir}
 }
 
-if {[file exists $projects_folder/${project}.runs/impl_1/${project}_wrapper.sysdef] && [file exists ${projects_folder}/fmchc_python1300c.xpr]} {
+if {[file exists $projects_folder/${project}.runs/impl_1/${project}_wrapper.sysdef] && [file exists ${projects_folder}/fmchc_python1300c.xpr] && [string match -nocase "no" $bd]} {
    open_project ${projects_folder}/fmchc_python1300c.xpr
 } else {
 
