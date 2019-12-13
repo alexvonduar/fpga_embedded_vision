@@ -1,4 +1,0 @@
-[submodule "avnet"]
-	path = avnet
-	url = git@github.com:alexvonduar/avnet-hdl.git
-	branch = zcu104
