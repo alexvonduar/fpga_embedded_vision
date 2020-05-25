@@ -1,4 +1,4 @@
 [submodule "avnet"]
 	path = avnet
 	url = https://github.com/alexvonduar/avnet-hdl.git
-	branch = ultrazynq
+	branch = 2019.2
