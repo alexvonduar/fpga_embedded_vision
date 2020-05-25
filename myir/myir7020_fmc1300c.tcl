@@ -95,7 +95,7 @@ set required_version 2019.2
 # ----------------------------------------------------------------------------
 
 set debuglevel 0
-set scriptdir "/home/alex/work/fpga_embedded_vision/myir"
+set scriptdir [pwd]
 set board "MYIR7020_FMC"
 set clean "no"
 set project "fmchc_python1300c"
@@ -108,72 +108,9 @@ set sdk "yes"
 set jtag "no"
 set dev_arch "zynq"
 set vivado_ver "2019_2"
-set avnet_dir "/home/alex/work/fpga_embedded_vision/avnet"
+set avnet_dir "${scriptdir}/../avnet"
 
-# create GREP process
-# From: http://wiki.tcl.tk/9395
-# Modified to set a variable, instead of only printing locations
-proc grep {pattern args} {
-    global found
-    set found "false"
-    if {[llength $args] == 0} {
-        grep0 "" $pattern stdin
-    } else {
-        foreach filename $args {
-            if {[file exists $filename]} {
-                set file [open $filename r]
-                grep0 ${filename}: $pattern $file
-                close $file
-            } else {
-                puts "File $filename does not exist"
-            }
-        }
-    }
-}
-
-proc grep0 {prefix pattern handle} {
-    set lnum 0
-    while {[gets $handle line] >= 0} {
-        incr lnum
-        if {[regexp $pattern $line]} {
-            global found
-            set found "true"
-            puts "$prefix${lnum}:${line}"
-        }
-    }
-}
-
-# From StackOverflow
-# https://stackoverflow.com/questions/29482303/how-to-find-the-number-of-cpus-in-tcl
-
-proc numberOfCPUs {} {
-    # Windows puts it in an environment variable
-    global tcl_platform env
-    if {$tcl_platform(platform) eq "windows"} {
-        return $env(NUMBER_OF_PROCESSORS)
-    }
-
-    # Check for sysctl (OSX, BSD)
-    set sysctl [auto_execok "sysctl"]
-    if {[llength $sysctl]} {
-        if {![catch {exec {*}$sysctl -n "hw.ncpu"} cores]} {
-            return $cores
-        }
-    }
-
-    # Assume Linux, which has /proc/cpuinfo, but be careful
-    if {![catch {open "/proc/cpuinfo"} f]} {
-        set cores [regexp -all -line {^processor\s} [read $f]]
-        close $f
-        if {$cores > 0} {
-            return $cores
-        }
-    }
-
-    # No idea what the actual number of cores is; exhausted all our options
-    # Fall back to returning 1; there must be at least that because we're running on it!
-    return 1
-}
+source ${scriptdir}/utils.tcl -notrace
 
 set numberOfCores [numberOfCPUs]
 
@@ -347,11 +284,12 @@ if {[string match -nocase "init" $project]} {
 }
 
 # create variables with absolute folders for all necessary folders
+set repo_folder [file normalize [pwd]/../]
 set boards_folder [file normalize ${avnet_dir}/Boards]
 set ip_folder [file normalize ${avnet_dir}/IP]
-set projects_folder [file normalize ${scriptdir}/${project}/${board}_${vivado_ver}]
+set projects_folder [file normalize ${repo_folder}/projects/${project}/${board}_${vivado_ver}]
 set scripts_folder [file normalize ${avnet_dir}/Scripts]
-set repo_folder [file normalize /home/alex/fpga_embedded_vision/]
+
 
 puts "\n\n*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
 puts " Selected Board and Project as:\n$board and $project"
@@ -407,55 +345,6 @@ if {[string match -nocase "init" $tag]} {
 puts "Setting Up Project $project..."
 #source ${scripts_folder}/ProjectScripts/$project.tcl -notrace
 
-proc validate_core_licenses { core_list ip_report_filename } {
-    set valid_cores 0
-    set invalid_cores 0
-
-    puts ""
-    puts "+------------------+------------------------------------+"
-    puts "| Video IP Core    | License Status                     |"
-    puts "+------------------+------------------------------------+"
-
-    foreach core $core_list {
-
-        # Format core name for display
-        set core_name $core
-        for {set j 0} {$j < [expr 16 - [string length $core]]} {incr j} {
-            append core_name " "
-        }
-
-        # Search for core license status in ip status report
-        set file [open $ip_report_filename r]
-        set ip_status ""
-        while {[gets $file line] >= 0} {
-            if {[regexp $core $line]} {
-                set ip_status $line
-            break
-            }
-        }
-        close $file
-        #puts "ip_status = ${ip_status}"
-
-        # Validate and display status of core license
-        if {[regexp "Included" ${ip_status}]} {
-            puts "| ${core_name} | VALID (Full License)               |"
-            incr valid_cores
-        } elseif {[regexp "Hardware_E" ${ip_status}]} {
-            puts "| ${core_name} | VALID (Hardware Evaluation)        |"
-            incr valid_cores
-        } elseif {[regexp "Purchased" ${ip_status}]} {
-            puts "| ${core_name} | VALID (Purchased)                  |"
-            incr valid_cores
-        } else {
-            puts "| ${core_name} | INVALID                            |"
-            incr invalid_cores
-        }
-        puts "+------------------+------------------------------------+"
-
-    }
-    return $valid_cores
-}
-
 # 'private' used to allow this project to be privately tagged
 # 'public' used to allow this project to be publicly tagged
 set release_state public
@@ -463,13 +352,7 @@ set release_state public
 # Generate Avnet IP
 puts "***** Generating IP..."
 #source ./makeip.tcl -notrace
-proc avnet_generate_ip {ip_name} {
-    puts "Making $ip_name..."
-    source ../IP/$ip_name/$ip_name.tcl -notrace
-    cd ../IP/$ip_name
-    make_ip $ip_name
-    cd ../../Scripts
-}
+
 #avnet_generate_ip onsemi_vita_spi
 #avnet_generate_ip onsemi_vita_cam
 #avnet_generate_ip avnet_hdmi_in
@@ -478,31 +361,13 @@ proc avnet_generate_ip {ip_name} {
 # Create Vivado project
 puts "***** Creating Vivado Project..."
 #source ../Boards/$board/[string tolower $board].tcl -notrace
-####### BOARDS #######
 
-proc avnet_create_project {project projects_folder scriptdir} {
-
-    create_project $project $projects_folder -part xc7z020clg400-1 -force
-    # add selection for proper xdc based on needs
-    # if IO carrier, then use that xdc
-    # if FMC, choose that one
-    #import_files -fileset constrs_1 -norecurse $scriptdir/../Boards/PZ7030_FMC2/#PZ7030_7015_RevC_FMCV2_RevA_v1.xdc
-    # TODO: import xdc here
-}
-
-proc avnet_add_ps {project projects_folder scriptdir} {
-
-    # add selection for customization depending on board choice (or none)
-    create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0
-    apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 -config {make_external "FIXED_IO, DDR" }  [get_bd_cells processing_system7_0]
-    #create_bd_port -dir I -type clk M_AXI_GP0_ACLK
-    #connect_bd_net [get_bd_pins /processing_system7_0/M_AXI_GP0_ACLK] [get_bd_ports M_AXI_GP0_ACLK]
-
-}
-
-
-####### END BOARDS #######
-avnet_create_project $project $projects_folder $scriptdir
+create_project $project $projects_folder -part xc7z020clg400-1 -force
+# add selection for proper xdc based on needs
+# if IO carrier, then use that xdc
+# if FMC, choose that one
+#import_files -fileset constrs_1 -norecurse $scriptdir/../Boards/PZ7030_FMC2/#PZ7030_7015_RevC_FMCV2_RevA_v1.xdc
+# TODO: import xdc here
 #
 remove_files -fileset constrs_1 *.xdc
 # Add board specific constraint file
@@ -512,6 +377,8 @@ remove_files -fileset constrs_1 *.xdc
 #add_files -fileset constrs_1 -norecurse ${projects_folder}/../pz7030_fmc2_fmchc_python1300c.xdc
 #}
 #TODO: add myir7020 constraint file here
+#add_files -fileset constrs_1 -norecurse ${scriptdir}/zedboard_fmchc_python1300c.xdc
+add_files -fileset constrs_1 -norecurse ${scriptdir}/myir7020_fmchc_python1300c.xdc
 
 # Add Avnet IP Repository
 puts "***** Updating Vivado to include IP Folder"
@@ -522,7 +389,11 @@ update_ip_catalog
 # Create Block Design and Add PS core
 puts "***** Creating Block Design..."
 create_bd_design ${project}
-avnet_add_ps $project $projects_folder $scriptdir
+# add selection for customization depending on board choice (or none)
+create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0
+apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 -config {make_external "FIXED_IO, DDR" }  [get_bd_cells processing_system7_0]
+#create_bd_port -dir I -type clk M_AXI_GP0_ACLK
+#connect_bd_net [get_bd_pins /processing_system7_0/M_AXI_GP0_ACLK] [get_bd_ports M_AXI_GP0_ACLK]
 # Apply board specific settings
 #PZ7030_FMC2 {
 #    source ../../Scripts/ProjectScripts/picozed_preset.tcl
