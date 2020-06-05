@@ -615,7 +615,7 @@ proc create_root_design { parentCell } {
     # Create instance: avnet_hdmi_in_0, and set properties
     set avnet_hdmi_in_0 [ create_bd_cell -type ip -vlnv avnet:avnet_hdmi:avnet_hdmi_in avnet_hdmi_in_0 ]
     set_property -dict [ list \
-        CONFIG.C_USE_BUFR {true} \
+        CONFIG.C_USE_BUFR {false} \
     ] $avnet_hdmi_in_0
 
     # Create instance: avnet_hdmi_out_0, and set properties
