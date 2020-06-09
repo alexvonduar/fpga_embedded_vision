@@ -37,3 +37,4 @@ vivado -mode tcl -source zcu104_vcu_trd_proj.tcl -notrace
 cd myir
 vivado -mode tcl -source myir7020_fmchc_python1300c.tcl -notrace
 ```
+![result](pictures/myir7020_fmchc_python1300c.jpeg)
