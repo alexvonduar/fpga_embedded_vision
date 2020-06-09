@@ -85,7 +85,7 @@
 #  Hardware Boards:
 #
 #  Tool versions:
-set required_version 2019.2
+set required_version 2020.1
 #
 #  Description:         Build Script for sample project (fails build)
 #
@@ -107,7 +107,7 @@ set ok_to_tag_public "false"
 set sdk "yes"
 set jtag "no"
 set dev_arch "zynq"
-set vivado_ver "2019_2"
+set vivado_ver "2020_1"
 set avnet_dir "${scriptdir}/../avnet"
 
 source ${scriptdir}/utils.tcl -notrace
@@ -340,6 +340,8 @@ if {[string match -nocase "init" $tag]} {
     }
 }
 
+if {![file exists ${projects_folder}/${project}.xpr] || ![file exists ${projects_folder}/${project}.srcs/sources_1/bd/${project}/${project}.bd]} {
+
 # Project Creation Cases
 # use a - for fall through expressions
 puts "Setting Up Project $project..."
@@ -466,7 +468,7 @@ set script_folder [_tcl::get_script_folder]
 ################################################################
 # Check if script is running in correct Vivado version.
 ################################################################
-set scripts_vivado_version 2019.2
+set scripts_vivado_version 2020.1
 set current_vivado_version [version -short]
 
 if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
@@ -2125,34 +2127,39 @@ create_root_design ""
 
 ####### end board specific block diagram #######s
 
-
 # Add Project source files
 puts "***** Adding Source Files to Block Design..."
 make_wrapper -files [get_files ${projects_folder}/${project}.srcs/sources_1/bd/${project}/${project}.bd] -top
 add_files -norecurse ${projects_folder}/${project}.srcs/sources_1/bd/${project}/hdl/${project}_wrapper.vhd
 
+} else {
+    puts "***** open project ${project}"
+    open_project ${projects_folder}/${project}.xpr
+}
 # Build the binary
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 #*- KEEP OUT, do not touch this section unless you know what you are doing! -*
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-puts "***** Building Binary..."
+if {![file exists ${projects_folder}/${project}.runs/impl_1/${project}_wrapper.bit]} {
+puts "***** Generating Hardware implementation..."
 # add this to allow up+enter rebuild capability
 #cd $scripts_folder
 #update_compile_order -fileset sources_1
 #update_compile_order -fileset sim_1
 #save_bd_design
-#launch_runs impl_1 -to_step write_bitstream -j 8
+launch_runs impl_1 -to_step write_bitstream -j 6
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 #*- KEEP OUT, do not touch this section unless you know what you are doing! -*
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
-
-
+} else {
+    puts "**** Hardware already done..."
+}
 
 
 ####### make #######
 
 if {[string match -nocase "no" $jtag]} {
-    puts "Generating Binary..."
+    puts "***** Building Binary..."
     #source ./bin_helper.tcl -notrace
 
     # if using for development, can set this to yes to just use the script
@@ -2179,11 +2186,13 @@ if {[string match -nocase "no" $jtag]} {
         # https://www.xilinx.com/html_docs/xilinx2018_2/SDK_Doc/xsct/use_cases/xsct_howtoruntclscriptfiles.html
         # added the Board variable so it could be used when needed - see uz_petalinux SDK build script for
         # how to use this
-        #exec >@stdout 2>@stderr xsct ../../../Software/$project/$project\_sdk.tcl -notrace $board $vivado_ver
+        file copy -force ${repo_folder}/myir/$project\_sdk.tcl ./
+        exec >@stdout 2>@stderr xsct $project\_sdk.tcl -notrace $board $vivado_ver
         # Build a BOOT.bin file only if a BIF file exists for the project.
-        if {[file exists ../../../Software/$project/$project\_sd.bif]} {
+        if {[file exists ${repo_folder}/myir/$project\_sd.bif]} {
+            file copy -force ${repo_folder}/myir/$project\_sd.bif ./
             puts "Generating BOOT.BIN..."
-            #exec >@stdout 2>@stderr bootgen -arch $dev_arch -image ../../../Software/$project/$project\_sd.bif -w -o BOOT.bin
+            exec >@stdout 2>@stderr bootgen -arch $dev_arch -image $project\_sd.bif -w -o BOOT.bin
         }
         cd ${scripts_folder}
     }
