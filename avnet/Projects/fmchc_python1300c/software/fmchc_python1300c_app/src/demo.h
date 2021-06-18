@@ -57,13 +57,14 @@
 #include "xaxivdma_ext.h"
 #include "xosd.h"
 #include "onsemi_python_sw.h"
-#include "xcfa.h"
+//#include "xcfa.h"
+#include "xv_demosaic.h"
 
 typedef struct {
 	XAxiVdma axivdma0;
 	XAxiVdma axivdma1;
 	XOSD osd;
-	XCfa cfa;
+	XV_demosaic cfa;
     fmc_iic_t fmc_hdmi_cam_iic;
     fmc_hdmi_cam_t fmc_hdmi_cam;
     onsemi_python_t python_receiver;
@@ -73,7 +74,7 @@ typedef struct {
 	XAxiVdma *paxivdma0;
 	XAxiVdma *paxivdma1;
 	XOSD *posd;
-	XCfa *pcfa;
+	XV_demosaic *pcfa;
     fmc_iic_t *pfmc_hdmi_cam_iic;
     fmc_hdmi_cam_t *pfmc_hdmi_cam;
 	onsemi_python_t *ppython_receiver;
