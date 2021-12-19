@@ -1,6 +1,6 @@
 # ----------------------------------------------------------------------------
 #
-#        ** **        **          **  ****      **  **********  ********** ®
+#        ** **        **          **  ****      **  **********  ********** Â®
 #       **   **        **        **   ** **     **  **              **
 #      **     **        **      **    **  **    **  **              **
 #     **       **        **    **     **   **   **  *********       **
@@ -2139,6 +2139,8 @@ add_files -norecurse ${projects_folder}/${project}.srcs/sources_1/bd/${project}/
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 #*- KEEP OUT, do not touch this section unless you know what you are doing! -*
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+
+#adi_project_run ${project}
 if {![file exists ${projects_folder}/${project}.runs/impl_1/${project}_wrapper.bit]} {
 puts "***** Generating Hardware implementation..."
 # add this to allow up+enter rebuild capability
@@ -2147,6 +2149,9 @@ puts "***** Generating Hardware implementation..."
 #update_compile_order -fileset sim_1
 #save_bd_design
 launch_runs impl_1 -to_step write_bitstream -j 6
+wait_on_run impl_1
+open_run impl_1
+report_timing_summary -warn_on_violation -file timing_impl.log
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 #*- KEEP OUT, do not touch this section unless you know what you are doing! -*
 #*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*

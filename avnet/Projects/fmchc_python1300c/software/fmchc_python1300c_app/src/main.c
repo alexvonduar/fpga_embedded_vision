@@ -41,6 +41,7 @@ int main()
 	xil_printf("------------------------------------------------------\n\r");
 	xil_printf("--             FMC-HDMI-CAM + PYTHON-1300-C         --\n\r");
 	xil_printf("--               Getting Started Design             --\n\r");
+	xil_printf("--                 Compile with 2019.1              --\n\r");
 	xil_printf("------------------------------------------------------\n\r");
 	xil_printf("\n\r");
 
