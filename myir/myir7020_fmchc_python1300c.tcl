@@ -2046,6 +2046,7 @@ proc create_root_design { parentCell } {
         [get_bd_pins axi_mem_intercon/S01_ARESETN] \
         [get_bd_pins axi_mem_intercon/S02_ARESETN] \
         [get_bd_pins axi_mem_intercon/S03_ARESETN] \
+        [get_bd_pins processing_system7_0_axi_periph/M04_ARESETN] \
         [get_bd_pins rst_processing_system7_0_149M/peripheral_aresetn] \
         [get_bd_pins v_cfa_0/ap_rst_n] \
         [get_bd_pins v_cresample_0/aresetn] \
@@ -2062,7 +2063,6 @@ proc create_root_design { parentCell } {
         [get_bd_pins processing_system7_0_axi_periph/M01_ARESETN] \
         [get_bd_pins processing_system7_0_axi_periph/M02_ARESETN] \
         [get_bd_pins processing_system7_0_axi_periph/M03_ARESETN] \
-        [get_bd_pins processing_system7_0_axi_periph/M04_ARESETN] \
         [get_bd_pins processing_system7_0_axi_periph/M05_ARESETN] \
         [get_bd_pins processing_system7_0_axi_periph/M06_ARESETN] \
         [get_bd_pins processing_system7_0_axi_periph/S00_ARESETN] \
