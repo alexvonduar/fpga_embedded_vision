@@ -87,6 +87,12 @@ createapp -name ${app_name} -hwproject ${hw_name} -proc ps7_cortexa9_0 -os stand
 
 # APP : copy sources to empty application
 importsources -name ${app_name} -path ../software/${app_name}/src
+configapp -app ${app_name} include-path {../src}
+configapp -app ${app_name} include-path {../src/TX}
+configapp -app ${app_name} include-path {../src/TX/HAL/COMMON}
+configapp -app ${app_name} include-path {../src/TX/HAL/WIRED/ADV7511}
+configapp -app ${app_name} include-path {../src/TX/HAL/WIRED/ADV7511/MACROS}
+configapp -app ${app_name} include-path {../src/TX/LIB}
 
 # build APP
 puts "\n#\n#\n# Build ${app_name} ...\n#\n#\n"

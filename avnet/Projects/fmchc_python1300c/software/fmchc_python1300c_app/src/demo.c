@@ -46,20 +46,33 @@
 
 #include "demo.h"
 
+
+#include "tpg_settings.h"
+
+#include "cat9554.h"
+
+#include "wrapper.h"
+#include "tx_lib.h"
+
+
 int demo_init( demo_t *pdemo )
 {
     int status;
+    u32 ret;
 
     pdemo->paxivdma0 = &(pdemo->axivdma0);
     pdemo->paxivdma1 = &(pdemo->axivdma1);
-    pdemo->posd = &(pdemo->osd);
+    pdemo->ptpg = &(pdemo->tpg);
+    pdemo->pmixer = &(pdemo->mixer);
     pdemo->pcfa = &(pdemo->cfa);
+    //pdemo->pvtc = &(pdemo->vtc);
+    pdemo->pcsc = &(pdemo->csc);
     pdemo->pfmc_hdmi_cam_iic = &(pdemo->fmc_hdmi_cam_iic);
     pdemo->pfmc_hdmi_cam = &(pdemo->fmc_hdmi_cam);
     pdemo->ppython_receiver = &(pdemo->python_receiver);
 
     // general command settings
-    pdemo->bVerbose = 0;
+    pdemo->bVerbose = 1;
 
     // fmc-hami-cam commands
     pdemo->adv7611_llc_polarity = 1;
@@ -73,14 +86,57 @@ int demo_init( demo_t *pdemo )
 
     // start command settings
     pdemo->cam_alpha = 0xFF;
+    pdemo->cam_enable = 1;
     pdemo->hdmi_alpha = 0x00;
+    pdemo->hdmi_enable = 0;
 
     // video ip command settings
     pdemo->cam_bayer = 0;//XCFA_RGRG_COMBINATION;
 
     XAxiVdma_Config *paxivdma_config;
-    XOSD_Config *posd_config;
     XV_demosaic_Config *pcfa_config;
+
+    ret = XVidC_SetVideoStream(&pdemo->mixer_stream_in, XVIDC_VM_1080_60_P, XVIDC_CSF_YCRCB_422, XVIDC_BPC_8, XVIDC_PPC_1);
+    if (ret != XST_SUCCESS) {
+    	xil_printf("Set Mixer Video stream In failed\n\r");
+    }
+
+    //ret = XVidC_SetVideoStream(&pdemo->mixer_stream1_in, XVIDC_VM_1080_60_P, XVIDC_CSF_YCRCB_422, XVIDC_BPC_8, XVIDC_PPC_1);
+    //if (ret != XST_SUCCESS) {
+    //	xil_printf("Set Mixer Video 1 stream In failed\n\r");
+    //}
+
+    ret = XVidC_SetVideoStream(&pdemo->mixer_stream2_in, XVIDC_VM_1280x1024_60_P, XVIDC_CSF_YCRCB_422, XVIDC_BPC_8, XVIDC_PPC_1);
+    if (ret != XST_SUCCESS) {
+    	xil_printf("Set Mixer Video 2 stream In failed\n\r");
+    }
+
+    ret = XVidC_SetVideoStream(&pdemo->csc_stream_in, XVIDC_VM_1280x1024_60_P, XVIDC_CSF_RGB, XVIDC_BPC_8, XVIDC_PPC_1);
+    if (ret != XST_SUCCESS) {
+    	xil_printf("Set Chroma Resample Video stream In failed\n\r");
+    }
+
+    xil_printf( "FMC-HDMI-CAM Initialization ...\n\r" );
+
+    //Initialize the Video Test Pattern Generator
+    XV_tpg_Config *ptpg_config = XV_tpg_LookupConfig(XPAR_V_TPG_0_DEVICE_ID);
+    XV_tpg_CfgInitialize(pdemo->ptpg, ptpg_config, ptpg_config->BaseAddress);
+
+    //Initialize the Video mixer
+    XVMix_Initialize(pdemo->pmixer, XPAR_V_MIX_0_DEVICE_ID);
+
+    //Initialize the color space converter
+    XVprocSs_Config* pcsc_config = XVprocSs_LookupConfig(XPAR_V_CSC_0_DEVICE_ID);
+    /* Start capturing event log. */
+    XVprocSs_LogReset(pdemo->pcsc);
+    XVprocSs_CfgInitialize(pdemo->pcsc, pcsc_config, pcsc_config->BaseAddress);
+    XVprocSs_ReportSubsystemCoreInfo(pdemo->pcsc);
+
+    // Initialize the VTC
+    //XVtc_Config *VTC_Config = XVtc_LookupConfig(XPAR_V_TC_0_DEVICE_ID);
+    //XVtc_CfgInitialize(pdemo->pvtc, VTC_Config, VTC_Config->BaseAddress);
+    //XVtc_ConvVideoMode2Timing(pdemo->pvtc, XVTC_VMODE_1080P, &(pdemo->vtctiming));
+    pdemo->pvtiming = XVidC_GetTimingInfo(XVIDC_VM_1080_60_P);
 
     paxivdma_config = XAxiVdma_LookupConfig(XPAR_AXIVDMA_0_DEVICE_ID);
     XAxiVdma_CfgInitialize(pdemo->paxivdma0, paxivdma_config,
@@ -89,11 +145,6 @@ int demo_init( demo_t *pdemo )
     paxivdma_config = XAxiVdma_LookupConfig(XPAR_AXIVDMA_1_DEVICE_ID);
     XAxiVdma_CfgInitialize(pdemo->paxivdma1, paxivdma_config,
             paxivdma_config->BaseAddress);
-
-    posd_config = XOSD_LookupConfig(XPAR_OSD_0_DEVICE_ID);
-    XOSD_CfgInitialize(pdemo->posd, posd_config, posd_config->BaseAddress);
-
-    xil_printf( "FMC-HDMI-CAM Initialization ...\n\r" );
 
     pcfa_config = XV_demosaic_LookupConfig(XPAR_V_CFA_0_DEVICE_ID);
     XV_demosaic_CfgInitialize(pdemo->pcfa, pcfa_config, pcfa_config->BaseAddress);
@@ -125,17 +176,29 @@ int demo_init( demo_t *pdemo )
     pdemo->hdmio_timing.IsInterlaced  = 0;
     pdemo->hdmio_timing.ColorDepth    = 8;
 
-    pdemo->hdmio_timing.HActiveVideo  = 1920;
-    pdemo->hdmio_timing.HFrontPorch   =   88;
-    pdemo->hdmio_timing.HSyncWidth    =   44;
-    pdemo->hdmio_timing.HSyncPolarity =    1;
-    pdemo->hdmio_timing.HBackPorch    =  148;
-    pdemo->hdmio_timing.VBackPorch    =   36;
-
-    pdemo->hdmio_timing.VActiveVideo  = 1080;
-    pdemo->hdmio_timing.VFrontPorch   =    4;
-    pdemo->hdmio_timing.VSyncWidth    =    5;
-    pdemo->hdmio_timing.VSyncPolarity =    1;
+    pdemo->hdmio_timing.HActiveVideo  = pdemo->pvtiming->HActive;//1920;
+    xil_printf("HActiveVideo: %d\r\n", pdemo->pvtiming->HActive);
+    pdemo->hdmio_timing.HFrontPorch   =   pdemo->pvtiming->HFrontPorch;//88;
+    xil_printf("HFrontPorch: %d\r\n", pdemo->pvtiming->HFrontPorch);
+    pdemo->hdmio_timing.HSyncWidth    =   pdemo->pvtiming->HSyncWidth;//44;
+    xil_printf("HSyncWidth: %d\r\n", pdemo->pvtiming->HSyncWidth);
+    pdemo->hdmio_timing.HSyncPolarity =    pdemo->pvtiming->HSyncPolarity;//1;
+    xil_printf("HSyncPolarity: %d\r\n", pdemo->pvtiming->HSyncPolarity);
+    pdemo->hdmio_timing.HBackPorch    =  pdemo->pvtiming->HBackPorch;//148;
+    xil_printf("HBackPorch: %d\r\n", pdemo->pvtiming->HBackPorch);
+    pdemo->hdmio_timing.VBackPorch    =   pdemo->pvtiming->F0PVBackPorch;//36;
+    xil_printf("F0PVBackPorch: %d\r\n", pdemo->pvtiming->F0PVBackPorch);
+    xil_printf("F1VBackPorch: %d\r\n", pdemo->pvtiming->F1VBackPorch);
+    pdemo->hdmio_timing.VActiveVideo  = pdemo->pvtiming->VActive;//1080;
+    xil_printf("VActiveVideo: %d\r\n", pdemo->pvtiming->VActive);
+    pdemo->hdmio_timing.VFrontPorch   =    pdemo->pvtiming->F0PVFrontPorch;//4;
+    xil_printf("F0PVFrontPorch: %d\r\n", pdemo->pvtiming->F0PVFrontPorch);
+    xil_printf("F1VFrontPorch: %d\r\n", pdemo->pvtiming->F1VFrontPorch);
+    pdemo->hdmio_timing.VSyncWidth    =    pdemo->pvtiming->F0PVSyncWidth;//5;
+    xil_printf("F0PVSyncWidth: %d\r\n", pdemo->pvtiming->F0PVSyncWidth);
+    xil_printf("F1VSyncWidth: %d\r\n", pdemo->pvtiming->F1VSyncWidth);
+    pdemo->hdmio_timing.VSyncPolarity =    pdemo->pvtiming->VSyncPolarity;//1;
+    xil_printf("VSyncPolarity: %d\r\n", pdemo->pvtiming->VSyncPolarity);
 
     xil_printf( "HDMI Output Initialization ...\n\r" );
     status = fmc_hdmi_cam_hdmio_init( pdemo->pfmc_hdmi_cam,
@@ -149,12 +212,59 @@ int demo_init( demo_t *pdemo )
         return 0;
     }
 
+    fmc_hdmi_cam_iic_mux(pdemo->pfmc_hdmi_cam, FMC_HDMI_CAM_I2C_SELECT_HDMI_OUT);
+    HAL_SetI2CHandler(pdemo->pfmc_hdmi_cam_iic);
+    UINT16 TxRev;
+    ADIAPI_TxGetChipRevision(&TxRev);
+    xil_printf("Get ADV7511 revision: %0xd\n\r", TxRev);
+
     // Default HDMI input resolution
     pdemo->hdmii_width = pdemo->hdmio_width;
     pdemo->hdmii_height = pdemo->hdmio_height;
 
+    demo_hdmi_out_status(pdemo);
 
     return 1;
+}
+
+void demo_hdmi_out_status( demo_t * pdemo ) {
+	int stat;
+    fmc_hdmi_cam_iic_mux(pdemo->pfmc_hdmi_cam, FMC_HDMI_CAM_I2C_SELECT_HDMI_OUT);
+    //HAL_SetI2CHandler(pdemo->pfmc_hdmi_cam_iic);
+    TX_STATUS status;
+    ATV_ERR ret =  ADIAPI_TxGetStatus (&status);
+    if (ret == ATVERR_OK) {
+
+        if (status.ChipPd) {
+        	xil_printf("chip power down: %d\n\r", status.ChipPd);
+        	xil_printf("TMDS power down: %d\n\r", status.TmdsPd);
+        	xil_printf("HPD: %d\n\r", status.Hpd);
+        	xil_printf("Monitor Sense: %d\n\r", status.MonSen);
+        	xil_printf("HDMI mode: %d\n\r", status.OutputHdmi);
+        	xil_printf("PLL locked: %d\n\r", status.PllLocked);
+        	xil_printf("Video Muted: %d\n\r", status.VideoMuted);
+        	xil_printf("Clear AV Mute: %d\n\r", status.ClearAVMute);
+        	xil_printf("Set AV Mute: %d\n\r", status.SetAVMute);
+        	xil_printf("Audio Repeat: %d\n\r", status.AudioRep);
+        	xil_printf("Spdif Enable: %d\n\r", status.SpdifEnable);
+        	xil_printf("I2S Enable: 0x%0xd\n\r", status.I2SEnable);
+        	xil_printf("Detected VIC: %d\n\r", status.DetectedVic);
+        	xil_printf("Last HDCP Errors: %d\n\r", status.LastHdcpErr);
+            xil_printf( "HDMI Output Initialization ...\n\r" );
+            stat = fmc_hdmi_cam_hdmio_init( pdemo->pfmc_hdmi_cam,
+                                           1,                      // hdmioEnable = 1
+                                           &(pdemo->hdmio_timing), // pTiming
+                                           0                       // waitHPD = 0
+                                           );
+            if ( !stat )
+            {
+                xil_printf( "ERROR : Failed to init HDMI Output Interface\n\r" );
+                //return 0;
+            }
+        }
+    } else {
+        xil_printf("Get ADV7511 status error: %d\n\r", ret);
+    }
 }
 
 int demo_start_hdmi_in( demo_t *pdemo )
@@ -199,6 +309,12 @@ int demo_start_hdmi_in( demo_t *pdemo )
        pdemo->hdmii_height = pdemo->hdmii_timing.VActiveVideo;
        xil_printf( "\tInput resolution = %d X %d\n\r", pdemo->hdmii_width, pdemo->hdmii_height );
     }
+
+    pdemo->hdmi_enable = 1;
+    pdemo->hdmi_alpha = 0xff;
+    pdemo->cam_enable = 0;
+    pdemo->cam_alpha = 0;
+    demo_set_video_mixer(pdemo);
 
     return 0;
 }
@@ -262,6 +378,12 @@ int demo_start_cam_in( demo_t *pdemo )
     XV_demosaic_Set_HwReg_bayer_phase(pdemo->pcfa, pdemo->cam_bayer);
     XV_demosaic_WriteReg(XPAR_XV_DEMOSAIC_0_S_AXI_CTRL_BASEADDR, XV_DEMOSAIC_CTRL_ADDR_AP_CTRL, 0x81);
 
+
+    pdemo->hdmi_enable = 0;
+    pdemo->hdmi_alpha = 0;
+    pdemo->cam_enable = 1;
+    pdemo->cam_alpha = 0xff;
+    demo_set_video_mixer(pdemo);
 
     return 1;
 }
@@ -327,6 +449,21 @@ int demo_stop_frame_buffer( demo_t *pdemo )
 
 int demo_start_frame_buffer( demo_t *pdemo )
 {
+	u32 ret;
+
+	/* VTC Configuration */
+    //XVtc_Timing XVtc_Timingconf;
+    //XVtc_ConvVideoMode2Timing(pdemo->pvtc, XVTC_VMODE_1080P,&XVtc_Timingconf);
+    //XVtc_SetGeneratorTiming(pdemo->pvtc, &(pdemo->vtctiming));
+    //XVtc_RegUpdate(pdemo->pvtc);
+
+	/* End of VTC Configuration */
+
+    //Start the VTC generator
+    //XVtc_EnableGenerator(pdemo->pvtc);
+
+    //xil_printf("VTC started\r\n");
+
 
     xil_printf("VDMA 0 Initialization\r\n");
     XAxiVdma_Reset(pdemo->paxivdma0, XAXIVDMA_WRITE);
@@ -342,26 +479,142 @@ int demo_start_frame_buffer( demo_t *pdemo )
     ReadSetup(pdemo->paxivdma1, 0x18000000, 0, 1, 1, 0, 0, 1280, 1024, 2048, 2048);
     StartTransfer(pdemo->paxivdma1);
 
-    xil_printf("OSD Initialization (hdmi=0x%02X, cam=0x%02X)\r\n", pdemo->hdmi_alpha, pdemo->cam_alpha);
-    XOSD_Reset(pdemo->posd);
-    XOSD_RegUpdateEnable(pdemo->posd);
-    XOSD_Enable(pdemo->posd);
+    demo_set_video_mixer(pdemo);
 
-    XOSD_SetScreenSize(pdemo->posd, pdemo->hdmio_width, pdemo->hdmio_height);
-    XOSD_SetBackgroundColor(pdemo->posd, 0x80, 0x80, 0x80);
+    //Configure the Chroma Resample
+    //XVprocSs_Stop(pdemo->pcresample);
+    //XVprocSs_Reset(pdemo->pcresample);
+    //XVprocSs_SetVidStreamIn(pdemo->pcresample, &(pdemo->cresample_stream_in));
+    //XVprocSs_SetVidStreamOut(pdemo->pcresample, &(pdemo->mixer_stream1_in));
+    //ret = XVprocSs_SetSubsystemConfig(pdemo->pcresample);
+    //if (ret != XST_SUCCESS) {
+    //	xil_printf("chroma resample failed\n\r");
+    //	XVprocSs_ReportSubsystemConfig(pdemo->pcresample);
+    //	XVprocSs_ReportSubsystemCoreInfo(pdemo->pcresample);
+    //	XVprocSs_ReportSubcoreStatus(pdemo->pcresample, XVPROCSS_SUBCORE_CR_H);
+    //	XVprocSs_LogDisplay(pdemo->pcresample);
+    //}
+    //XVprocSs_Start(pdemo->pcresample);
+    //xil_printf("Chroma Resample started\n\r");
 
-    // Layer 0 - HDMI input
-    XOSD_SetLayerPriority(pdemo->posd, 0, XOSD_LAYER_PRIORITY_0);
-    XOSD_SetLayerAlpha(pdemo->posd, 0, 1, pdemo->hdmi_alpha);
-    XOSD_SetLayerDimension(pdemo->posd, 0, 0, 0, pdemo->hdmio_width, pdemo->hdmio_height);
+    //Configure the Color space convert
+    XVprocSs_Stop(pdemo->pcsc);
+    XVprocSs_Reset(pdemo->pcsc);
+    XVprocSs_SetVidStreamIn(pdemo->pcsc, &(pdemo->csc_stream_in));
+    XVprocSs_SetVidStreamOut(pdemo->pcsc, &(pdemo->mixer_stream2_in));
+    XVprocSs_SetSubsystemConfig(pdemo->pcsc);
+    ret = XVprocSs_SetSubsystemConfig(pdemo->pcsc);
+    if (ret != XST_SUCCESS) {
+    	xil_printf("color space converter failed\n\r");
+    	XVprocSs_ReportSubsystemConfig(pdemo->pcsc);
+    	XVprocSs_ReportSubsystemCoreInfo(pdemo->pcsc);
+    	XVprocSs_ReportSubcoreStatus(pdemo->pcsc, XVPROCSS_SUBCORE_CSC);
+    	XVprocSs_LogDisplay(pdemo->pcsc);
+    }
+    XVprocSs_Start(pdemo->pcsc);
+    xil_printf("Color Spece Converter started\n\r");
 
-    // Layer 1 - PYTHON-1300 camera
-    XOSD_SetLayerPriority(pdemo->posd, 1, XOSD_LAYER_PRIORITY_1);
-    XOSD_SetLayerAlpha(pdemo->posd, 1, 1, pdemo->cam_alpha);
-    XOSD_SetLayerDimension(pdemo->posd, 1, 0, 0, 1280, 1024);
+    xil_printf("Video Test Pattern Initialization\r\n");
+    //Configure the TPG
+    tpg_set(pdemo->ptpg, 1080, 1920, XVIDC_CSF_YCRCB_422, XTPG_BKGND_COLOR_BARS);
 
-    XOSD_EnableLayer(pdemo->posd, 0);
-    XOSD_EnableLayer(pdemo->posd, 1);
+    //Configure the moving box of the TPG
+    tpg_set_box(pdemo->ptpg, 100, 3);
 
+    //Start the TPG
+    XV_tpg_EnableAutoRestart(pdemo->ptpg);
+    XV_tpg_Start(pdemo->ptpg);
+    xil_printf("TPG started!\r\n");
+
+    return 1;
+}
+
+int demo_set_video_mixer(demo_t * pdemo)
+{
+    xil_printf("Video Mixer Initialization (hdmi = %d(0x%02X), cam = %d(0x%02X))\r\n", pdemo->hdmi_enable, pdemo->hdmi_alpha, pdemo->cam_enable, pdemo->cam_alpha);
+    XVMix_Stop(pdemo->pmixer);
+    //XVMix_LayerDisable(pdemo->pmixer, XVMIX_LAYER_MASTER);
+
+    int NumLayers, Status;
+
+    /* Setup default config after reset */
+    XVMix_LayerDisable(pdemo->pmixer, XVMIX_LAYER_ALL);
+    XVMix_SetVidStream(pdemo->pmixer, &pdemo->mixer_stream_in);
+
+    NumLayers = XVMix_GetNumLayers(pdemo->pmixer);
+    xil_printf("mixer %d layers\n\r", NumLayers);
+    XVidC_ColorFormat cfmt;
+    XVMix_GetLayerColorFormat(pdemo->pmixer, XVMIX_LAYER_1, &cfmt);
+    int isStream = XVMix_IsLayerInterfaceStream(pdemo->pmixer, XVMIX_LAYER_1);
+    xil_printf("mixer layer 1 : is tream %d color format %d\n\r", isStream, cfmt);
+    XVMix_SetLayerAlpha(pdemo->pmixer, XVMIX_LAYER_1, pdemo->hdmi_alpha);
+
+    XVidC_VideoWindow Win = {0,  0,  pdemo->hdmio_width, pdemo->hdmio_height};
+    u32 Stride = ((cfmt == XVIDC_CSF_YCRCB_422) ? 2: 4); //BytesPerPixel
+    Stride *= Win.Width;
+
+    xil_printf("Set HDMI IN Layer Window (%3d, %3d, %3d, %3d): ",
+            Win.StartX, Win.StartY, Win.Width, Win.Height);
+    Status = XVMix_SetLayerWindow(pdemo->pmixer, XVMIX_LAYER_1, &Win, Stride);
+    if(Status != XST_SUCCESS) {
+        xil_printf("<ERROR:: Command Failed>\r\n");
+        //++ErrorCount;
+    } else {
+        xil_printf("Done\r\n");
+    }
+
+
+    XVMix_GetLayerColorFormat(pdemo->pmixer, XVMIX_LAYER_2, &cfmt);
+    isStream = XVMix_IsLayerInterfaceStream(pdemo->pmixer, XVMIX_LAYER_2);
+    xil_printf("mixer layer 2 : is tream %d color format %d\n\r", isStream, cfmt);
+    XVMix_SetLayerAlpha(pdemo->pmixer, XVMIX_LAYER_2, pdemo->cam_alpha);
+
+    //Win = {0,  0,  1280/*pdemo->hdmio_width*/, 1024/*pdemo->hdmio_height*/};
+    Win.StartX = 0;
+    Win.StartY = 0;
+    Win.Height = 1024;
+    Win.Width = 1280;
+    Stride = ((cfmt == XVIDC_CSF_YCRCB_422) ? 2: 4); //BytesPerPixel
+    Stride *= Win.Width;
+
+    xil_printf("   Set CAM IN Layer Window (%3d, %3d, %3d, %3d): ",
+            Win.StartX, Win.StartY, Win.Width, Win.Height);
+    Status = XVMix_SetLayerWindow(pdemo->pmixer, XVMIX_LAYER_2, &Win, Stride);
+    if(Status != XST_SUCCESS) {
+        xil_printf("<ERROR:: Command Failed>\r\n");
+        //++ErrorCount;
+    } else {
+        xil_printf("Done\r\n");
+    }
+
+
+    if(!XVMix_IsLogoEnabled(pdemo->pmixer)) {
+        xil_printf("INFO: Logo Layer Disabled in HW \r\n");
+    }
+    //XVMix_SetBackgndColor(pdemo->pmixer, XVMIX_BKGND_BLUE, stream.ColorDepth);
+
+    if (pdemo->hdmi_enable) {
+    	xil_printf("enable hdmi layer\n\r");
+        Status = XVMix_LayerEnable(pdemo->pmixer, XVMIX_LAYER_1);
+        if(Status != XST_SUCCESS) {
+            xil_printf("<ERROR:: Command Failed>\r\n");
+        } else {
+            xil_printf("Done\r\n");
+        }
+    }
+    if (pdemo->cam_enable) {
+    	xil_printf("enable cam layer\n\r");
+        Status = XVMix_LayerEnable(pdemo->pmixer, XVMIX_LAYER_2);
+        if(Status != XST_SUCCESS) {
+            xil_printf("<ERROR:: Command Failed>\r\n");
+        } else {
+            xil_printf("Done\r\n");
+        }
+    }
+    XVMix_LayerEnable(pdemo->pmixer, XVMIX_LAYER_MASTER);
+    XVMix_InterruptDisable(pdemo->pmixer);
+    XVMix_Start(pdemo->pmixer);
+    XVMix_DbgReportStatus(pdemo->pmixer);
+    xil_printf("INFO: Mixer configured\r\n");
     return 1;
 }

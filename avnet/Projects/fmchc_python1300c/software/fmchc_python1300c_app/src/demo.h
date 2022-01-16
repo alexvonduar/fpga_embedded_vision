@@ -55,26 +55,37 @@
 
 #include "xaxivdma.h"
 #include "xaxivdma_ext.h"
-#include "xosd.h"
+#include "xv_mix_l2.h"
 #include "onsemi_python_sw.h"
-//#include "xcfa.h"
 #include "xv_demosaic.h"
+#include "xv_tpg.h"
+//#include "xvtc.h"
+#include "xvprocss.h"
 
 typedef struct {
 	XAxiVdma axivdma0;
 	XAxiVdma axivdma1;
-	XOSD osd;
+	XV_Mix_l2 mixer;
 	XV_demosaic cfa;
+    XV_tpg tpg;
+    XVprocSs csc;
+    //XVtc vtc;
+    //XVtc_Timing vtctiming;
+    const XVidC_VideoTiming * pvtiming;
     fmc_iic_t fmc_hdmi_cam_iic;
     fmc_hdmi_cam_t fmc_hdmi_cam;
     onsemi_python_t python_receiver;
     onsemi_python_status_t python_status_t1;
     onsemi_python_status_t python_status_t2;
+    XVidC_VideoStream csc_stream_in, mixer_stream_in, mixer_stream2_in;
 
 	XAxiVdma *paxivdma0;
 	XAxiVdma *paxivdma1;
-	XOSD *posd;
+	XV_Mix_l2 *pmixer;
 	XV_demosaic *pcfa;
+    XV_tpg *ptpg;
+    XVprocSs *pcsc;//, *pcresample;
+    //XVtc *pvtc;
     fmc_iic_t *pfmc_hdmi_cam_iic;
     fmc_hdmi_cam_t *pfmc_hdmi_cam;
 	onsemi_python_t *ppython_receiver;
@@ -105,19 +116,23 @@ typedef struct {
 	Xuint32 cam_bayer;
 
     // start commands
-	u8 cam_alpha;
-	u8 hdmi_alpha;
+	int cam_enable;
+	int  hdmi_enable;
+	u16 cam_alpha;
+	u16 hdmi_alpha;
 
 } demo_t;
 
 extern Xuint8 fmc_hdmi_cam_hdmii_edid_content[256];
 
 int demo_init( demo_t *pdemo );
+void demo_hdmi_out_status( demo_t * pdemo );
 int demo_start_hdmi_in( demo_t *pdemo );
 int demo_start_cam_in( demo_t *pdemo );
 int demo_init_frame_buffer( demo_t *pdemo );
 int demo_stop_frame_buffer( demo_t *pdemo );
 int demo_start_frame_buffer( demo_t *pdemo );
+int demo_set_video_mixer(demo_t * pdemo);
 
 
 #endif // _DEMO_H_

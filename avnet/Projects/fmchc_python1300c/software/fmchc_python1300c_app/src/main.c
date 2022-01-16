@@ -52,7 +52,9 @@ int main()
 	demo_init_frame_buffer(pdemo);
 
 	// Try CAM first
+	pdemo->cam_enable = 1;
 	pdemo->cam_alpha = 0xFF;
+	pdemo->hdmi_enable = 0;
 	pdemo->hdmi_alpha = 0x00;
 	if ( !demo_start_cam_in(pdemo) )
 	{
@@ -63,6 +65,8 @@ int main()
 	}
 	demo_start_frame_buffer(pdemo);
 
+	demo_hdmi_out_status(pdemo);
+
 	// Start serial console
 	print_avnet_console_serial_app_header();
 	start_avnet_console_serial_application();
@@ -71,6 +75,8 @@ int main()
 		if (transfer_avnet_console_serial_data()) {
 			break;
 		}
+		demo_hdmi_out_status(pdemo);
+		usleep(100000);
 	}
 
 	return 0;
