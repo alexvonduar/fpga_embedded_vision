@@ -51,66 +51,86 @@
 
 
 #!/usr/bin/tclsh
+set repo_folder [lindex $argv 1]
+set board [lindex $argv 2]
+set vivado_ver [lindex $argv 3]
+set hw_file [lindex $argv 4]
+set hw_name [lindex $argv 5]
 set project  "fmchc_python1300c"
-set hw_name  "fmchc_python1300c_hw"
+#set hw_name  "fmchc_python1300c_hw"
 set bsp_name "fmchc_python1300c_bsp"
 set app_name "fmchc_python1300c_app"
+set app_system "fmchc_python1300c_system"
 
 # Set workspace and import hardware platform
-setws ${project}.sdk
+set workspace ${repo_folder}/${project}_vitis
+setws ${workspace}
+
+puts "\n#\n#\n# Vivado ${vivado_ver} Board ${board} hw ${hw_name} file ${hw_file}\n#\n#\n"
 
 puts "\n#\n#\n# Adding local user repository ...\n#\n#\n"
 #repo -set ../software/sw_repository
-repo -set ../../../avnet/Projects/${project}/software/sw_repository
+repo -set ${repo_folder}/avnet/Projects/${project}/software/sw_repository
 
-puts "\n#\n#\n# Importing hardware definition ${hw_name} from impl_1 folder ...\n#\n#\n"
-file copy -force ${project}.runs/impl_1/${project}_wrapper.sysdef ${project}.sdk/${hw_name}.hdf
-puts "\n#\n#\n# Create hardware definition project ...\n#\n#\n"
-sdk createhw -name ${hw_name} -hwspec ${project}.sdk/${hw_name}.hdf
+#puts "\n#\n#\n# Importing hardware definition ${hw_name} from impl_1 folder ...\n#\n#\n"
+#file copy -force ${project}.runs/impl_1/${project}_wrapper.sysdef ${project}.sdk/${hw_name}.hdf
+#puts "\n#\n#\n# Create hardware definition project ...\n#\n#\n"
+#sdk createhw -name ${hw_name} -hwspec ${project}.sdk/${hw_name}.hdf
+#openhw ${hw_file}
 
 # Generate BSP
 puts "\n#\n#\n# Creating ${bsp_name} ...\n#\n#\n"
-createbsp -name ${bsp_name} -proc ps7_cortexa9_0 -hwproject ${hw_name} -os standalone
+platform create -name ${project} -hw ${hw_file} -proc {ps7_cortexa9_0} -os standalone
+#platform write
+#platform read {${workspace}/${project}/platform.spr}
+#platform active ${project}
+
+
 # add libraries for FSBL
-setlib -bsp ${bsp_name} -lib xilffs
-setlib -bsp ${bsp_name} -lib xilrsa
+bsp setlib -name xilffs
+bsp setlib -name xilrsa
 # add libraries for APP
-setlib -bsp ${bsp_name} -lib fmc_iic_sw
-setlib -bsp ${bsp_name} -lib fmc_hdmi_cam_sw
-setlib -bsp ${bsp_name} -lib onsemi_python_sw
+bsp setlib -name fmc_iic_sw
+bsp setlib -name fmc_hdmi_cam_sw
+bsp setlib -name onsemi_python_sw
 # regen and build
-regenbsp -hw ${hw_name} -bsp ${bsp_name}
-projects -build -type bsp -name ${bsp_name}
+#regenbsp -hw ${hw_name} -bsp ${bsp_name}
+bsp regenerate
+#projects -build -type bsp -name ${bsp_name}
+platform generate
 
 # Create APP
 puts "\n#\n#\n# Creating ${app_name} ...\n#\n#\n"
-createapp -name ${app_name} -hwproject ${hw_name} -proc ps7_cortexa9_0 -os standalone -lang C -app {Empty Application} -bsp ${bsp_name} 
+#createapp -name ${app_name} -hwproject ${hw_name} -proc ps7_cortexa9_0 -os standalone -lang C -app {Empty Application} -bsp ${bsp_name} 
+app create -name ${app_name} -sysproj ${app_system} -platform ${project} -domain standalone_domain -proc ps7_cortexa9_0 -os standalone -lang C -template {Empty Application(C)}
 
 # APP : copy sources to empty application
 importsources -name ${app_name} -path ../../../avnet/Projects/${project}/software/${app_name}/src
-configapp -app ${app_name} include-path {../src}
-configapp -app ${app_name} include-path {../src/TX}
-configapp -app ${app_name} include-path {../src/TX/HAL/COMMON}
-configapp -app ${app_name} include-path {../src/TX/HAL/WIRED/ADV7511}
-configapp -app ${app_name} include-path {../src/TX/HAL/WIRED/ADV7511/MACROS}
-configapp -app ${app_name} include-path {../src/TX/LIB}
+app config -add -name ${app_name} include-path {../src}
+app config -add -name ${app_name} include-path {../src/TX}
+app config -add -name ${app_name} include-path {../src/TX/HAL/COMMON}
+app config -add -name ${app_name} include-path {../src/TX/HAL/WIRED/ADV7511}
+app config -add -name ${app_name} include-path {../src/TX/HAL/WIRED/ADV7511/MACROS}
+app config -add -name ${app_name} include-path {../src/TX/LIB}
 
 # build APP
 puts "\n#\n#\n# Build ${app_name} ...\n#\n#\n"
-projects -build -type app -name ${app_name}
+#projects -build -type app -name ${app_name}
+app build -name ${app_name}
+sysproj build -name ${app_system}
 
 # Create Zynq FSBL application
-puts "\n#\n#\n# Creating zynq_fsbl ...\n#\n#\n"
+#puts "\n#\n#\n# Creating zynq_fsbl ...\n#\n#\n"
 #createapp -name zynq_fsbl_app -hwproject ${hw_name} -proc ps7_cortexa9_0 -os standalone -lang C -app {Zynq FSBL} -bsp zynq_fsbl_bsp
-createapp -name zynq_fsbl_app -hwproject ${hw_name} -proc ps7_cortexa9_0 -os standalone -lang C -app {Zynq FSBL} -bsp ${bsp_name}
+#createapp -name zynq_fsbl_app -hwproject ${hw_name} -proc ps7_cortexa9_0 -os standalone -lang C -app {Zynq FSBL} -bsp ${bsp_name}
 
 # Set the build type to release
 #configapp -app zynq_fsbl_app build-config release
 
 # Build FSBL application
-puts "\n#\n#\n Building zynq_fsbl ...\n#\n#\n"
+#puts "\n#\n#\n Building zynq_fsbl ...\n#\n#\n"
 #projects -build -type bsp -name zynq_fsbl_bsp
-projects -build -type app -name zynq_fsbl_app
+#projects -build -type app -name zynq_fsbl_app
 
 # done
 exit

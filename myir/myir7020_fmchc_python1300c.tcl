@@ -2286,6 +2286,11 @@ if {![file exists ${projects_folder}/${project}.runs/impl_1/${project}_wrapper.b
     puts "**** Hardware already done..."
 }
 
+# create xsa file
+set hw_name  "fmchc_python1300c_hw"
+set hw_file ${projects_folder}/${hw_name}.xsa
+write_hw_platform -fixed -include_bit -force -file ${hw_file}
+
 ####### make #######
 
 if {[string match -nocase "no" $jtag]} {
@@ -2317,13 +2322,13 @@ if {[string match -nocase "no" $jtag]} {
         # added the Board variable so it could be used when needed - see uz_petalinux SDK build script for
         # how to use this
         file copy -force ${repo_folder}/myir/$project\_sdk.tcl ./
-        exec >@stdout 2>@stderr xsct $project\_sdk.tcl -notrace $board $vivado_ver
-        # Build a BOOT.bin file only if a BIF file exists for the project.
-        if {[file exists ${repo_folder}/myir/$project\_sd.bif]} {
-            file copy -force ${repo_folder}/myir/$project\_sd.bif ./
-            puts "Generating BOOT.BIN..."
-            exec >@stdout 2>@stderr bootgen -arch $dev_arch -image $project\_sd.bif -w -o BOOT.bin
-        }
+        exec >@stdout 2>@stderr xsct $project\_sdk.tcl -notrace ${repo_folder} $board $vivado_ver $hw_file  ${hw_name}
+        ## Build a BOOT.bin file only if a BIF file exists for the project.
+        #if {[file exists ${repo_folder}/myir/$project\_sd.bif]} {
+        #    file copy -force ${repo_folder}/myir/$project\_sd.bif ./
+        #    puts "Generating BOOT.BIN..."
+        #    exec >@stdout 2>@stderr bootgen -arch $dev_arch -image $project\_sd.bif -w -o BOOT.bin
+        #}
         cd ${scripts_folder}
     }
 
