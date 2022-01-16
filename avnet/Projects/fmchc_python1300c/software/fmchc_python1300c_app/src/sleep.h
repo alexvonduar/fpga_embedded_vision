@@ -1,6 +1,6 @@
 
 // Function prototypes
-void usleep(unsigned int useconds);
+int usleep(unsigned int useconds);
 
 void millisleep(unsigned int microseconds);
 

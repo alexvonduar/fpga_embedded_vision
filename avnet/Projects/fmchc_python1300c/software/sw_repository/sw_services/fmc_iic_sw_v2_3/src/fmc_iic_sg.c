@@ -83,7 +83,7 @@ struct struct_fmc_iic_sg_t
     xc_from_fifo_t *CmdResponse0;
 
     xc_to_reg_t *GpioOut0;
-    Xuint32 GpioOutData0;
+    u32 GpioOutData0;
 };
 typedef struct struct_fmc_iic_sg_t fmc_iic_sg_t;
 
@@ -102,16 +102,16 @@ typedef struct struct_fmc_iic_sg_t fmc_iic_sg_t;
 ////////////////////////////////////////////////////////////////////////
 
 // Forward declarations
-int fmc_iic_sg_GpoRead ( fmc_iic_t *pIIC, Xuint32 *pGpioData );
-int fmc_iic_sg_GpoWrite( fmc_iic_t *pIIC, Xuint32 GpioData );
-int fmc_iic_sg_IicWrite( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
-                                          Xuint8 *pBuffer, Xuint8 ByteCount);
-int fmc_iic_sg_IicRead ( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
-                                          Xuint8 *pBuffer, Xuint8 ByteCount);
-int fmc_iic_sg_IicEWrite( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress,
-                                           Xuint8 *pBuffer, Xuint8 ByteCount);
-int fmc_iic_sg_IicERead ( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress,
-                                           Xuint8 *pBuffer, Xuint8 ByteCount);
+int fmc_iic_sg_GpoRead ( fmc_iic_t *pIIC, u32 *pGpioData );
+int fmc_iic_sg_GpoWrite( fmc_iic_t *pIIC, u32 GpioData );
+int fmc_iic_sg_IicWrite( fmc_iic_t *pIIC, u8 ChipAddress, u8 RegAddress,
+                                          u8 *pBuffer, u8 ByteCount);
+int fmc_iic_sg_IicRead ( fmc_iic_t *pIIC, u8 ChipAddress, u8 RegAddress,
+                                          u8 *pBuffer, u8 ByteCount);
+int fmc_iic_sg_IicEWrite( fmc_iic_t *pIIC, u8 ChipAddress, u16 RegAddress,
+                                           u8 *pBuffer, u8 ByteCount);
+int fmc_iic_sg_IicERead ( fmc_iic_t *pIIC, u8 ChipAddress, u16 RegAddress,
+                                           u8 *pBuffer, u8 ByteCount);
 
 /******************************************************************************
 * This function initializes the IIC controller.
@@ -123,7 +123,7 @@ int fmc_iic_sg_IicERead ( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddres
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_sg_init( fmc_iic_t *pIIC, char szName[], void *pConfig, Xuint32 delay )
+int fmc_iic_sg_init( fmc_iic_t *pIIC, char szName[], void *pConfig, u32 delay )
 {
     //fmc_iic_sg_t *c  = (fmc_iic_sg_t *)malloc( sizeof(fmc_iic_sg_t) );
     //if ( pContext == NULL )
@@ -206,7 +206,7 @@ int fmc_iic_sg_init( fmc_iic_t *pIIC, char szName[], void *pConfig, Xuint32 dela
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_sg_GpoRead( fmc_iic_t *pIIC, Xuint32 *pGpioData )
+int fmc_iic_sg_GpoRead( fmc_iic_t *pIIC, u32 *pGpioData )
 {
     fmc_iic_sg_t *pContext = (fmc_iic_sg_t *)(pIIC->pContext);
 
@@ -225,7 +225,7 @@ int fmc_iic_sg_GpoRead( fmc_iic_t *pIIC, Xuint32 *pGpioData )
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_sg_GpoWrite( fmc_iic_t *pIIC, Xuint32 GpioData )
+int fmc_iic_sg_GpoWrite( fmc_iic_t *pIIC, u32 GpioData )
 {
     fmc_iic_sg_t *pContext = (fmc_iic_sg_t *)(pIIC->pContext);
 
@@ -253,10 +253,10 @@ int fmc_iic_sg_GpoWrite( fmc_iic_t *pIIC, Xuint32 GpioData )
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_sg_IicWrite(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
-                                         Xuint8 *pBuffer, Xuint8 ByteCount)
+int fmc_iic_sg_IicWrite(fmc_iic_t *pIIC, u8 ChipAddress, u8 RegAddress,
+                                         u8 *pBuffer, u8 ByteCount)
 {
-    Xuint8 SentByteCount;
+    u8 SentByteCount;
     uint32_t status;
     uint32_t cmd_req;
     uint32_t cmd_rsp;
@@ -311,10 +311,10 @@ int fmc_iic_sg_IicWrite(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_sg_IicRead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
-                                        Xuint8 *pBuffer, Xuint8 ByteCount)
+int fmc_iic_sg_IicRead(fmc_iic_t *pIIC, u8 ChipAddress, u8 RegAddress,
+                                        u8 *pBuffer, u8 ByteCount)
 {
-    Xuint8 ReceivedByteCount;
+    u8 ReceivedByteCount;
     uint32_t status;
     uint32_t cmd_req;
     uint32_t cmd_rsp;
@@ -346,7 +346,7 @@ int fmc_iic_sg_IicRead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
             // I2C error, abort
             break;
         }
-        pBuffer[ReceivedByteCount] = (Xuint8)(cmd_rsp & 0x000000FF);
+        pBuffer[ReceivedByteCount] = (u8)(cmd_rsp & 0x000000FF);
     }
 
     // Return the number of bytes received.
@@ -371,10 +371,10 @@ int fmc_iic_sg_IicRead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_sg_IicEWrite(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress,
-                                         Xuint8 *pBuffer, Xuint8 ByteCount)
+int fmc_iic_sg_IicEWrite(fmc_iic_t *pIIC, u8 ChipAddress, u16 RegAddress,
+                                         u8 *pBuffer, u8 ByteCount)
 {
-    Xuint8 SentByteCount;
+    u8 SentByteCount;
     uint32_t status;
     uint32_t cmd_req;
     uint32_t cmd_rsp;
@@ -550,10 +550,10 @@ int fmc_iic_sg_IicEWrite(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_sg_IicERead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress,
-                                        Xuint8 *pBuffer, Xuint8 ByteCount)
+int fmc_iic_sg_IicERead(fmc_iic_t *pIIC, u8 ChipAddress, u16 RegAddress,
+                                        u8 *pBuffer, u8 ByteCount)
 {
-    Xuint8 ReceivedByteCount;
+    u8 ReceivedByteCount;
     uint32_t status;
     uint32_t cmd_req;
     uint32_t cmd_rsp;
@@ -728,7 +728,7 @@ int fmc_iic_sg_IicERead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress,
             // I2C error, abort
             break;
         }
-        pBuffer[ReceivedByteCount] = (Xuint8)((cmd_rsp & 0x00FF0000)>>16);
+        pBuffer[ReceivedByteCount] = (u8)((cmd_rsp & 0x00FF0000)>>16);
     }
 
     // Format Request8 : READ_BYTE_LAST (for Reg Data[7:0])
@@ -754,7 +754,7 @@ int fmc_iic_sg_IicERead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress,
         // I2C error, abort
         return 0;
     }
-    pBuffer[ReceivedByteCount] = (Xuint8)((cmd_rsp & 0x00FF0000)>>16);
+    pBuffer[ReceivedByteCount] = (u8)((cmd_rsp & 0x00FF0000)>>16);
     ReceivedByteCount++;
 
     // Return the number of bytes received.

@@ -83,7 +83,7 @@
 struct struct_fmc_hdmi_cam_t
 {
     // software library version
-    Xuint32 uVersion;
+    u32 uVersion;
 
     // instantiation-specific name
     char szName[32];
@@ -92,10 +92,10 @@ struct struct_fmc_hdmi_cam_t
     fmc_iic_t *pIIC;
 
     // GPIO value
-    Xuint32 GpioData;
+    u32 GpioData;
 
     // Verblse
-    Xuint32 bVerbose;
+    u32 bVerbose;
 };
 typedef struct struct_fmc_hdmi_cam_t fmc_hdmi_cam_t;
 
@@ -104,24 +104,24 @@ struct struct_fmc_hdmi_cam_video_timing_t
     //char *pName;
 
     // General info
-    Xuint32 IsHDMI;
-    Xuint32 IsEncrypted;
-    Xuint32 IsInterlaced;
-    Xuint32 ColorDepth;
+    u32 IsHDMI;
+    u32 IsEncrypted;
+    u32 IsInterlaced;
+    u32 ColorDepth;
 
     // Horizontal Timing
-    Xuint32 HActiveVideo;
-    Xuint32 HFrontPorch;
-    Xuint32 HSyncWidth;
-    Xuint32 HBackPorch;
-    Xuint32 HSyncPolarity;
+    u32 HActiveVideo;
+    u32 HFrontPorch;
+    u32 HSyncWidth;
+    u32 HBackPorch;
+    u32 HSyncPolarity;
 
     // Vertical Timing
-    Xuint32 VActiveVideo;
-    Xuint32 VFrontPorch;
-    Xuint32 VSyncWidth;
-    Xuint32 VBackPorch;
-    Xuint32 VSyncPolarity;
+    u32 VActiveVideo;
+    u32 VFrontPorch;
+    u32 VSyncWidth;
+    u32 VBackPorch;
+    u32 VSyncPolarity;
 };
 typedef struct struct_fmc_hdmi_cam_video_timing_t fmc_hdmi_cam_video_timing_t;
 
@@ -130,7 +130,7 @@ int fmc_hdmi_cam_init( fmc_hdmi_cam_t *pContext, char szName[], fmc_iic_t *pIIC 
 
 // I2C MUX Functions
 void fmc_hdmi_cam_iic_mux_reset( fmc_hdmi_cam_t *pContext );
-void fmc_hdmi_cam_iic_mux( fmc_hdmi_cam_t *pContext, Xuint32 MuxSelect );
+void fmc_hdmi_cam_iic_mux( fmc_hdmi_cam_t *pContext, u32 MuxSelect );
 // Single Mux Selections
 #define FMC_HDMI_CAM_I2C_MIN               0
 #define FMC_HDMI_CAM_I2C_MAX               7
@@ -144,14 +144,14 @@ void fmc_hdmi_cam_iic_mux( fmc_hdmi_cam_t *pContext, Xuint32 MuxSelect );
 #define FMC_HDMI_CAM_I2C_SELECT_HDMI       8 // select both HDMI_IN and HDMI_OUT
 
 // General I2C Configuration Functions
-void fmc_hdmi_cam_iic_config2( fmc_hdmi_cam_t *pContext, Xuint8 ChipAddress,
-                                Xuint8 ConfigData[][2], Xuint32 ConfigLength );
+void fmc_hdmi_cam_iic_config2( fmc_hdmi_cam_t *pContext, u8 ChipAddress,
+                                u8 ConfigData[][2], u32 ConfigLength );
 void fmc_hdmi_cam_iic_config3( fmc_hdmi_cam_t *pContext,
-                                Xuint8 ConfigData[][3], Xuint32 ConfigLength );
+                                u8 ConfigData[][3], u32 ConfigLength );
 
 // Video Clock Synthesizer Functions
 void fmc_hdmi_cam_vclk_init( fmc_hdmi_cam_t *pContext );
-void fmc_hdmi_cam_vclk_config( fmc_hdmi_cam_t *pContext, Xuint32 FreqId );
+void fmc_hdmi_cam_vclk_config( fmc_hdmi_cam_t *pContext, u32 FreqId );
 #define FMC_HDMI_CAM_VCLK_FREQ_25_175_000       0
 #define FMC_HDMI_CAM_VCLK_FREQ_27_000_000       1
 #define FMC_HDMI_CAM_VCLK_FREQ_40_000_000       2
@@ -162,23 +162,23 @@ void fmc_hdmi_cam_vclk_config( fmc_hdmi_cam_t *pContext, Xuint32 FreqId );
 #define FMC_HDMI_CAM_VCLK_FREQ_162_000_000      7
 
 // HDMI Input Functions
-int fmc_hdmi_cam_hdmii_init( fmc_hdmi_cam_t *pContext, Xuint32 Enable, Xuint32 edidInit, Xuint8 pEdid[256] );
-int fmc_hdmi_cam_hdmii_init2( fmc_hdmi_cam_t *pContext, Xuint32 Enable, Xuint32 edidInit, Xuint8 pEdid[256], Xuint32 llc_polarity, Xuint32 llc_delay );
-int fmc_hdmi_cam_hdmii_set_hpd( fmc_hdmi_cam_t *pContext, Xuint32 HotPlugStatus );
-int fmc_hdmi_cam_hdmii_set_rst( fmc_hdmi_cam_t *pContext, Xuint32 Reset );
-int fmc_hdmi_cam_hdmii_get_int( fmc_hdmi_cam_t *pContext, Xuint32 *pIntStatus );
+int fmc_hdmi_cam_hdmii_init( fmc_hdmi_cam_t *pContext, u32 Enable, u32 edidInit, u8 pEdid[256] );
+int fmc_hdmi_cam_hdmii_init2( fmc_hdmi_cam_t *pContext, u32 Enable, u32 edidInit, u8 pEdid[256], u32 llc_polarity, u32 llc_delay );
+int fmc_hdmi_cam_hdmii_set_hpd( fmc_hdmi_cam_t *pContext, u32 HotPlugStatus );
+int fmc_hdmi_cam_hdmii_set_rst( fmc_hdmi_cam_t *pContext, u32 Reset );
+int fmc_hdmi_cam_hdmii_get_int( fmc_hdmi_cam_t *pContext, u32 *pIntStatus );
 int fmc_hdmi_cam_hdmii_get_lock( fmc_hdmi_cam_t *pContext );
 int fmc_hdmi_cam_hdmii_get_timing( fmc_hdmi_cam_t *pContext, fmc_hdmi_cam_video_timing_t *pTiming );
 
 // HDMI Output Functions
-int fmc_hdmi_cam_hdmio_init( fmc_hdmi_cam_t *pContext, Xuint32 Enable, fmc_hdmi_cam_video_timing_t *pTiming, Xuint32 WaitForHPD );
-int fmc_hdmi_cam_hdmio_set_pd( fmc_hdmi_cam_t *pContext, Xuint32 PowerDown );
-int fmc_hdmi_cam_hdmio_get_hpd( fmc_hdmi_cam_t *pContext, Xuint32 *pHotPlugDetect );
+int fmc_hdmi_cam_hdmio_init( fmc_hdmi_cam_t *pContext, u32 Enable, fmc_hdmi_cam_video_timing_t *pTiming, u32 WaitForHPD );
+int fmc_hdmi_cam_hdmio_set_pd( fmc_hdmi_cam_t *pContext, u32 PowerDown );
+int fmc_hdmi_cam_hdmio_get_hpd( fmc_hdmi_cam_t *pContext, u32 *pHotPlugDetect );
 
 // DDC/EDID Functions
-int fmc_hdmi_cam_hdmii_read_edid( fmc_hdmi_cam_t *pContext, Xuint8 data[256] );
-int fmc_hdmi_cam_hdmii_write_edid( fmc_hdmi_cam_t *pContext, Xuint8 data[256] );
-int fmc_hdmi_cam_hdmio_read_edid( fmc_hdmi_cam_t *pContext, Xuint8 data[256] );
+int fmc_hdmi_cam_hdmii_read_edid( fmc_hdmi_cam_t *pContext, u8 data[256] );
+int fmc_hdmi_cam_hdmii_write_edid( fmc_hdmi_cam_t *pContext, u8 data[256] );
+int fmc_hdmi_cam_hdmio_read_edid( fmc_hdmi_cam_t *pContext, u8 data[256] );
 
 // Delay Functions
 void fmc_hdmi_cam_wait_usec(unsigned int delay);

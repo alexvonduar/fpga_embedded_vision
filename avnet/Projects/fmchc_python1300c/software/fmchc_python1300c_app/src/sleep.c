@@ -42,12 +42,13 @@
 #include "xparameters.h"
 #include "xpseudo_asm.h"
 #include "xreg_cortexa9.h"
+#include "xil_printf.h"
 
 //#define COUNTS_PER_SECOND          (XPAR_CPU_CORTEXA9_CORE_CLOCK_FREQ_HZ / 64)
 // the above runs 64x too fast, so remove the division by 64 ...
 #define COUNTS_PER_SECOND          (XPAR_CPU_CORTEXA9_CORE_CLOCK_FREQ_HZ)
 
-void usleep(unsigned int useconds)
+int usleep(unsigned int useconds)
 {
     unsigned long tEnd, tCur;
     unsigned int reg;
@@ -129,8 +130,7 @@ void usleep(unsigned int useconds)
         return -1;
     }
 
-    //return 0;
-    return;
+    return 0;
 }
 
 #endif // #if !defined(USE_DEFAULT_USLEEP)

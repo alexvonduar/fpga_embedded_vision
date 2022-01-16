@@ -29,6 +29,8 @@
 //
 // ----------------------------------------------------------------------------
 
+#include "xil_printf.h"
+
 // address used on production hardware
 #define IIC_CAT9554_SADR   0x24
 // address used on prototype hardware

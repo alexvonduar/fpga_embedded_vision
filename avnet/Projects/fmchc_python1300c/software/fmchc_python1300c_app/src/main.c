@@ -31,6 +31,7 @@
 
 #include "demo.h"
 #include "avnet_console.h"
+#include "avnet_console_serial.h"
 
 demo_t demo;
 demo_t *pdemo;

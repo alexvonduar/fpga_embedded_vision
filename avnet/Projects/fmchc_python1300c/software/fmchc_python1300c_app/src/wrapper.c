@@ -599,7 +599,7 @@ UINT16 HAL_I2CReadBlock (UCHAR Dev, UCHAR Reg, UCHAR *Data, UINT16 NofBytes)
     uint16_t i = 0;
 
     //i2c_handler->slave_address = i2c_addr;
-    UCHAR one = 1;
+    //UCHAR one = 1;
 
     do {
         reg_addr = Reg + i;

@@ -52,39 +52,47 @@
 
 #!/usr/bin/tclsh
 set repo_folder [lindex $argv 1]
-set board [lindex $argv 2]
-set vivado_ver [lindex $argv 3]
-set hw_file [lindex $argv 4]
-set hw_name [lindex $argv 5]
+set project_folder [lindex $argv 2]
+set board [lindex $argv 3]
+set vivado_ver [lindex $argv 4]
+set hw_file [lindex $argv 5]
+set hw_name [lindex $argv 6]
 set project  "fmchc_python1300c"
 #set hw_name  "fmchc_python1300c_hw"
 set bsp_name "fmchc_python1300c_bsp"
-set app_name "fmchc_python1300c_app"
-set app_system "fmchc_python1300c_system"
+set app_name "${project}_app"
+set system_project "${project}_system"
+
+
+puts "\n#\n#"
+puts "# repo: ${repo_folder}"
+puts "# project folder: ${project_folder}"
+puts "# project: ${project}"
+puts "# vivado: ${vivado_ver}"
+puts "# board: ${board}"
+puts "# hw: ${hw_name}"
+puts "# hw file: ${hw_file}"
+puts "#\n#"
 
 # Set workspace and import hardware platform
-set workspace ${repo_folder}/${project}_vitis
+set workspace ${project_folder}/${project}.vitis
 setws ${workspace}
 
-puts "\n#\n#\n# Vivado ${vivado_ver} Board ${board} hw ${hw_name} file ${hw_file}\n#\n#\n"
-
 puts "\n#\n#\n# Adding local user repository ...\n#\n#\n"
-#repo -set ../software/sw_repository
 repo -set ${repo_folder}/avnet/Projects/${project}/software/sw_repository
 
-#puts "\n#\n#\n# Importing hardware definition ${hw_name} from impl_1 folder ...\n#\n#\n"
-#file copy -force ${project}.runs/impl_1/${project}_wrapper.sysdef ${project}.sdk/${hw_name}.hdf
-#puts "\n#\n#\n# Create hardware definition project ...\n#\n#\n"
-#sdk createhw -name ${hw_name} -hwspec ${project}.sdk/${hw_name}.hdf
-#openhw ${hw_file}
-
-# Generate BSP
-puts "\n#\n#\n# Creating ${bsp_name} ...\n#\n#\n"
-platform create -name ${project} -hw ${hw_file} -proc {ps7_cortexa9_0} -os standalone
+# Generate Platform
+set platform_name ${project}_platform
+puts "\n#\n#\n# Creating Platform ${platform_name} ...\n#\n#\n"
+if {[catch {platform remove ${platform_name}} errmsg]} {
+    puts "**** ${platform_name} ${errmsg}"
+} else {
+    puts "**** ${platform_name} removed"
+}
+platform create -name ${platform_name} -hw ${hw_file} -proc {ps7_cortexa9_0} -os standalone
 #platform write
 #platform read {${workspace}/${project}/platform.spr}
 #platform active ${project}
-
 
 # add libraries for FSBL
 bsp setlib -name xilffs
@@ -94,43 +102,40 @@ bsp setlib -name fmc_iic_sw
 bsp setlib -name fmc_hdmi_cam_sw
 bsp setlib -name onsemi_python_sw
 # regen and build
-#regenbsp -hw ${hw_name} -bsp ${bsp_name}
 bsp regenerate
-#projects -build -type bsp -name ${bsp_name}
-platform generate
+bsp config -append extra_compiler_flags "-Wno-comment -Wno-unused-but-set-variable -Wno-unused-variable"
+#platform generate
 
 # Create APP
 puts "\n#\n#\n# Creating ${app_name} ...\n#\n#\n"
-#createapp -name ${app_name} -hwproject ${hw_name} -proc ps7_cortexa9_0 -os standalone -lang C -app {Empty Application} -bsp ${bsp_name} 
-app create -name ${app_name} -sysproj ${app_system} -platform ${project} -domain standalone_domain -proc ps7_cortexa9_0 -os standalone -lang C -template {Empty Application(C)}
+if {[catch {app remove ${app_name}} errmsg]} {
+    puts "**** ${app_name} ${errmsg}"
+} else {
+    puts "**** ${app_name} removed"
+}
+if {[catch {sysproj remove ${system_project}} errmsg]} {
+    puts "**** ${system_project} ${errmsg}"
+} else {
+    puts "**** ${system_project} removed"
+}
+app create -name ${app_name} -sysproj ${system_project} -platform ${platform_name} -domain standalone_domain -proc ps7_cortexa9_0 -os standalone -lang C -template {Empty Application(C)}
 
 # APP : copy sources to empty application
-importsources -name ${app_name} -path ../../../avnet/Projects/${project}/software/${app_name}/src
-app config -add -name ${app_name} include-path {../src}
-app config -add -name ${app_name} include-path {../src/TX}
-app config -add -name ${app_name} include-path {../src/TX/HAL/COMMON}
-app config -add -name ${app_name} include-path {../src/TX/HAL/WIRED/ADV7511}
-app config -add -name ${app_name} include-path {../src/TX/HAL/WIRED/ADV7511/MACROS}
-app config -add -name ${app_name} include-path {../src/TX/LIB}
+set app_src_dir ${repo_folder}/avnet/Projects/${project}/software/${app_name}/src
+importsources -name ${app_name} -path ${app_src_dir} -soft-link
+app config -add -name ${app_name} include-path ${app_src_dir}
+app config -add -name ${app_name} include-path ${app_src_dir}/TX
+app config -add -name ${app_name} include-path ${app_src_dir}/TX/HAL/COMMON
+app config -add -name ${app_name} include-path ${app_src_dir}/TX/HAL/WIRED/ADV7511
+app config -add -name ${app_name} include-path ${app_src_dir}/TX/HAL/WIRED/ADV7511/MACROS
+app config -add -name ${app_name} include-path ${app_src_dir}/TX/LIB
+app config -add -name ${app_name} compiler-misc {-Wno-comment}
+app config -set -name ${app_name} linker-script ${app_src_dir}/lscript.ld
 
 # build APP
-puts "\n#\n#\n# Build ${app_name} ...\n#\n#\n"
-#projects -build -type app -name ${app_name}
-app build -name ${app_name}
-sysproj build -name ${app_system}
-
-# Create Zynq FSBL application
-#puts "\n#\n#\n# Creating zynq_fsbl ...\n#\n#\n"
-#createapp -name zynq_fsbl_app -hwproject ${hw_name} -proc ps7_cortexa9_0 -os standalone -lang C -app {Zynq FSBL} -bsp zynq_fsbl_bsp
-#createapp -name zynq_fsbl_app -hwproject ${hw_name} -proc ps7_cortexa9_0 -os standalone -lang C -app {Zynq FSBL} -bsp ${bsp_name}
-
-# Set the build type to release
-#configapp -app zynq_fsbl_app build-config release
-
-# Build FSBL application
-#puts "\n#\n#\n Building zynq_fsbl ...\n#\n#\n"
-#projects -build -type bsp -name zynq_fsbl_bsp
-#projects -build -type app -name zynq_fsbl_app
+puts "\n#\n#\n# Build ${app_name}, ${system_project} and generate BOOT.bin ...\n#\n#\n"
+#app build -name ${app_name}
+sysproj build -name ${system_project}
 
 # done
 exit

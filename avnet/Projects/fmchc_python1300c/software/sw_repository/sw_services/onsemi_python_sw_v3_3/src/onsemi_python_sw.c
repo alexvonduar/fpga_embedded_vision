@@ -104,7 +104,7 @@
 #include <stdio.h>
 #include <string.h>
 #define VITA_CDS_SEQ_QTY  104
-Xuint16 vita_cds_seq[VITA_CDS_SEQ_QTY][3] =
+u16 vita_cds_seq[VITA_CDS_SEQ_QTY][3] =
 {
     {192, 0xFFFF, 0x0800},
     {204, 0xFFFF, 0x01E3},
@@ -219,7 +219,7 @@ Xuint16 vita_cds_seq[VITA_CDS_SEQ_QTY][3] =
 *****************************************************************************/
 
 #define VITA_PRNU_SEQ_QTY  16
-Xuint8 vita_prnu_seq[VITA_PRNU_SEQ_QTY][2] =
+u8 vita_prnu_seq[VITA_PRNU_SEQ_QTY][2] =
 {
     {0x00, 0x00},       // Kernel  0 FPN, PRNU
     {0x00, 0x00},       // Kernel  1 FPN, PRNU
@@ -246,7 +246,7 @@ Xuint8 vita_prnu_seq[VITA_PRNU_SEQ_QTY][2] =
 *****************************************************************************/
 
 #define VITA_SPI_SEQ1_QTY  8
-Xuint16 vita_spi_seq1[VITA_SPI_SEQ1_QTY][3] =
+u16 vita_spi_seq1[VITA_SPI_SEQ1_QTY][3] =
 {
     // Enable Clock Management - Part 1
     //    V1/SN/SE 10-bit mode with PLL
@@ -262,7 +262,7 @@ Xuint16 vita_spi_seq1[VITA_SPI_SEQ1_QTY][3] =
 };
 
 #define VITA_SPI_SEQ3_QTY  3
-Xuint16 vita_spi_seq3[VITA_SPI_SEQ3_QTY][3] =
+u16 vita_spi_seq3[VITA_SPI_SEQ3_QTY][3] =
 {
     // Enable Clock Management - Part 2
     //    V1/SN/SE 10-bit mode with PLL
@@ -273,7 +273,7 @@ Xuint16 vita_spi_seq3[VITA_SPI_SEQ3_QTY][3] =
 };
 
 #define VITA_SPI_SEQ4_QTY  21
-Xuint16 vita_spi_seq4[VITA_SPI_SEQ4_QTY][3] =
+u16 vita_spi_seq4[VITA_SPI_SEQ4_QTY][3] =
 {
     // Required Register Upload
     //    V1/SN/SE 10-bit mode with PLL
@@ -305,7 +305,7 @@ Xuint16 vita_spi_seq4[VITA_SPI_SEQ4_QTY][3] =
 };
 
 #define VITA_SPI_SEQ5_QTY  9
-Xuint16 vita_spi_seq5[VITA_SPI_SEQ5_QTY][3] =
+u16 vita_spi_seq5[VITA_SPI_SEQ5_QTY][3] =
 {
     // Soft Power-Up
     //    V1/SN/SE 10-bit mode with PLL
@@ -322,14 +322,14 @@ Xuint16 vita_spi_seq5[VITA_SPI_SEQ5_QTY][3] =
 };
 
 #define VITA_SPI_SEQ6_QTY  1
-Xuint16 vita_spi_seq6[VITA_SPI_SEQ6_QTY][3] =
+u16 vita_spi_seq6[VITA_SPI_SEQ6_QTY][3] =
 {
     // Enable Sequencer
     {192, 0x0001, 0x0001}  // [0] Enable Sequencer
 };
 
 #define VITA_SPI_ROLLING_SEQ6_QTY 2
-Xuint16 vita_spi_rolling_seq6[VITA_SPI_ROLLING_SEQ6_QTY][3] =
+u16 vita_spi_rolling_seq6[VITA_SPI_ROLLING_SEQ6_QTY][3] =
 {
     {192, 0x0003, 0x0003}, // [0] Enable Sequencer
                             // [1] Rolling Shutter Enable
@@ -338,14 +338,14 @@ Xuint16 vita_spi_rolling_seq6[VITA_SPI_ROLLING_SEQ6_QTY][3] =
 };
 
 #define VITA_SPI_SEQ7_QTY  1
-Xuint16 vita_spi_seq7[VITA_SPI_SEQ7_QTY][3] =
+u16 vita_spi_seq7[VITA_SPI_SEQ7_QTY][3] =
 {
     // Disable Sequencer
     {192, 0x0001, 0x0000}  // [0] Disable Sequencer
 };
 
 #define VITA_SPI_SEQ8_QTY  6
-Xuint16 vita_spi_seq8[VITA_SPI_SEQ8_QTY][3] =
+u16 vita_spi_seq8[VITA_SPI_SEQ8_QTY][3] =
 {
     // Soft Power-Down
     {112, 0xFFFF, 0x0000},  // Disable LVDS transmitters
@@ -357,7 +357,7 @@ Xuint16 vita_spi_seq8[VITA_SPI_SEQ8_QTY][3] =
 };
 
 #define VITA_SPI_SEQ9_QTY  3
-Xuint16 vita_spi_seq9[VITA_SPI_SEQ9_QTY][3] =
+u16 vita_spi_seq9[VITA_SPI_SEQ9_QTY][3] =
 {
     // Disable Clock Management - Part 2
     //    V1/SN/SE 10-bit mode with PLL
@@ -368,7 +368,7 @@ Xuint16 vita_spi_seq9[VITA_SPI_SEQ9_QTY][3] =
 };
 
 #define VITA_SPI_SEQA_QTY  3
-Xuint16 vita_spi_seqA[VITA_SPI_SEQA_QTY][3] =
+u16 vita_spi_seqA[VITA_SPI_SEQA_QTY][3] =
 {
     // Disable Clock Management - Part 1
     { 16, 0xFFFF, 0x0000}, // Disable PLL
@@ -377,33 +377,33 @@ Xuint16 vita_spi_seqA[VITA_SPI_SEQA_QTY][3] =
 };
 
 #define VITA_AUTOEXP_ON_QTY  1
-Xuint16 vita_autoexp_on_seq[VITA_AUTOEXP_ON_QTY][3] = {
+u16 vita_autoexp_on_seq[VITA_AUTOEXP_ON_QTY][3] = {
     // Auto-Exposure ON
     {160, 0x0001, 0x0001} // [4] Auto Exposure enable
 };
 
 #define VITA_AUTOEXP_OFF_QTY  1
-Xuint16 vita_autoexp_off_seq[VITA_AUTOEXP_OFF_QTY][3] = {
+u16 vita_autoexp_off_seq[VITA_AUTOEXP_OFF_QTY][3] = {
     // Auto-Exposure OFF
     {160, 0x0001, 0x0000} // [4] Auto Exposure enable
 };
 
 #define VITA_IMAGE_ON_QTY  2
-Xuint16 vita_image_on_seq[VITA_IMAGE_ON_QTY][3] = {
+u16 vita_image_on_seq[VITA_IMAGE_ON_QTY][3] = {
     // Black Image ON
     {219, 0xFFFF, 0x3E3E},
     {220, 0xFFFF, 0x674F}
 };
 
 #define VITA_IMAGE_OFF_QTY  2
-Xuint16 vita_image_off_seq[VITA_IMAGE_OFF_QTY][3] = {
+u16 vita_image_off_seq[VITA_IMAGE_OFF_QTY][3] = {
     // Black Image OFF
     {219, 0xFFFF, 0x3E2E},
     {220, 0xFFFF, 0x6767}
 };
 
 #define VITA_GRAYIMAGE_ON_QTY  14
-Xuint16 vita_grayimage_on1_seq[VITA_GRAYIMAGE_ON_QTY][3] = {
+u16 vita_grayimage_on1_seq[VITA_GRAYIMAGE_ON_QTY][3] = {
     // Gray Image ON (for vita_refclk in 55-62MHz range)
     {219, 0xFFFF, 0x3E2D},//                    0x3E2D},
     {220, 0xFFFF, 0x674F},//                    0x674F},
@@ -421,7 +421,7 @@ Xuint16 vita_grayimage_on1_seq[VITA_GRAYIMAGE_ON_QTY][3] = {
     {476, 0xFFFF, 0x2142} //                    0x2142}
 };
 
-Xuint16 vita_grayimage_on2_seq[VITA_GRAYIMAGE_ON_QTY][3] = {
+u16 vita_grayimage_on2_seq[VITA_GRAYIMAGE_ON_QTY][3] = {
     // Gray Image ON (for vita_refclk in 45-55MHz range)
     {219, 0xFFFF, 0x3E2D},
     {220, 0xFFFF, 0x674F},
@@ -439,7 +439,7 @@ Xuint16 vita_grayimage_on2_seq[VITA_GRAYIMAGE_ON_QTY][3] = {
     {476, 0xFFFF, 0x2141}
 };
 
-Xuint16 vita_grayimage_on3_seq[VITA_GRAYIMAGE_ON_QTY][3] = {
+u16 vita_grayimage_on3_seq[VITA_GRAYIMAGE_ON_QTY][3] = {
     // Gray Image ON (for vita_refclk in 30-45MHz range)
     {219, 0xFFFF, 0x3E2D},
     {220, 0xFFFF, 0x674F},
@@ -458,7 +458,7 @@ Xuint16 vita_grayimage_on3_seq[VITA_GRAYIMAGE_ON_QTY][3] = {
 };
 
 #define VITA_GRAYIMAGE_OFF_QTY  14
-Xuint16 vita_grayimage_off_seq[VITA_GRAYIMAGE_OFF_QTY][3] = {
+u16 vita_grayimage_off_seq[VITA_GRAYIMAGE_OFF_QTY][3] = {
     // Gray Image OFF
     {219, 0xFFFF, 0x3E2E},
     {220, 0xFFFF, 0x6750},
@@ -477,7 +477,7 @@ Xuint16 vita_grayimage_off_seq[VITA_GRAYIMAGE_OFF_QTY][3] = {
 };
 
 #define VITA_GLOBAL_RESET_ON_QTY  14
-Xuint16 vita_global_reset_on_seq[VITA_GLOBAL_RESET_ON_QTY][3] = {
+u16 vita_global_reset_on_seq[VITA_GLOBAL_RESET_ON_QTY][3] = {
     // Global Reset
     // reference : App Note AND9049/D
     {384, 0xFFFF, 0x1010}, // reserved
@@ -497,7 +497,7 @@ Xuint16 vita_global_reset_on_seq[VITA_GLOBAL_RESET_ON_QTY][3] = {
 };
 
 #define VITA_GLOBAL_RESET_OFF_QTY  14
-Xuint16 vita_global_reset_off_seq[VITA_GLOBAL_RESET_OFF_QTY][3] = {
+u16 vita_global_reset_off_seq[VITA_GLOBAL_RESET_OFF_QTY][3] = {
     // Global Reset
     // reference : default values of image sensor after config
     {384, 0xFFFF, 0x1010}, // reserved
@@ -517,7 +517,7 @@ Xuint16 vita_global_reset_off_seq[VITA_GLOBAL_RESET_OFF_QTY][3] = {
 };
 
 #define VITA_ROI0_CROP_1080P_QTY  2
-Xuint16 vita_roi0_crop_1080p_seq[VITA_ROI0_CROP_1080P_QTY][3] = {
+u16 vita_roi0_crop_1080p_seq[VITA_ROI0_CROP_1080P_QTY][3] = {
     // Crop ROI0 from 1920x1200 to 1920x1080
     //   R257[10:0] y_start = 60 (0x3C)
     //   R258[10:0] y_end   = 60+1080 = 1140 (0x474)
@@ -526,7 +526,7 @@ Xuint16 vita_roi0_crop_1080p_seq[VITA_ROI0_CROP_1080P_QTY][3] = {
 };
 
 #define VITA_MULT_TIMER_LINE_RESOLUTION_QTY  1
-Xuint16 vita_mult_timer_line_resolution_seq[VITA_MULT_TIMER_LINE_RESOLUTION_QTY][3] = {
+u16 vita_mult_timer_line_resolution_seq[VITA_MULT_TIMER_LINE_RESOLUTION_QTY][3] = {
     // R199[15:0] mult_timer = (1920+88+44+148)/4 = 2200/4 = 550 (0x0226)
     //199, 0xFFFF, 0x0226
     // R199[15:0] mult_timer = (1920+88+44+132)/4 = 2184/4 = 546 (0x0222)
@@ -534,7 +534,7 @@ Xuint16 vita_mult_timer_line_resolution_seq[VITA_MULT_TIMER_LINE_RESOLUTION_QTY]
 };
 
 #define VITA_SPI_AGAIN_QTY  11
-Xuint16 vita_spi_again_values[VITA_SPI_AGAIN_QTY][3] =
+u16 vita_spi_again_values[VITA_SPI_AGAIN_QTY][3] =
 {
     {204, 0xFFFF, 0x01E3}, // 1.00 : gain_state1=0x03(1.00), gain_stage2=0xF(1.00)
     {204, 0xFFFF, 0x00E3}, // 1.14 : gain_state1=0x03(1.00), gain_stage2=0x7(1.14)
@@ -550,13 +550,13 @@ Xuint16 vita_spi_again_values[VITA_SPI_AGAIN_QTY][3] =
 };
 
 #define VITA_SPI_DGAIN_QTY  1
-Xuint16 vita_spi_dgain_values[VITA_SPI_DGAIN_QTY][3] =
+u16 vita_spi_dgain_values[VITA_SPI_DGAIN_QTY][3] =
 {
     {205, 0xFFFF, 0x0080}  // 1.00
 };
 
 #define VITA_SPI_EXPOSURE_QTY 1
-Xuint16 vita_spi_exposure_values[VITA_SPI_EXPOSURE_QTY][3] =
+u16 vita_spi_exposure_values[VITA_SPI_EXPOSURE_QTY][3] =
 {
     {201, 0xFFFF, 0x0000}  // 0
 };
@@ -574,9 +574,9 @@ Xuint16 vita_spi_exposure_values[VITA_SPI_EXPOSURE_QTY][3] =
 * @note     None.
 *
 ******************************************************************************/
-int onsemi_vita_init( onsemi_vita_t *pContext, char szName[], Xuint32 uBaseAddr_SPI, Xuint32 uBaseAddr_CAM )
+int onsemi_vita_init( onsemi_vita_t *pContext, char szName[], u32 uBaseAddr_SPI, u32 uBaseAddr_CAM )
 {
-    Xuint32 uCoreVersion, uCoreID;
+    u32 uCoreVersion, uCoreID;
 
     pContext->uBaseAddr_SPI = uBaseAddr_SPI;
     pContext->uBaseAddr_CAM = uBaseAddr_CAM;
@@ -644,17 +644,17 @@ int onsemi_vita_init( onsemi_vita_t *pContext, char szName[], Xuint32 uBaseAddr_
 * @note     None.
 *
 ******************************************************************************/
-Xuint32 onsemi_vita_spi_reg_read( onsemi_vita_t *pContext, Xuint32 uRegOffset )
+u32 onsemi_vita_spi_reg_read( onsemi_vita_t *pContext, u32 uRegOffset )
 {
-    Xuint32 uData;
+    u32 uData;
 
     uData = ONSEMI_VITA_SPI_mReadSlaveReg0(pContext->uBaseAddr_SPI, uRegOffset );
 
     return uData;
 }
-Xuint32 onsemi_vita_cam_reg_read( onsemi_vita_t *pContext, Xuint32 uRegOffset )
+u32 onsemi_vita_cam_reg_read( onsemi_vita_t *pContext, u32 uRegOffset )
 {
-    Xuint32 uData;
+    u32 uData;
 
     uData = ONSEMI_VITA_CAM_mReadSlaveReg0(pContext->uBaseAddr_CAM, uRegOffset );
 
@@ -673,11 +673,11 @@ Xuint32 onsemi_vita_cam_reg_read( onsemi_vita_t *pContext, Xuint32 uRegOffset )
 * @note     None.
 *
 ******************************************************************************/
-void onsemi_vita_spi_reg_write( onsemi_vita_t *pContext, Xuint32 uRegOffset, Xuint32 uData )
+void onsemi_vita_spi_reg_write( onsemi_vita_t *pContext, u32 uRegOffset, u32 uData )
 {
     ONSEMI_VITA_SPI_mWriteSlaveReg0(pContext->uBaseAddr_SPI, uRegOffset, uData );
 }
-void onsemi_vita_cam_reg_write( onsemi_vita_t *pContext, Xuint32 uRegOffset, Xuint32 uData )
+void onsemi_vita_cam_reg_write( onsemi_vita_t *pContext, u32 uRegOffset, u32 uData )
 {
     ONSEMI_VITA_CAM_mWriteSlaveReg0(pContext->uBaseAddr_CAM, uRegOffset, uData );
 }
@@ -693,7 +693,7 @@ void onsemi_vita_cam_reg_write( onsemi_vita_t *pContext, Xuint32 uRegOffset, Xui
 * @note     None.
 *
 ******************************************************************************/
-int onsemi_vita_reset( onsemi_vita_t *pContext, Xuint32 uReset )
+int onsemi_vita_reset( onsemi_vita_t *pContext, u32 uReset )
 {
     ONSEMI_VITA_CAM_mWriteSlaveReg0(pContext->uBaseAddr_CAM, 0, uReset);
 
@@ -711,9 +711,9 @@ int onsemi_vita_reset( onsemi_vita_t *pContext, Xuint32 uReset )
 * @note     None.
 *
 ******************************************************************************/
-int onsemi_vita_spi_config( onsemi_vita_t *pContext, Xuint16 uTiming )
+int onsemi_vita_spi_config( onsemi_vita_t *pContext, u16 uTiming )
 {
-    onsemi_vita_spi_reg_write( pContext, ONSEMI_VITA_SPI_TIMING_REG, (Xuint32)uTiming );
+    onsemi_vita_spi_reg_write( pContext, ONSEMI_VITA_SPI_TIMING_REG, (u32)uTiming );
 
     return 1;
 }
@@ -730,11 +730,11 @@ int onsemi_vita_spi_config( onsemi_vita_t *pContext, Xuint16 uTiming )
 * @note     None.
 *
 ******************************************************************************/
-int onsemi_vita_spi_read( onsemi_vita_t *pContext, Xuint16 uAddr, Xuint16 *pData )
+int onsemi_vita_spi_read( onsemi_vita_t *pContext, u16 uAddr, u16 *pData )
 {
-    Xuint32 uRequest;
-    Xuint32 uResponse;
-    Xuint32 uStatus;
+    u32 uRequest;
+    u32 uResponse;
+    u32 uStatus;
     int timeout;
 
     // Make sure the RXFIFO is empty
@@ -760,7 +760,7 @@ int onsemi_vita_spi_read( onsemi_vita_t *pContext, Xuint16 uAddr, Xuint16 *pData
     while ( (uStatus & ONSEMI_VITA_SPI_TXFIFO_FULL_BIT) && (--timeout) );
 
     // Send Request
-    uRequest = (ONSEMI_VITA_SPI_READ_BIT) | (((Xuint32)uAddr) << 16) | 0x0000;
+    uRequest = (ONSEMI_VITA_SPI_READ_BIT) | (((u32)uAddr) << 16) | 0x0000;
     //xil_printf( "[onsemi_vita_spi_read ] Request  = 0x%08X\n\r", uRequest );
     onsemi_vita_spi_reg_write(pContext, ONSEMI_VITA_SPI_TXFIFO_REG, uRequest);
 
@@ -795,7 +795,7 @@ int onsemi_vita_spi_read( onsemi_vita_t *pContext, Xuint16 uAddr, Xuint16 *pData
 
     //xil_printf( "[onsemi_vita_spi_read ] Response = 0x%08X\n\r", uResponse );
 
-    *pData = (Xuint16)(uResponse & 0x0000FFFF);
+    *pData = (u16)(uResponse & 0x0000FFFF);
 
     return 1;
 }
@@ -812,11 +812,11 @@ int onsemi_vita_spi_read( onsemi_vita_t *pContext, Xuint16 uAddr, Xuint16 *pData
 * @note     None.
 *
 ******************************************************************************/
-int onsemi_vita_spi_write( onsemi_vita_t *pContext, Xuint16 uAddr, Xuint16 uData )
+int onsemi_vita_spi_write( onsemi_vita_t *pContext, u16 uAddr, u16 uData )
 {
-    Xuint32 uRequest;
-    Xuint32 uResponse;
-    Xuint32 uStatus;
+    u32 uRequest;
+    u32 uResponse;
+    u32 uStatus;
     int timeout;
 
     // Wait until TXFIFO is not full
@@ -835,7 +835,7 @@ int onsemi_vita_spi_write( onsemi_vita_t *pContext, Xuint16 uAddr, Xuint16 uData
     }
 
     // Send Request
-    uRequest = (ONSEMI_VITA_SPI_WRITE_BIT) | (((Xuint32)uAddr) << 16) | ((Xuint16)uData);
+    uRequest = (ONSEMI_VITA_SPI_WRITE_BIT) | (((u32)uAddr) << 16) | ((u16)uData);
     //xil_printf( "[onsemi_vita_spi_write] Request  = 0x%08X\n\r", uRequest );
     onsemi_vita_spi_reg_write(pContext, ONSEMI_VITA_SPI_TXFIFO_REG, uRequest);
 
@@ -854,9 +854,9 @@ int onsemi_vita_spi_write( onsemi_vita_t *pContext, Xuint16 uAddr, Xuint16 uData
 ******************************************************************************/
 int onsemi_vita_spi_nop( onsemi_vita_t *pContext )
 {
-    Xuint32 uRequest;
-    Xuint32 uResponse;
-    Xuint32 uStatus;
+    u32 uRequest;
+    u32 uResponse;
+    u32 uStatus;
     int timeout;
 
     // Wait until TXFIFO is not full
@@ -894,9 +894,9 @@ int onsemi_vita_spi_nop( onsemi_vita_t *pContext )
 * @note     None.
 *
 ******************************************************************************/
-int onsemi_vita_spi_write_sequence( onsemi_vita_t *pContext, Xuint16 pConfig[][3], Xuint32 uLength )
+int onsemi_vita_spi_write_sequence( onsemi_vita_t *pContext, u16 pConfig[][3], u32 uLength )
 {
-    Xuint16 uData;
+    u16 uData;
     int i;
     int j;
 
@@ -941,9 +941,9 @@ int onsemi_vita_spi_write_sequence( onsemi_vita_t *pContext, Xuint16 pConfig[][3
 * @note     None.
 *
 ******************************************************************************/
-int onsemi_vita_spi_display_sequence( onsemi_vita_t *pContext, Xuint16 pConfig[][3], Xuint32 uLength )
+int onsemi_vita_spi_display_sequence( onsemi_vita_t *pContext, u16 pConfig[][3], u32 uLength )
 {
-    Xuint16 uData;
+    u16 uData;
     int i;
     int j;
 
@@ -1004,10 +1004,10 @@ int onsemi_vita_spi_display_sequence( onsemi_vita_t *pContext, Xuint16 pConfig[]
 int onsemi_vita_sensor_initialize(  onsemi_vita_t *pContext, int initID, int bVerbose )
 {
     int i;
-    Xuint16 uAddr, uAddr2;
-    Xuint16 uData, uData2;
-    Xuint32 uStatus;
-    Xuint32 uControl;
+    u16 uAddr, uAddr2;
+    u16 uData, uData2;
+    u32 uStatus;
+    u32 uControl;
     int timeout;
 
 
@@ -1019,26 +1019,26 @@ int onsemi_vita_sensor_initialize(  onsemi_vita_t *pContext, int initID, int bVe
             //{ 1920,   88,   44,  148,    1, 1080,    4,    5,   36,    1}, // VIDEO_RESOLUTION_1080P
             //{ 1280,   48,  184,  200,    0, 1024,    1,    3,   26,    0}, // VIDEO_RESOLUTION_SXGA
 
-            Xuint32 h_active     = 1280;
-            Xuint32 h_fporch     = 48;
-            Xuint32 h_syncwidth  = 184;
-            Xuint32 h_bporch     = 74;
-            Xuint32 v_active     = 1024;
-            Xuint32 v_fporch     = 1;
-            Xuint32 v_syncwidth  = 3;
-            Xuint32 v_bporch     = 26;
+            u32 h_active     = 1280;
+            u32 h_fporch     = 48;
+            u32 h_syncwidth  = 184;
+            u32 h_bporch     = 74;
+            u32 v_active     = 1024;
+            u32 v_fporch     = 1;
+            u32 v_syncwidth  = 3;
+            u32 v_bporch     = 26;
 
-//          Xuint32 h_active     = 1920;
-//          Xuint32 h_fporch     = 88;
-//          Xuint32 h_syncwidth  = 44;
-//          Xuint32 h_bporch     = 148;
-//          Xuint32 v_active     = 1080;
-//          Xuint32 v_fporch     = 4;
-//          Xuint32 v_syncwidth  = 5;
-//          Xuint32 v_bporch     = 36;
+//          u32 h_active     = 1920;
+//          u32 h_fporch     = 88;
+//          u32 h_syncwidth  = 44;
+//          u32 h_bporch     = 148;
+//          u32 v_active     = 1080;
+//          u32 v_fporch     = 4;
+//          u32 v_syncwidth  = 5;
+//          u32 v_bporch     = 36;
 
-            Xuint32 h_syncpol    = 1;
-            Xuint32 v_syncpol    = 1;
+            u32 h_syncpol    = 1;
+            u32 v_syncpol    = 1;
 
             if ( bVerbose )
             {
@@ -1145,7 +1145,7 @@ int onsemi_vita_sensor_initialize(  onsemi_vita_t *pContext, int initID, int bVe
 
     if ( (initID == SENSOR_INIT_SEQ02) || (initID == SENSOR_INIT_ENABLE) )
     {
-        Xuint16 uLock = 0;
+        u16 uLock = 0;
 
         if ( bVerbose ) xil_printf("VITA SPI Sequence 2 - Verify PLL Lock Indicator\n\r" );
         uAddr = 24;
@@ -1413,7 +1413,7 @@ int onsemi_vita_get_status( onsemi_vita_t *pContext, onsemi_vita_status_t *pStat
 ******************************************************************************/
 int onsemi_vita_sensor_1080P60( onsemi_vita_t *pContext, int bVerbose )
 {
-    Xuint16 vspi_data;
+    u16 vspi_data;
 
     //# Disable sequencer
     //vspi write 192 0x0000
@@ -1529,11 +1529,11 @@ int onsemi_vita_sensor_1080P60( onsemi_vita_t *pContext, int bVerbose )
     //trig internal 60 10
     if ( bVerbose ) xil_printf( "VITA 1080P60 - Enable trig generator\n\r");
     {
-        Xuint32 vitaTrigGenControl;
-        Xuint32 vitaTrigGenDefaultFreq;
-        Xuint32 vitaTrigGenTrig0High;
-        Xuint32 vitaTrigGenTrig0Low;
-        Xuint32 trigDutyCycle    = 90; // exposure time is 90% of frame time (ie. 15msec)
+        u32 vitaTrigGenControl;
+        u32 vitaTrigGenDefaultFreq;
+        u32 vitaTrigGenTrig0High;
+        u32 vitaTrigGenTrig0Low;
+        u32 trigDutyCycle    = 90; // exposure time is 90% of frame time (ie. 15msec)
         vitaTrigGenDefaultFreq = (((1920+88+44+148)*(1080+4+5+36))>>2) - 2;
 
         onsemi_vita_cam_reg_write( pContext, ONSEMI_VITA_CAM_TRIGGEN_DEFAULT_FREQ_REG, vitaTrigGenDefaultFreq );
@@ -1613,10 +1613,10 @@ int onsemi_vita_sensor_1080P60( onsemi_vita_t *pContext, int bVerbose )
 * @note     None.
 *
 ******************************************************************************/
-int onsemi_vita_set_analog_gain( onsemi_vita_t *pContext, Xuint32 uAnalogGain, int bVerbose )
+int onsemi_vita_set_analog_gain( onsemi_vita_t *pContext, u32 uAnalogGain, int bVerbose )
 {
     int id;
-    Xuint16 **seqData;
+    u16 **seqData;
     int seqLen;
 
     if ( uAnalogGain > 10 )
@@ -1650,9 +1650,9 @@ int onsemi_vita_set_analog_gain( onsemi_vita_t *pContext, Xuint32 uAnalogGain, i
 * @note     None.
 *
 ******************************************************************************/
-int onsemi_vita_set_digital_gain( onsemi_vita_t *pContext, Xuint32 uDigitalGain, int bVerbose )
+int onsemi_vita_set_digital_gain( onsemi_vita_t *pContext, u32 uDigitalGain, int bVerbose )
 {
-    Xuint16 **seqData;
+    u16 **seqData;
     int seqLen;
 
     if ( uDigitalGain > 4095  )
@@ -1688,14 +1688,14 @@ int onsemi_vita_set_digital_gain( onsemi_vita_t *pContext, Xuint32 uDigitalGain,
 * @note     None.
 *
 ******************************************************************************/
-int onsemi_vita_set_exposure_time( onsemi_vita_t *pContext, Xuint32 exposureTime, int bVerbose )
+int onsemi_vita_set_exposure_time( onsemi_vita_t *pContext, u32 exposureTime, int bVerbose )
 {
-    Xuint32 vitaTrigGenControl;
-    Xuint32 vitaTrigGenDefaultFreq;
-    Xuint32 vitaTrigGenTrig0High;
-    Xuint32 vitaTrigGenTrig0Low;
+    u32 vitaTrigGenControl;
+    u32 vitaTrigGenDefaultFreq;
+    u32 vitaTrigGenTrig0High;
+    u32 vitaTrigGenTrig0Low;
 
-    Xuint32 trigDutyCycle    = exposureTime;
+    u32 trigDutyCycle    = exposureTime;
     vitaTrigGenDefaultFreq = (((1920+88+44+148)*(1080+4+5+36))>>2) - 2;
     if ( bVerbose ) xil_printf( "\tTrigger = internal (NA fps, duty cycle = %d \%, period = %d cycles)...\r\n", trigDutyCycle, vitaTrigGenDefaultFreq+2 );
 
@@ -1756,4 +1756,5 @@ int onsemi_vita_sensor_cds(onsemi_vita_t *pContext,
     }
     onsemi_vita_spi_write_sequence(pContext, vita_cds_seq,
             VITA_CDS_SEQ_QTY);
+    return 0;
 }

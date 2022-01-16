@@ -44,6 +44,8 @@
 //
 //----------------------------------------------------------------
 
+#include "xil_cache.h"
+
 #include "demo.h"
 
 
@@ -270,7 +272,7 @@ void demo_hdmi_out_status( demo_t * pdemo ) {
 int demo_start_hdmi_in( demo_t *pdemo )
 {
     int status;
-    Xuint32 timeout = 100;
+    u32 timeout = 100;
 
     xil_printf("HDMI Input Initialization\r\n");
     status = fmc_hdmi_cam_hdmii_init2( pdemo->pfmc_hdmi_cam,
@@ -321,7 +323,7 @@ int demo_start_hdmi_in( demo_t *pdemo )
 
 int demo_start_cam_in( demo_t *pdemo )
 {
-    int status;
+    //int status;
 
     // PYTHON Receiver Initialization
     xil_printf( "PYTHON Receiver Initialization ...\n\r" );
@@ -395,13 +397,13 @@ int demo_init_frame_buffer( demo_t *pdemo )
     {
         xil_printf( "Video Frame Buffer Initialization ...\n\r" );
     }
-    Xuint32 frame, row, col;
-    Xuint16 pixel;
-    volatile Xuint16 *pStorageMem;
+    u32 frame, row, col;
+    u16 pixel;
+    volatile u16 *pStorageMem;
 
     // Fill HDMI frame buffer with Gray ramps
-    pStorageMem = (Xuint16 *)0x10000000;
-    volatile Xuint16 *pStorageMem2 = (Xuint16 *)0x18000000;
+    pStorageMem = (u16 *)0x10000000;
+    //volatile u16 *pStorageMem2 = (u16 *)0x18000000;
     for ( frame = 0; frame < 3; frame++ )
     {
         //for ( row = 0; row < pdemo->hdmio_height; row++ )
@@ -417,7 +419,7 @@ int demo_init_frame_buffer( demo_t *pdemo )
     }
 
     // Fill Camera frame buffer with green screen
-    pStorageMem = (Xuint16 *)0x18000000;
+    pStorageMem = (u16 *)0x18000000;
     for ( frame = 0; frame < 3; frame++ )
     {
         //for ( row = 0; row < pdemo->hdmio_height; row++ )

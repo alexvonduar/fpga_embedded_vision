@@ -78,7 +78,7 @@
 
 struct struct_fmc_iic_axi_t
 {
-    Xuint32 CoreAddress;
+    u32 CoreAddress;
 };
 typedef struct struct_fmc_iic_axi_t fmc_iic_axi_t;
 
@@ -87,16 +87,16 @@ typedef struct struct_fmc_iic_axi_t fmc_iic_axi_t;
 ////////////////////////////////////////////////////////////////////////
 
 // Forward declarations
-int fmc_iic_axi_GpoRead ( fmc_iic_t *pIIC, Xuint32 *pGpioData );
-int fmc_iic_axi_GpoWrite( fmc_iic_t *pIIC, Xuint32 GpioData );
-int fmc_iic_axi_IicWrite( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
-                                           Xuint8 *pBuffer, Xuint8 ByteCount);
-int fmc_iic_axi_IicRead ( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
-                                           Xuint8 *pBuffer, Xuint8 ByteCount);
-int fmc_iic_axi_IicEWrite( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress,
-                                            Xuint8 *pBuffer, Xuint8 ByteCount);
-int fmc_iic_axi_IicERead ( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress,
-                                            Xuint8 *pBuffer, Xuint8 ByteCount);
+int fmc_iic_axi_GpoRead ( fmc_iic_t *pIIC, u32 *pGpioData );
+int fmc_iic_axi_GpoWrite( fmc_iic_t *pIIC, u32 GpioData );
+int fmc_iic_axi_IicWrite( fmc_iic_t *pIIC, u8 ChipAddress, u8 RegAddress,
+                                           u8 *pBuffer, u8 ByteCount);
+int fmc_iic_axi_IicRead ( fmc_iic_t *pIIC, u8 ChipAddress, u8 RegAddress,
+                                           u8 *pBuffer, u8 ByteCount);
+int fmc_iic_axi_IicEWrite( fmc_iic_t *pIIC, u8 ChipAddress, u16 RegAddress,
+                                            u8 *pBuffer, u8 ByteCount);
+int fmc_iic_axi_IicERead ( fmc_iic_t *pIIC, u8 ChipAddress, u16 RegAddress,
+                                            u8 *pBuffer, u8 ByteCount);
 
 /******************************************************************************
 * This function initializes the IIC controller.
@@ -108,11 +108,11 @@ int fmc_iic_axi_IicERead ( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddre
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_axi_init( fmc_iic_t *pIIC, char szName[], Xuint32 CoreAddress )
+int fmc_iic_axi_init( fmc_iic_t *pIIC, char szName[], u32 CoreAddress )
 {
     XStatus Status;
-    Xuint8 StatusReg;
-    Xuint32 timeout = 10000;
+    u8 StatusReg;
+    u32 timeout = 10000;
 
     //fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)malloc( sizeof(fmc_iic_axi_t) );
     //if ( pContext == NULL )
@@ -178,7 +178,7 @@ int fmc_iic_axi_init( fmc_iic_t *pIIC, char szName[], Xuint32 CoreAddress )
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_axi_GpoRead( fmc_iic_t *pIIC, Xuint32 *pGpioData )
+int fmc_iic_axi_GpoRead( fmc_iic_t *pIIC, u32 *pGpioData )
 {
    fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
 
@@ -197,7 +197,7 @@ int fmc_iic_axi_GpoRead( fmc_iic_t *pIIC, Xuint32 *pGpioData )
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_axi_GpoWrite( fmc_iic_t *pIIC, Xuint32 GpioData )
+int fmc_iic_axi_GpoWrite( fmc_iic_t *pIIC, u32 GpioData )
 {
     fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
 
@@ -225,13 +225,13 @@ int fmc_iic_axi_GpoWrite( fmc_iic_t *pIIC, Xuint32 GpioData )
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_axi_IicWrite(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
-                                          Xuint8 *pBuffer, Xuint8 ByteCount)
+int fmc_iic_axi_IicWrite(fmc_iic_t *pIIC, u8 ChipAddress, u8 RegAddress,
+                                          u8 *pBuffer, u8 ByteCount)
 {
-    Xuint8 SentByteCount;
-    Xuint8 WriteBuffer[PAGE_SIZE + 1];
-    Xuint8 Index;
-    Xuint8 StatusReg;
+    u8 SentByteCount;
+    u8 WriteBuffer[PAGE_SIZE + 1];
+    u8 Index;
+    u8 StatusReg;
     fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
 
 #if 1
@@ -290,12 +290,12 @@ int fmc_iic_axi_IicWrite(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_axi_IicRead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
-                                         Xuint8 *pBuffer, Xuint8 ByteCount)
+int fmc_iic_axi_IicRead(fmc_iic_t *pIIC, u8 ChipAddress, u8 RegAddress,
+                                         u8 *pBuffer, u8 ByteCount)
 {
-    Xuint8 ReceivedByteCount = 0;
-    Xuint8 SentByteCount = 0;
-    Xuint8 StatusReg;
+    u8 ReceivedByteCount = 0;
+    u8 SentByteCount = 0;
+    u8 StatusReg;
     XStatus TestStatus=XST_FAILURE;
     int cnt = 0;
     fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
@@ -321,7 +321,7 @@ int fmc_iic_axi_IicRead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
         if(!(StatusReg & XIIC_SR_BUS_BUSY_MASK))
         {
         SentByteCount = XIic_DynSend(pContext->CoreAddress, ChipAddress,
-                                    (Xuint8 *)&RegAddress, 1,
+                                    (u8 *)&RegAddress, 1,
                                                 XIIC_REPEATED_START);
         }
         cnt++;
@@ -355,13 +355,13 @@ int fmc_iic_axi_IicRead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_axi_IicEWrite(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress,
-                                          Xuint8 *pBuffer, Xuint8 ByteCount)
+int fmc_iic_axi_IicEWrite(fmc_iic_t *pIIC, u8 ChipAddress, u16 RegAddress,
+                                          u8 *pBuffer, u8 ByteCount)
 {
-    Xuint8 SentByteCount;
-    Xuint8 WriteBuffer[PAGE_SIZE + 1];
-    Xuint8 Index;
-    Xuint8 StatusReg;
+    u8 SentByteCount;
+    u8 WriteBuffer[PAGE_SIZE + 1];
+    u8 Index;
+    u8 StatusReg;
     fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
 
 #if 1
@@ -381,8 +381,8 @@ int fmc_iic_axi_IicEWrite(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddres
     * A temporary write buffer must be used which contains both the address
     * and the data to be written, put the address in first
     */
-    WriteBuffer[0] = (Xuint8)((RegAddress>>8) & 0x00FF);
-    WriteBuffer[1] = (Xuint8)( RegAddress     & 0x00FF);
+    WriteBuffer[0] = (u8)((RegAddress>>8) & 0x00FF);
+    WriteBuffer[1] = (u8)( RegAddress     & 0x00FF);
 
     /*
     * Put the data in the write buffer following the address.
@@ -422,13 +422,13 @@ int fmc_iic_axi_IicEWrite(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddres
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_axi_IicERead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress,
-                                         Xuint8 *pBuffer, Xuint8 ByteCount)
+int fmc_iic_axi_IicERead(fmc_iic_t *pIIC, u8 ChipAddress, u16 RegAddress,
+                                         u8 *pBuffer, u8 ByteCount)
 {
-    Xuint8 ReceivedByteCount = 0;
-    Xuint8 SentByteCount = 0;
-    Xuint8 WriteBuffer[2];
-    Xuint8 StatusReg;
+    u8 ReceivedByteCount = 0;
+    u8 SentByteCount = 0;
+    u8 WriteBuffer[2];
+    u8 StatusReg;
     XStatus TestStatus=XST_FAILURE;
     int cnt = 0;
     fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
@@ -450,8 +450,8 @@ int fmc_iic_axi_IicERead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress
     * A temporary write buffer must be used which contains both the address
     * and the data to be written, put the address in first
     */
-    WriteBuffer[0] = (Xuint8)((RegAddress>>8) & 0x00FF);
-    WriteBuffer[1] = (Xuint8)( RegAddress     & 0x00FF);
+    WriteBuffer[0] = (u8)((RegAddress>>8) & 0x00FF);
+    WriteBuffer[1] = (u8)( RegAddress     & 0x00FF);
 
     // Position the Read pointer to specific location.
     do

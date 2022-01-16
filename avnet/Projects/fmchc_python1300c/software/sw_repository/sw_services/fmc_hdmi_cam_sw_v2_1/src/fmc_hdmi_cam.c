@@ -51,6 +51,7 @@
 // Located in: microblaze_0/include/
 #include "xparameters.h"
 #include "xstatus.h"
+#include "xil_printf.h"
 
 #include "fmc_iic.h"
 #include "fmc_hdmi_cam.h"
@@ -73,9 +74,9 @@
 ******************************************************************************/
 int fmc_hdmi_cam_init( fmc_hdmi_cam_t *pContext, char szName[], fmc_iic_t *pIIC )
 {
-    Xuint8 reg_addr;
-    Xuint8 reg_data;
-    Xuint8 num_bytes;
+    u8 reg_addr;
+    u8 reg_data;
+    u8 num_bytes;
 
     pContext->pIIC = pIIC;
     strcpy( pContext->szName, szName );
@@ -98,7 +99,7 @@ int fmc_hdmi_cam_init( fmc_hdmi_cam_t *pContext, char szName[], fmc_iic_t *pIIC 
     // Initialize the IIC Multiplexer
     fmc_hdmi_cam_iic_mux_reset( pContext );
 
-    #if 1
+#if 1
     // Initialize the I/O Expander to default state
     fmc_hdmi_cam_iic_mux( pContext, FMC_HDMI_CAM_I2C_SELECT_IO_EXP );
 
@@ -131,7 +132,7 @@ int fmc_hdmi_cam_init( fmc_hdmi_cam_t *pContext, char szName[], fmc_iic_t *pIIC 
                      // P7 => unused      = x (input)
     //xil_printf( "[fmc_hdmi_cam_init] PCA9534[0x%02X] <= 0x%02X\n\r", reg_addr, reg_data );
     num_bytes = pContext->pIIC->fpIicWrite( pContext->pIIC, FMC_HDMI_CAM_IO_EXP_ADDR, reg_addr, &reg_data, 1);
-    #endif
+#endif
 
     return 1;
 }
@@ -181,10 +182,10 @@ void fmc_hdmi_cam_iic_mux_reset( fmc_hdmi_cam_t *pContext )
 * @note     None.
 *
 ******************************************************************************/
-void fmc_hdmi_cam_iic_mux( fmc_hdmi_cam_t *pContext, Xuint32 MuxSelect )
+void fmc_hdmi_cam_iic_mux( fmc_hdmi_cam_t *pContext, u32 MuxSelect )
 {
-    Xuint8 mux_data;
-    Xuint8 num_bytes;
+    u8 mux_data;
+    u8 num_bytes;
 
     switch ( MuxSelect )
     {
@@ -253,10 +254,10 @@ void fmc_hdmi_cam_iic_mux( fmc_hdmi_cam_t *pContext, Xuint32 MuxSelect )
 * @note     None.
 *
 ******************************************************************************/
-void fmc_hdmi_cam_iic_config2( fmc_hdmi_cam_t *pContext, Xuint8 ChipAddress,
-                                Xuint8 ConfigData[][2], Xuint32 ConfigLength )
+void fmc_hdmi_cam_iic_config2( fmc_hdmi_cam_t *pContext, u8 ChipAddress,
+                                u8 ConfigData[][2], u32 ConfigLength )
 {
-    Xuint8 num_bytes;
+    u8 num_bytes;
     int i;
 
     for ( i = 0; i < ConfigLength; i++ )
@@ -279,9 +280,9 @@ void fmc_hdmi_cam_iic_config2( fmc_hdmi_cam_t *pContext, Xuint8 ChipAddress,
 *
 ******************************************************************************/
 void fmc_hdmi_cam_iic_config3( fmc_hdmi_cam_t *pContext,
-                                Xuint8 ConfigData[][3], Xuint32 ConfigLength )
+                                u8 ConfigData[][3], u32 ConfigLength )
 {
-    Xuint8 num_bytes;
+    u8 num_bytes;
     int i;
 
     for ( i = 0; i < ConfigLength; i++ )
@@ -297,75 +298,75 @@ void fmc_hdmi_cam_iic_config3( fmc_hdmi_cam_t *pContext,
 
 // CDCE913
 #define MAX_IIC_CDCE913 32
-static Xuint8 iic_cdce913[MAX_IIC_CDCE913][2]=
+static u8 iic_cdce913[MAX_IIC_CDCE913][2]=
 {
-    0x00, 0x81, // Byte 00 - 10000001
-    0x01, 0x01, // Byte 01 - 00000000
-                // [1:0] - Slave Address A[1:0]=01b
-    //0x02, 0xB4, // Byte 02 - 10110100
-    //0x03, 0x01, // Byte 03 - 00000001
-    0x02, 0xB4, // [  7] = M1 = 1 (PLL1 Clock)
-                // [1:0] = PDIV1[9:8] =
-    0x03, 0x02, // [7:0] = PDIV1[7:0] = 2
-    0x04, 0x02, // Byte 04 - 00000010
-    0x05, 0x50, // Byte 05 - 01010000
-    0x06, 0x60, // Byte 06 - 01100000
-    0x07, 0x00, // Byte 07 - 00000000
-    0x08, 0x00, // Byte 08 - 00000000
-    0x09, 0x00, // Byte 09 - 00000000
-    0x0A, 0x00, // Byte 10 - 00000000
-    0x0B, 0x00, // Byte 11 - 00000000
-    0x0C, 0x00, // Byte 12 - 00000000
-    0x0D, 0x00, // Byte 13 - 00000000
-    0x0E, 0x00, // Byte 14 - 00000000
-    0x0F, 0x00, // Byte 15 - 00000000
-    0x10, 0x00, // Byte 16 - 00000000
-    0x11, 0x00, // Byte 17 - 00000000
-    0x12, 0x00, // Byte 18 - 00000000
-    0x13, 0x00, // Byte 19 - 00000000
-    //0x14, 0xED, // Byte 20 - 11101101
-    0x14, 0x6D, // [  7] = MUX1 = 0 (PLL1)
+    {0x00, 0x81}, // Byte 00 - 10000001
+    {0x01, 0x01}, // Byte 01 - 00000000
+                  // [1:0] - Slave Address A[1:0]=01b
+    //{0x02, 0xB4}, // Byte 02 - 10110100
+    //{0x03, 0x01}, // Byte 03 - 00000001
+    {0x02, 0xB4}, // [  7] = M1 = 1 (PLL1 Clock)
+                  // [1:0] = PDIV1[9:8] =
+    {0x03, 0x02}, // [7:0] = PDIV1[7:0] = 2
+    {0x04, 0x02}, // Byte 04 - 00000010
+    {0x05, 0x50}, // Byte 05 - 01010000
+    {0x06, 0x60}, // Byte 06 - 01100000
+    {0x07, 0x00}, // Byte 07 - 00000000
+    {0x08, 0x00}, // Byte 08 - 00000000
+    {0x09, 0x00}, // Byte 09 - 00000000
+    {0x0A, 0x00}, // Byte 10 - 00000000
+    {0x0B, 0x00}, // Byte 11 - 00000000
+    {0x0C, 0x00}, // Byte 12 - 00000000
+    {0x0D, 0x00}, // Byte 13 - 00000000
+    {0x0E, 0x00}, // Byte 14 - 00000000
+    {0x0F, 0x00}, // Byte 15 - 00000000
+    {0x10, 0x00}, // Byte 16 - 00000000
+    {0x11, 0x00}, // Byte 17 - 00000000
+    {0x12, 0x00}, // Byte 18 - 00000000
+    {0x13, 0x00}, // Byte 19 - 00000000
+    //{0x14, 0xED}, // Byte 20 - 11101101
+    {0x14, 0x6D}, // [  7] = MUX1 = 0 (PLL1)
                 // [  6] = M2 = 1 (PDIV2)
                 // [5:4] = M3 = 2 (PDIV3)
-    0x15, 0x02, // Byte 21 - 00000010
-    //0x16, 0x01, // Byte 22 - 00000001
-    //0x17, 0x01, // Byte 23 - 00000001
-    0x16, 0x00, // [6:0] = PDIV2 = 0 (reset and stand-by)
-    0x17, 0x00, // [6:0] = PDIV3 = 0 (reset and stand-by)
-    //0x18, 0x00, // Byte 24 - 00000000
-    //0x19, 0x40, // Byte 25 - 01000000
-    //0x1A, 0x02, // Byte 26 - 00000010
-    //0x1B, 0x08, // Byte 27 - 00001000
+    {0x15, 0x02}, // Byte 21 - 00000010
+    //{0x16, 0x01}, // Byte 22 - 00000001
+    //{0x17, 0x01}, // Byte 23 - 00000001
+    {0x16, 0x00}, // [6:0] = PDIV2 = 0 (reset and stand-by)
+    {0x17, 0x00}, // [6:0] = PDIV3 = 0 (reset and stand-by)
+    //{0x18, 0x00}, // Byte 24 - 00000000
+    //{0x19, 0x40}, // Byte 25 - 01000000
+    //{0x1A, 0x02}, // Byte 26 - 00000010
+    //{0x1B, 0x08}, // Byte 27 - 00001000
                 // PLL1 : Fin=27MHz, M=2, N=11, PDIV=2 Fout=74.25MHz
                 //        Fvco = 148.5 MHz
                 //        P = 4 - int(log2(11/2)) = 4 - 2 = 2
                 //        N'= 11 * 2^2 = 44
                 //        Q = int(44/2) = 22
                 //        R = 44 - 2*22 = 0
-    0x18, 0x00, // [7:0] = PLL1_0N[11:4] = 00000000
-    0x19, 0xB0, // [7:4] = PLL1_0N[3:0] = 1011
-                // [3:0] = PLL1_0R[8:5] = 0000
-    0x1A, 0x02, // [7:3] = PLL1_0R[4:0] = 00000
-                // [2:0] = PLL1_0Q[5:3] = 010
-    0x1B, 0xC9, // [7:5] = PLL1_0Q[2:0] = 110
-                // [4:2] = PLL1_0P[2:0] = 010
-                // [1:0] = VC01_0_RANGE[1:0] = 01 (125 MHz < Fvco1 < 150 MHz)
-    //0x1C, 0x00, // Byte 28 - 00000000
-    //0x1D, 0x40, // Byte 29 - 01000000
-    //0x1E, 0x02, // Byte 30 - 00000010
-    //0x1F, 0x08, // Byte 31 - 00001000
+    {0x18, 0x00}, // [7:0] = PLL1_0N[11:4] = 00000000
+    {0x19, 0xB0}, // [7:4] = PLL1_0N[3:0] = 1011
+                  // [3:0] = PLL1_0R[8:5] = 0000
+    {0x1A, 0x02}, // [7:3] = PLL1_0R[4:0] = 00000
+                  // [2:0] = PLL1_0Q[5:3] = 010
+    {0x1B, 0xC9}, // [7:5] = PLL1_0Q[2:0] = 110
+                  // [4:2] = PLL1_0P[2:0] = 010
+                  // [1:0] = VC01_0_RANGE[1:0] = 01 (125 MHz < Fvco1 < 150 MHz)
+    //{0x1C, 0x00}, // Byte 28 - 00000000
+    //{0x1D, 0x40}, // Byte 29 - 01000000
+    //{0x1E, 0x02}, // Byte 30 - 00000010
+    //{0x1F, 0x08}, // Byte 31 - 00001000
                 // PLL1 : Fin=27MHz, M=2, N=11, PDIV=2 Fout=74.25MHz
                 //        Fvco = 148.5 MHz
                 //        P = 4 - int(log2(11/2)) = 4 - 2 = 2
                 //        N'= 11 * 2^2 = 44
                 //        Q = int(44/2) = 22
                 //        R = 44 - 2*22 = 0
-    0x1C, 0x00, // [7:0] = PLL1_1N[11:4] = 00000000
-    0x1D, 0xB0, // [7:4] = PLL1_1N[3:0] = 1011
-                // [3:0] = PLL1_1R[8:5] = 0000
-    0x1E, 0x02, // [7:3] = PLL1_1R[4:0] = 00000
-                // [2:0] = PLL1_1Q[5:3] = 010
-    0x1F, 0xC9  // [7:5] = PLL1_1Q[2:0] = 110
+    {0x1C, 0x00}, // [7:0] = PLL1_1N[11:4] = 00000000
+    {0x1D, 0xB0}, // [7:4] = PLL1_1N[3:0] = 1011
+                  // [3:0] = PLL1_1R[8:5] = 0000
+    {0x1E, 0x02}, // [7:3] = PLL1_1R[4:0] = 00000
+                  // [2:0] = PLL1_1Q[5:3] = 010
+    {0x1F, 0xC9}  // [7:5] = PLL1_1Q[2:0] = 110
                 // [4:2] = PLL1_1P[2:0] = 010
                 // [1:0] = VC01_1_RANGE[1:0] = 01 (125 MHz < Fvco1 < 150 MHz)
 };
@@ -382,17 +383,17 @@ static Xuint8 iic_cdce913[MAX_IIC_CDCE913][2]=
 //       Np = N * 2^P = 8056
 //       Q = int(Np/M) = 29
 //       R = Np - M*Q = 226
-static Xuint8 iic_cdce913_y1_config_25_175_000[6][2] =
+static u8 iic_cdce913_y1_config_25_175_000[6][2] =
 {
-    0x02, 0xB4,   // [  7] = M1 = 1 (PLL1 clock)
+    {0x02, 0xB4},   // [  7] = M1 = 1 (PLL1 clock)
                     // [1:0] = Pdiv1[9:8]
-    0x03, 0x04,   // [7:0] = Pdiv1[7:0]
-    0x18, 0x3E,   // [7:0] = PLL1_0N[11:4]
-    0x19, 0xF7,   // [7:4] = PLL1_0N[3:0]
+    {0x03, 0x04},   // [7:0] = Pdiv1[7:0]
+    {0x18, 0x3E},   // [7:0] = PLL1_0N[11:4]
+    {0x19, 0xF7},   // [7:4] = PLL1_0N[3:0]
                     // [3:0] = PLL1_0R[8:5]
-    0x1A, 0x13,   // [7:3] = PLL1_0R[4:0]
+    {0x1A, 0x13},   // [7:3] = PLL1_0R[4:0]
                     // [2:0] = PLL1_0Q[5:3]
-    0x1B, 0xAC    // [7:5] = PLL1_0Q[2:0]
+    {0x1B, 0xAC}    // [7:5] = PLL1_0Q[2:0]
                     // [4:2] = PLL1_0P[2:0]
                     // [1:0] = VCO1_0_RANGE[1:0]
 };
@@ -409,17 +410,17 @@ static Xuint8 iic_cdce913_y1_config_25_175_000[6][2] =
 //       Np = N * 2^P = 16
 //       Q = int(Np/M) = 16
 //       R = Np - M*Q = 0
-static Xuint8 iic_cdce913_y1_config_27_000_000[6][2] =
+static u8 iic_cdce913_y1_config_27_000_000[6][2] =
 {
-    0x02, 0x34,   // [  7] = M1 = 0 (PLL1 bypassed)
+    {0x02, 0x34},   // [  7] = M1 = 0 (PLL1 bypassed)
                     // [1:0] = Pdiv1[9:8]
-    0x03, 0x01,   // [7:0] = Pdiv1[7:0]
-    0x18, 0x00,   // [7:0] = PLL1_0N[11:4]
-    0x19, 0x10,   // [7:4] = PLL1_0N[3:0]
+    {0x03, 0x01},   // [7:0] = Pdiv1[7:0]
+    {0x18, 0x00},   // [7:0] = PLL1_0N[11:4]
+    {0x19, 0x10},   // [7:4] = PLL1_0N[3:0]
                     // [3:0] = PLL1_0R[8:5]
-    0x1A, 0x02,   // [7:3] = PLL1_0R[4:0]
+    {0x1A, 0x02},   // [7:3] = PLL1_0R[4:0]
                     // [2:0] = PLL1_0Q[5:3]
-    0x1B, 0x10    // [7:5] = PLL1_0Q[2:0]
+    {0x1B, 0x10}    // [7:5] = PLL1_0Q[2:0]
                     // [4:2] = PLL1_0P[2:0]
                     // [1:0] = VCO1_0_RANGE[1:0]
 };
@@ -437,17 +438,17 @@ static Xuint8 iic_cdce913_y1_config_27_000_000[6][2] =
 //       Np = N * 2^P = 640
 //       Q = int(Np/M) = 23
 //       R = Np - M*Q = 19
-static Xuint8 iic_cdce913_y1_config_40_000_000[6][2] =
+static u8 iic_cdce913_y1_config_40_000_000[6][2] =
 {
-    0x02, 0xB4,   // [  7] = M1 = 1 (PLL1 clock)
+    {0x02, 0xB4},   // [  7] = M1 = 1 (PLL1 clock)
                     // [1:0] = Pdiv1[9:8]
-    0x03, 0x02,   // [7:0] = Pdiv1[7:0]
-    0x18, 0x05,   // [7:0] = PLL1_0N[11:4]
-    0x19, 0x00,   // [7:4] = PLL1_0N[3:0]
+    {0x03, 0x02},   // [7:0] = Pdiv1[7:0]
+    {0x18, 0x05},   // [7:0] = PLL1_0N[11:4]
+    {0x19, 0x00},   // [7:4] = PLL1_0N[3:0]
                     // [3:0] = PLL1_0R[8:5]
-    0x1A, 0x9A,   // [7:3] = PLL1_0R[4:0]
+    {0x1A, 0x9A},   // [7:3] = PLL1_0R[4:0]
                     // [2:0] = PLL1_0Q[5:3]
-    0x1B, 0xEC    // [7:5] = PLL1_0Q[2:0]
+    {0x1B, 0xEC}    // [7:5] = PLL1_0Q[2:0]
                     // [4:2] = PLL1_0P[2:0]
                     // [1:0] = VCO1_0_RANGE[1:0]
 };
@@ -464,17 +465,17 @@ static Xuint8 iic_cdce913_y1_config_40_000_000[6][2] =
 //       Np = N * 2^P = 520
 //       Q = int(Np/M) = 19
 //       R = Np - M*Q = 7
-static Xuint8 iic_cdce913_y1_config_65_000_000[6][2] =
+static u8 iic_cdce913_y1_config_65_000_000[6][2] =
 {
-    0x02, 0xB4,   // [  7] = M1 = 1 (PLL1 clock)
+    {0x02, 0xB4},   // [  7] = M1 = 1 (PLL1 clock)
                     // [1:0] = Pdiv1[9:8]
-    0x03, 0x02,   // [7:0] = Pdiv1[7:0]
-    0x18, 0x08,   // [7:0] = PLL1_0N[11:4]
-    0x19, 0x20,   // [7:4] = PLL1_0N[3:0]
+    {0x03, 0x02},   // [7:0] = Pdiv1[7:0]
+    {0x18, 0x08},   // [7:0] = PLL1_0N[11:4]
+    {0x19, 0x20},   // [7:4] = PLL1_0N[3:0]
                     // [3:0] = PLL1_0R[8:5]
-    0x1A, 0x3A,   // [7:3] = PLL1_0R[4:0]
+    {0x1A, 0x3A},   // [7:3] = PLL1_0R[4:0]
                     // [2:0] = PLL1_0Q[5:3]
-    0x1B, 0x69    // [7:5] = PLL1_0Q[2:0]
+    {0x1B, 0x69}    // [7:5] = PLL1_0Q[2:0]
                     // [4:2] = PLL1_0P[2:0]
                     // [1:0] = VCO1_0_RANGE[1:0]
 };
@@ -491,17 +492,17 @@ static Xuint8 iic_cdce913_y1_config_65_000_000[6][2] =
 //       Np = N * 2^P = 44
 //       Q = int(Np/M) = 22
 //       R = Np - M*Q = 0
-static Xuint8 iic_cdce913_y1_config_74_250_000[6][2] =
+static u8 iic_cdce913_y1_config_74_250_000[6][2] =
 {
-    0x02, 0xB4,   // [  7] = M1 = 1 (PLL1 clock)
+    {0x02, 0xB4},   // [  7] = M1 = 1 (PLL1 clock)
                     // [1:0] = Pdiv1[9:8]
-    0x03, 0x02,   // [7:0] = Pdiv1[7:0]
-    0x18, 0x00,   // [7:0] = PLL1_0N[11:4]
-    0x19, 0xB0,   // [7:4] = PLL1_0N[3:0]
+    {0x03, 0x02},   // [7:0] = Pdiv1[7:0]
+    {0x18, 0x00},   // [7:0] = PLL1_0N[11:4]
+    {0x19, 0xB0},   // [7:4] = PLL1_0N[3:0]
                     // [3:0] = PLL1_0R[8:5]
-    0x1A, 0x02,   // [7:3] = PLL1_0R[4:0]
+    {0x1A, 0x02},   // [7:3] = PLL1_0R[4:0]
                     // [2:0] = PLL1_0Q[5:3]
-    0x1B, 0xC9    // [7:5] = PLL1_0Q[2:0]
+    {0x1B, 0xC9}    // [7:5] = PLL1_0Q[2:0]
                     // [4:2] = PLL1_0P[2:0]
                     // [1:0] = VCO1_0_RANGE[1:0]
 };
@@ -518,17 +519,17 @@ static Xuint8 iic_cdce913_y1_config_74_250_000[6][2] =
 //       Np = N * 2^P = 440
 //       Q = int(Np/M) = 16
 //       R = Np - M*Q = 8
-static Xuint8 iic_cdce913_y1_config_110_000_000[6][2] =
+static u8 iic_cdce913_y1_config_110_000_000[6][2] =
 {
-    0x02, 0xB4,   // [  7] = M1 = 1 (PLL1 clock)
+    {0x02, 0xB4},   // [  7] = M1 = 1 (PLL1 clock)
                     // [1:0] = Pdiv1[9:8]
-    0x03, 0x01,   // [7:0] = Pdiv1[7:0]
-    0x18, 0x06,   // [7:0] = PLL1_0N[11:4]
-    0x19, 0xE0,   // [7:4] = PLL1_0N[3:0]
+    {0x03, 0x01},   // [7:0] = Pdiv1[7:0]
+    {0x18, 0x06},   // [7:0] = PLL1_0N[11:4]
+    {0x19, 0xE0},   // [7:4] = PLL1_0N[3:0]
                     // [3:0] = PLL1_0R[8:5]
-    0x1A, 0x42,   // [7:3] = PLL1_0R[4:0]
+    {0x1A, 0x42},   // [7:3] = PLL1_0R[4:0]
                     // [2:0] = PLL1_0Q[5:3]
-    0x1B, 0x08    // [7:5] = PLL1_0Q[2:0]
+    {0x1B, 0x08}    // [7:5] = PLL1_0Q[2:0]
                     // [4:2] = PLL1_0P[2:0]
                     // [1:0] = VCO1_0_RANGE[1:0]
 };
@@ -545,17 +546,17 @@ static Xuint8 iic_cdce913_y1_config_110_000_000[6][2] =
 //       Np = N * 2^P = 44
 //       Q = int(Np/M) = 22
 //       R = Np - M*Q = 0
-static Xuint8 iic_cdce913_y1_config_148_500_000[6][2] =
+static u8 iic_cdce913_y1_config_148_500_000[6][2] =
 {
-    0x02, 0xB4,   // [  7] = M1 = 1 (PLL1 clock)
+    {0x02, 0xB4},   // [  7] = M1 = 1 (PLL1 clock)
                     // [1:0] = Pdiv1[9:8]
-    0x03, 0x01,   // [7:0] = Pdiv1[7:0]
-    0x18, 0x00,   // [7:0] = PLL1_0N[11:4]
-    0x19, 0xB0,   // [7:4] = PLL1_0N[3:0]
+    {0x03, 0x01},   // [7:0] = Pdiv1[7:0]
+    {0x18, 0x00},   // [7:0] = PLL1_0N[11:4]
+    {0x19, 0xB0},   // [7:4] = PLL1_0N[3:0]
                     // [3:0] = PLL1_0R[8:5]
-    0x1A, 0x02,   // [7:3] = PLL1_0R[4:0]
+    {0x1A, 0x02},   // [7:3] = PLL1_0R[4:0]
                     // [2:0] = PLL1_0Q[5:3]
-    0x1B, 0xC9    // [7:5] = PLL1_0Q[2:0]
+    {0x1B, 0xC9}    // [7:5] = PLL1_0Q[2:0]
                     // [4:2] = PLL1_0P[2:0]
                     // [1:0] = VCO1_0_RANGE[1:0]
 };
@@ -572,17 +573,17 @@ static Xuint8 iic_cdce913_y1_config_148_500_000[6][2] =
 //       Np = N * 2^P = 24
 //       Q = int(Np/M) = 24
 //       R = Np - M*Q = 0
-static Xuint8 iic_cdce913_y1_config_162_000_000[6][2] =
+static u8 iic_cdce913_y1_config_162_000_000[6][2] =
 {
-    0x02, 0xB4,   // [  7] = M1 = 1 (PLL1 clock)
+    {0x02, 0xB4},   // [  7] = M1 = 1 (PLL1 clock)
                     // [1:0] = Pdiv1[9:8]
-    0x03, 0x01,   // [7:0] = Pdiv1[7:0]
-    0x18, 0x00,   // [7:0] = PLL1_0N[11:4]
-    0x19, 0x60,   // [7:4] = PLL1_0N[3:0]
+    {0x03, 0x01},   // [7:0] = Pdiv1[7:0]
+    {0x18, 0x00},   // [7:0] = PLL1_0N[11:4]
+    {0x19, 0x60},   // [7:4] = PLL1_0N[3:0]
                     // [3:0] = PLL1_0R[8:5]
-    0x1A, 0x03,   // [7:3] = PLL1_0R[4:0]
+    {0x1A, 0x03},   // [7:3] = PLL1_0R[4:0]
                     // [2:0] = PLL1_0Q[5:3]
-    0x1B, 0x0A    // [7:5] = PLL1_0Q[2:0]
+    {0x1B, 0x0A}    // [7:5] = PLL1_0Q[2:0]
                     // [4:2] = PLL1_0P[2:0]
                     // [1:0] = VCO1_0_RANGE[1:0]
 };
@@ -605,8 +606,8 @@ static Xuint8 iic_cdce913_y1_config_162_000_000[6][2] =
 void fmc_hdmi_cam_vclk_init( fmc_hdmi_cam_t *pContext )
 {
     int dev;
-    Xuint8 xdata;
-    Xuint8 num_bytes;
+    u8 xdata;
+    u8 num_bytes;
     int i;
 
     fmc_hdmi_cam_iic_mux( pContext, FMC_HDMI_CAM_I2C_SELECT_VID_CLK );
@@ -638,10 +639,10 @@ void fmc_hdmi_cam_vclk_init( fmc_hdmi_cam_t *pContext )
 * @note     None.
 *
 ******************************************************************************/
-void fmc_hdmi_cam_vclk_config( fmc_hdmi_cam_t *pContext, Xuint32 FreqId )
+void fmc_hdmi_cam_vclk_config( fmc_hdmi_cam_t *pContext, u32 FreqId )
 {
     int dev;
-    Xuint8 num_bytes;
+    u8 num_bytes;
     int i;
 
     fmc_hdmi_cam_iic_mux( pContext, FMC_HDMI_CAM_I2C_SELECT_VID_CLK );
@@ -712,99 +713,99 @@ void fmc_hdmi_cam_vclk_config( fmc_hdmi_cam_t *pContext, Xuint32 FreqId )
 ////////////////////////////////////////////////////////////////////////
 
 #define IIC_HDMI_IN_RESET_LEN  1
-Xuint8 iic_hdmi_in_reset[IIC_HDMI_IN_RESET_LEN][3] =
+u8 iic_hdmi_in_reset[IIC_HDMI_IN_RESET_LEN][3] =
 {
-    IIC_ADV7611_BASE_ADDR>>1, 0xFF, 0x80  // I2C reset
+    {IIC_ADV7611_BASE_ADDR>>1, 0xFF, 0x80}  // I2C reset
 };
 
 #define IIC_HDMI_IN_MAPPING_LEN  7
-Xuint8 iic_hdmi_in_mapping[IIC_HDMI_IN_MAPPING_LEN][3] =
+u8 iic_hdmi_in_mapping[IIC_HDMI_IN_MAPPING_LEN][3] =
 {
-    IIC_ADV7611_BASE_ADDR>>1, 0xF4, IIC_ADV7611_CEC_ADDR, // CEC
-    IIC_ADV7611_BASE_ADDR>>1, 0xF5, IIC_ADV7611_INFOFRAME_ADDR, // INFOFRAME
-    IIC_ADV7611_BASE_ADDR>>1, 0xF8, IIC_ADV7611_DPLL_ADDR, // DPLL
-    IIC_ADV7611_BASE_ADDR>>1, 0xF9, IIC_ADV7611_KSV_ADDR, // KSV
-    IIC_ADV7611_BASE_ADDR>>1, 0xFA, IIC_ADV7611_EDID_ADDR, // EDID
-    IIC_ADV7611_BASE_ADDR>>1, 0xFB, IIC_ADV7611_HDMI_ADDR, // HDMI
-    IIC_ADV7611_BASE_ADDR>>1, 0xFD, IIC_ADV7611_CP_ADDR  // CP
+    {IIC_ADV7611_BASE_ADDR>>1, 0xF4, IIC_ADV7611_CEC_ADDR}, // CEC
+    {IIC_ADV7611_BASE_ADDR>>1, 0xF5, IIC_ADV7611_INFOFRAME_ADDR}, // INFOFRAME
+    {IIC_ADV7611_BASE_ADDR>>1, 0xF8, IIC_ADV7611_DPLL_ADDR}, // DPLL
+    {IIC_ADV7611_BASE_ADDR>>1, 0xF9, IIC_ADV7611_KSV_ADDR}, // KSV
+    {IIC_ADV7611_BASE_ADDR>>1, 0xFA, IIC_ADV7611_EDID_ADDR}, // EDID
+    {IIC_ADV7611_BASE_ADDR>>1, 0xFB, IIC_ADV7611_HDMI_ADDR}, // HDMI
+    {IIC_ADV7611_BASE_ADDR>>1, 0xFD, IIC_ADV7611_CP_ADDR}  // CP
 };
 
 
 #define IIC_HDMI_IN_EDID_PRE_LEN  (1)
-Xuint8 iic_hdmi_in_edid_pre[IIC_HDMI_IN_EDID_PRE_LEN][3] =
+u8 iic_hdmi_in_edid_pre[IIC_HDMI_IN_EDID_PRE_LEN][3] =
 {
-    IIC_ADV7611_KSV_ADDR>>1, 0x77, 0x00  // Disable the Internal EDID
+    {IIC_ADV7611_KSV_ADDR>>1, 0x77, 0x00}  // Disable the Internal EDID
 };
 #define IIC_HDMI_IN_EDID_POST_LEN  (5)
-Xuint8 iic_hdmi_in_edid_post[IIC_HDMI_IN_EDID_POST_LEN][3] =
+u8 iic_hdmi_in_edid_post[IIC_HDMI_IN_EDID_POST_LEN][3] =
 {
-    IIC_ADV7611_KSV_ADDR>>1, 0x77, 0x00, // Set the Most Significant Bit of the SPA location to 0
-    IIC_ADV7611_KSV_ADDR>>1, 0x52, 0x20, // Set the SPA for port B.
-    IIC_ADV7611_KSV_ADDR>>1, 0x53, 0x00, // Set the SPA for port B.
-    IIC_ADV7611_KSV_ADDR>>1, 0x70, 0x9E, // Set the Least Significant Byte of the SPA location
-    IIC_ADV7611_KSV_ADDR>>1, 0x74, 0x03  // Enable the Internal EDID for Ports
+    {IIC_ADV7611_KSV_ADDR>>1, 0x77, 0x00}, // Set the Most Significant Bit of the SPA location to 0
+    {IIC_ADV7611_KSV_ADDR>>1, 0x52, 0x20}, // Set the SPA for port B.
+    {IIC_ADV7611_KSV_ADDR>>1, 0x53, 0x00}, // Set the SPA for port B.
+    {IIC_ADV7611_KSV_ADDR>>1, 0x70, 0x9E}, // Set the Least Significant Byte of the SPA location
+    {IIC_ADV7611_KSV_ADDR>>1, 0x74, 0x03}  // Enable the Internal EDID for Ports
 };
 
 #define IIC_HDMI_IN_CONFIG_LEN  42
-Xuint8 iic_hdmi_in_config[IIC_HDMI_IN_CONFIG_LEN][3] =
+u8 iic_hdmi_in_config[IIC_HDMI_IN_CONFIG_LEN][3] =
 {
-    IIC_ADV7611_BASE_ADDR>>1, 0x01, 0x06, // Prim_Mode =110b HDMI-GR
-    IIC_ADV7611_BASE_ADDR>>1, 0x02, 0xF5, // Auto CSC, YCrCb out, Set op_656 bit
-    IIC_ADV7611_BASE_ADDR>>1, 0x03, 0x80, // 16-Bit SDR ITU-R BT.656 4:2:2 Mode 0
-    IIC_ADV7611_BASE_ADDR>>1, 0x04, 0x62, // OP_CH_SEL[2:0] = 011b - (P[15:8] Y, P[7:0] CrCb), XTAL_FREQ[1:0] = 01b (28.63636 MHz)
-    IIC_ADV7611_BASE_ADDR>>1, 0x05, 0x2C, // AV Codes on
+    {IIC_ADV7611_BASE_ADDR>>1, 0x01, 0x06}, // Prim_Mode =110b HDMI-GR
+    {IIC_ADV7611_BASE_ADDR>>1, 0x02, 0xF5}, // Auto CSC, YCrCb out, Set op_656 bit
+    {IIC_ADV7611_BASE_ADDR>>1, 0x03, 0x80}, // 16-Bit SDR ITU-R BT.656 4:2:2 Mode 0
+    {IIC_ADV7611_BASE_ADDR>>1, 0x04, 0x62}, // OP_CH_SEL[2:0] = 011b - (P[15:8] Y, P[7:0] CrCb), XTAL_FREQ[1:0] = 01b (28.63636 MHz)
+    {IIC_ADV7611_BASE_ADDR>>1, 0x05, 0x2C}, // AV Codes on
 
-    IIC_ADV7611_CP_ADDR  >>1, 0x7B, 0x05, //
+    {IIC_ADV7611_CP_ADDR  >>1, 0x7B, 0x05}, //
 
-    IIC_ADV7611_BASE_ADDR>>1, 0x0B, 0x44, // Power up part
-    IIC_ADV7611_BASE_ADDR>>1, 0x0C, 0x42, // Power up part
-    IIC_ADV7611_BASE_ADDR>>1, 0x14, 0x7F, // Max Drive Strength
-    IIC_ADV7611_BASE_ADDR>>1, 0x15, 0x80, // Disable Tristate of Pins
-    IIC_ADV7611_BASE_ADDR>>1, 0x06, 0xA1, // LLC polarity (INV_LLC_POL = 1)
-    IIC_ADV7611_BASE_ADDR>>1, 0x19, 0x80, // LLC DLL phase (delay = 0)
-    IIC_ADV7611_BASE_ADDR>>1, 0x33, 0x40, // LLC DLL enable
+    {IIC_ADV7611_BASE_ADDR>>1, 0x0B, 0x44}, // Power up part
+    {IIC_ADV7611_BASE_ADDR>>1, 0x0C, 0x42}, // Power up part
+    {IIC_ADV7611_BASE_ADDR>>1, 0x14, 0x7F}, // Max Drive Strength
+    {IIC_ADV7611_BASE_ADDR>>1, 0x15, 0x80}, // Disable Tristate of Pins
+    {IIC_ADV7611_BASE_ADDR>>1, 0x06, 0xA1}, // LLC polarity (INV_LLC_POL = 1)
+    {IIC_ADV7611_BASE_ADDR>>1, 0x19, 0x80}, // LLC DLL phase (delay = 0)
+    {IIC_ADV7611_BASE_ADDR>>1, 0x33, 0x40}, // LLC DLL enable
 
-    IIC_ADV7611_CP_ADDR  >>1, 0xBA, 0x01, // Set HDMI FreeRun
+    {IIC_ADV7611_CP_ADDR  >>1, 0xBA, 0x01}, // Set HDMI FreeRun
 
-    IIC_ADV7611_KSV_ADDR >>1, 0x40, 0x81, // Disable HDCP 1.1 features
+    {IIC_ADV7611_KSV_ADDR >>1, 0x40, 0x81}, // Disable HDCP 1.1 features
 
-    IIC_ADV7611_HDMI_ADDR>>1, 0x9B, 0x03, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0xC1, 0x01, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0xC2, 0x01, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0xC3, 0x01, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0xC4, 0x01, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0xC5, 0x01, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0xC6, 0x01, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0xC7, 0x01, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0xC8, 0x01, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0xC9, 0x01, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0xCA, 0x01, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0xCB, 0x01, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0xCC, 0x01, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0x00, 0x08, // Set HDMI Input Port A  (BG_MEAS_PORT_SEL = 001b)
-    IIC_ADV7611_HDMI_ADDR>>1, 0x02, 0x03, // Enable Ports A & B in background mode
-    IIC_ADV7611_HDMI_ADDR>>1, 0x83, 0xFC, // Enable clock terminators for port A & B
-    IIC_ADV7611_HDMI_ADDR>>1, 0x6F, 0x0C, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0x85, 0x1F, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0x87, 0x70, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0x8D, 0x04, // LFG Port A
-    IIC_ADV7611_HDMI_ADDR>>1, 0x8E, 0x1E, // HFG Port A
-    IIC_ADV7611_HDMI_ADDR>>1, 0x1A, 0x8A, // Unmute audio
-    IIC_ADV7611_HDMI_ADDR>>1, 0x57, 0xDA, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0x58, 0x01, // ADI recommended setting
-    IIC_ADV7611_HDMI_ADDR>>1, 0x75, 0x10, // DDC drive strength
-    IIC_ADV7611_HDMI_ADDR>>1, 0x90, 0x04, // LFG Port B
-    IIC_ADV7611_HDMI_ADDR>>1, 0x91, 0x1E  // HFG Port B
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x9B, 0x03}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0xC1, 0x01}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0xC2, 0x01}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0xC3, 0x01}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0xC4, 0x01}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0xC5, 0x01}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0xC6, 0x01}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0xC7, 0x01}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0xC8, 0x01}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0xC9, 0x01}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0xCA, 0x01}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0xCB, 0x01}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0xCC, 0x01}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x00, 0x08}, // Set HDMI Input Port A  (BG_MEAS_PORT_SEL = 001b)
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x02, 0x03}, // Enable Ports A & B in background mode
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x83, 0xFC}, // Enable clock terminators for port A & B
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x6F, 0x0C}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x85, 0x1F}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x87, 0x70}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x8D, 0x04}, // LFG Port A
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x8E, 0x1E}, // HFG Port A
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x1A, 0x8A}, // Unmute audio
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x57, 0xDA}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x58, 0x01}, // ADI recommended setting
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x75, 0x10}, // DDC drive strength
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x90, 0x04}, // LFG Port B
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x91, 0x1E}  // HFG Port B
 };
 
 #define IIC_HDMI_IN_SPDIF_CONFIG_LEN  2
-Xuint8 iic_hdmi_in_spdif_config[IIC_HDMI_IN_SPDIF_CONFIG_LEN][3] =
+u8 iic_hdmi_in_spdif_config[IIC_HDMI_IN_SPDIF_CONFIG_LEN][3] =
 {
     // For reference, default values are:
     //   ADV7611-HDMI[0x03] => 0x18
     //   ADV7611-HDMI[0x6E] => 0x04
-    IIC_ADV7611_HDMI_ADDR>>1, 0x03, 0x78, // Raw SPDIF Mode
-    IIC_ADV7611_HDMI_ADDR>>1, 0x6E, 0x0C  // 0x6E[3]=MUX_SPDIF_TO_I2S_ENABLE
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x03, 0x78}, // Raw SPDIF Mode
+    {IIC_ADV7611_HDMI_ADDR>>1, 0x6E, 0x0C}  // 0x6E[3]=MUX_SPDIF_TO_I2S_ENABLE
 };
 
 /******************************************************************************
@@ -818,7 +819,7 @@ Xuint8 iic_hdmi_in_spdif_config[IIC_HDMI_IN_SPDIF_CONFIG_LEN][3] =
 * @note     None.
 *
 ******************************************************************************/
-int fmc_hdmi_cam_hdmii_init2( fmc_hdmi_cam_t *pContext, Xuint32 Enable, Xuint32 edidInit, Xuint8 pEdid[256], Xuint32 llc_polarity, Xuint32 llc_delay )
+int fmc_hdmi_cam_hdmii_init2( fmc_hdmi_cam_t *pContext, u32 Enable, u32 edidInit, u8 pEdid[256], u32 llc_polarity, u32 llc_delay )
 {
     //xil_printf( "LLC polarity = %d\n\r", llc_polarity );
     //xil_printf( "   iic_hdmi_in_config[10] => { 0x%02X, 0x%02X, 0x%02X }\n\r", iic_hdmi_in_config[10][0], iic_hdmi_in_config[10][1], iic_hdmi_in_config[10][2] );
@@ -833,14 +834,15 @@ int fmc_hdmi_cam_hdmii_init2( fmc_hdmi_cam_t *pContext, Xuint32 Enable, Xuint32 
     //xil_printf( "   iic_hdmi_in_config[11] <= { 0x%02X, 0x%02X, 0x%02X }\n\r", iic_hdmi_in_config[11][0], iic_hdmi_in_config[11][1], iic_hdmi_in_config[11][2] );
 
     fmc_hdmi_cam_hdmii_init( pContext, Enable, edidInit, pEdid );
+    return 1;
 }
 
-int fmc_hdmi_cam_hdmii_init( fmc_hdmi_cam_t *pContext, Xuint32 Enable, Xuint32 edidInit, Xuint8 pEdid[256] )
+int fmc_hdmi_cam_hdmii_init( fmc_hdmi_cam_t *pContext, u32 Enable, u32 edidInit, u8 pEdid[256] )
 {
-    Xuint8 i2c_address;
-    Xuint8 i2c_data;
-    Xuint8 num_bytes;
-    Xuint32 reg;
+    u8 i2c_address;
+    u8 i2c_data;
+    u8 num_bytes;
+    u32 reg;
 
     if ( !Enable )
     {
@@ -864,12 +866,12 @@ int fmc_hdmi_cam_hdmii_init( fmc_hdmi_cam_t *pContext, Xuint32 Enable, Xuint32 e
         fmc_hdmi_cam_wait_usec(1000000);
 
 
-    #if 0
+#if 0
         //xil_printf( "I2C Initializing - Reset\n\r" );
         fmc_hdmi_cam_iic_mux( pContext, FMC_HDMI_CAM_I2C_SELECT_HDMI_IN );
         fmc_hdmi_cam_iic_config3( pContext, iic_hdmi_in_reset, IIC_HDMI_IN_RESET_LEN );
         fmc_hdmi_cam_wait_usec(1000000);
-    #endif
+#endif
 
         //xil_printf("I2C Initializing - Mapping\n\r");
         fmc_hdmi_cam_iic_mux( pContext, FMC_HDMI_CAM_I2C_SELECT_HDMI_IN );
@@ -911,11 +913,11 @@ int fmc_hdmi_cam_hdmii_init( fmc_hdmi_cam_t *pContext, Xuint32 Enable, Xuint32 e
 * @note     None.
 *
 ******************************************************************************/
-int fmc_hdmi_cam_hdmii_set_hpd( fmc_hdmi_cam_t *pContext, Xuint32 HotPlugStatus )
+int fmc_hdmi_cam_hdmii_set_hpd( fmc_hdmi_cam_t *pContext, u32 HotPlugStatus )
 {
-    Xuint8 reg_addr;
-    Xuint8 reg_data;
-    Xuint8 num_bytes;
+    u8 reg_addr;
+    u8 reg_data;
+    u8 num_bytes;
 
     fmc_hdmi_cam_iic_mux( pContext, FMC_HDMI_CAM_I2C_SELECT_IO_EXP );
 
@@ -944,11 +946,11 @@ int fmc_hdmi_cam_hdmii_set_hpd( fmc_hdmi_cam_t *pContext, Xuint32 HotPlugStatus 
 * @note     None.
 *
 ******************************************************************************/
-int fmc_hdmi_cam_hdmii_set_rst( fmc_hdmi_cam_t *pContext, Xuint32 Reset )
+int fmc_hdmi_cam_hdmii_set_rst( fmc_hdmi_cam_t *pContext, u32 Reset )
 {
-    Xuint8 reg_addr;
-    Xuint8 reg_data;
-    Xuint8 num_bytes;
+    u8 reg_addr;
+    u8 reg_data;
+    u8 num_bytes;
 
     fmc_hdmi_cam_iic_mux( pContext, FMC_HDMI_CAM_I2C_SELECT_IO_EXP );
 
@@ -977,12 +979,12 @@ int fmc_hdmi_cam_hdmii_set_rst( fmc_hdmi_cam_t *pContext, Xuint32 Reset )
 * @note     None.
 *
 ******************************************************************************/
-int fmc_hdmi_cam_hdmii_get_int( fmc_hdmi_cam_t *pContext, Xuint32 *pIntStatus )
+int fmc_hdmi_cam_hdmii_get_int( fmc_hdmi_cam_t *pContext, u32 *pIntStatus )
 {
-    Xuint8 reg_addr;
-    Xuint8 reg_data;
-    Xuint8 num_bytes;
-    Xuint32 hdmii_int;
+    u8 reg_addr;
+    u8 reg_data;
+    u8 num_bytes;
+    u32 hdmii_int;
 
     fmc_hdmi_cam_iic_mux( pContext, FMC_HDMI_CAM_I2C_SELECT_IO_EXP );
 
@@ -1002,10 +1004,10 @@ int fmc_hdmi_cam_hdmii_get_int( fmc_hdmi_cam_t *pContext, Xuint32 *pIntStatus )
 
 int fmc_hdmi_cam_hdmii_get_lock( fmc_hdmi_cam_t *pContext )
 {
-    Xuint8 reg_addr = 0x07;
-    Xuint8 reg_data;
-    Xuint8 num_bytes;
-    Xuint32 lock;
+    u8 reg_addr = 0x07;
+    u8 reg_data;
+    u8 num_bytes;
+    u32 lock;
 
     fmc_hdmi_cam_iic_mux( pContext, FMC_HDMI_CAM_I2C_SELECT_HDMI_IN );
 
@@ -1023,37 +1025,37 @@ int fmc_hdmi_cam_hdmii_get_lock( fmc_hdmi_cam_t *pContext )
 int fmc_hdmi_cam_hdmii_get_timing( fmc_hdmi_cam_t *pContext, fmc_hdmi_cam_video_timing_t *pTiming )
 {
     int i;
-    Xuint8 reg_addr;
-    Xuint8 reg_data[256];
-    Xuint8 num_bytes;
+    u8 reg_addr;
+    u8 reg_data[256];
+    u8 num_bytes;
 
-    Xuint32 IsHDMI;
-    Xuint32 IsEncrypted;
-    Xuint32 IsInterlaced;
-    Xuint32 DeepColorMode;
-    Xuint32 LineWidth;
-    Xuint32 HFrontPorch;
-    Xuint32 HSyncWidth;
-    Xuint32 HBackPorch;
-    Xuint32 HSyncPolarity;
-    Xuint32 TotalLineWidth;
-    Xuint32 Field0Height;
-    Xuint32 Field0FrontPorch;
-    Xuint32 Field0SyncWidth;
-    Xuint32 Field0BackPorch;
-    Xuint32 Field0TotalHeight;
-    Xuint32 Field1Height;
-    Xuint32 Field1FrontPorch;
-    Xuint32 Field1SyncWidth;
-    Xuint32 Field1BackPorch;
-    Xuint32 Field1TotalHeight;
-    Xuint32 VSyncPolarity;
+    u32 IsHDMI;
+    u32 IsEncrypted;
+    u32 IsInterlaced;
+    u32 DeepColorMode;
+    u32 LineWidth;
+    u32 HFrontPorch;
+    u32 HSyncWidth;
+    u32 HBackPorch;
+    u32 HSyncPolarity;
+    u32 TotalLineWidth;
+    u32 Field0Height;
+    u32 Field0FrontPorch;
+    u32 Field0SyncWidth;
+    u32 Field0BackPorch;
+    u32 Field0TotalHeight;
+    u32 Field1Height;
+    u32 Field1FrontPorch;
+    u32 Field1SyncWidth;
+    u32 Field1BackPorch;
+    u32 Field1TotalHeight;
+    u32 VSyncPolarity;
 
     fmc_hdmi_cam_iic_mux( pContext, FMC_HDMI_CAM_I2C_SELECT_HDMI_IN );
 
     for ( i = 0; i < 256; i++ )
     {
-        reg_addr = (Xuint8)i;
+        reg_addr = (u8)i;
         num_bytes = pContext->pIIC->fpIicRead( pContext->pIIC, (IIC_ADV7611_HDMI_ADDR>>1), reg_addr, &reg_data[i], 1);
     }
 
@@ -1063,23 +1065,23 @@ int fmc_hdmi_cam_hdmii_get_timing( fmc_hdmi_cam_t *pContext, fmc_hdmi_cam_video_
     IsInterlaced  = (reg_data[0x0B] >> 5) & 0x01;
     DeepColorMode = (reg_data[0x0B] >> 6) & 0x03;
     //
-    LineWidth      = ((Xuint32)(reg_data[0x07] & 0x1F) << 8) | ((Xuint32)reg_data[0x08]);
-    HFrontPorch    = ((Xuint32)(reg_data[0x20] & 0x1F) << 8) | ((Xuint32)reg_data[0x21]);
-    HSyncWidth     = ((Xuint32)(reg_data[0x22] & 0x1F) << 8) | ((Xuint32)reg_data[0x23]);
-    HBackPorch     = ((Xuint32)(reg_data[0x24] & 0x1F) << 8) | ((Xuint32)reg_data[0x25]);
-    TotalLineWidth = ((Xuint32)(reg_data[0x1E] & 0x3F) << 8) | ((Xuint32)reg_data[0x1F]);
+    LineWidth      = ((u32)(reg_data[0x07] & 0x1F) << 8) | ((u32)reg_data[0x08]);
+    HFrontPorch    = ((u32)(reg_data[0x20] & 0x1F) << 8) | ((u32)reg_data[0x21]);
+    HSyncWidth     = ((u32)(reg_data[0x22] & 0x1F) << 8) | ((u32)reg_data[0x23]);
+    HBackPorch     = ((u32)(reg_data[0x24] & 0x1F) << 8) | ((u32)reg_data[0x25]);
+    TotalLineWidth = ((u32)(reg_data[0x1E] & 0x3F) << 8) | ((u32)reg_data[0x1F]);
     HSyncPolarity  = (reg_data[0x05] >> 5) & 0x01;
     //
-    Field0Height      = ((Xuint32)(reg_data[0x09] & 0x1F) << 8) | ((Xuint32)reg_data[0x0A]);
-    Field0FrontPorch  = ((Xuint32)(reg_data[0x2A] & 0x3F) << 8) | ((Xuint32)reg_data[0x2B]);
-    Field0SyncWidth   = ((Xuint32)(reg_data[0x2E] & 0x3F) << 8) | ((Xuint32)reg_data[0x2F]);
-    Field0BackPorch   = ((Xuint32)(reg_data[0x32] & 0x3F) << 8) | ((Xuint32)reg_data[0x33]);
-    Field0TotalHeight = ((Xuint32)(reg_data[0x26] & 0x3F) << 8) | ((Xuint32)reg_data[0x27]);
-    Field1Height      = ((Xuint32)(reg_data[0x0B] & 0x1F) << 8) | ((Xuint32)reg_data[0x0C]);
-    Field1FrontPorch  = ((Xuint32)(reg_data[0x2C] & 0x3F) << 8) | ((Xuint32)reg_data[0x2D]);
-    Field1SyncWidth   = ((Xuint32)(reg_data[0x30] & 0x3F) << 8) | ((Xuint32)reg_data[0x31]);
-    Field1BackPorch   = ((Xuint32)(reg_data[0x34] & 0x3F) << 8) | ((Xuint32)reg_data[0x35]);
-    Field1TotalHeight = ((Xuint32)(reg_data[0x28] & 0x3F) << 8) | ((Xuint32)reg_data[0x29]);
+    Field0Height      = ((u32)(reg_data[0x09] & 0x1F) << 8) | ((u32)reg_data[0x0A]);
+    Field0FrontPorch  = ((u32)(reg_data[0x2A] & 0x3F) << 8) | ((u32)reg_data[0x2B]);
+    Field0SyncWidth   = ((u32)(reg_data[0x2E] & 0x3F) << 8) | ((u32)reg_data[0x2F]);
+    Field0BackPorch   = ((u32)(reg_data[0x32] & 0x3F) << 8) | ((u32)reg_data[0x33]);
+    Field0TotalHeight = ((u32)(reg_data[0x26] & 0x3F) << 8) | ((u32)reg_data[0x27]);
+    Field1Height      = ((u32)(reg_data[0x0B] & 0x1F) << 8) | ((u32)reg_data[0x0C]);
+    Field1FrontPorch  = ((u32)(reg_data[0x2C] & 0x3F) << 8) | ((u32)reg_data[0x2D]);
+    Field1SyncWidth   = ((u32)(reg_data[0x30] & 0x3F) << 8) | ((u32)reg_data[0x31]);
+    Field1BackPorch   = ((u32)(reg_data[0x34] & 0x3F) << 8) | ((u32)reg_data[0x35]);
+    Field1TotalHeight = ((u32)(reg_data[0x28] & 0x3F) << 8) | ((u32)reg_data[0x29]);
     VSyncPolarity     = (reg_data[0x05] >> 4) & 0x01;
 
     memset( pTiming, 0x00, sizeof(fmc_hdmi_cam_video_timing_t) );
@@ -1116,7 +1118,7 @@ int fmc_hdmi_cam_hdmii_get_timing( fmc_hdmi_cam_t *pContext, fmc_hdmi_cam_video_
 ////////////////////////////////////////////////////////////////////////
 
 #define IIC_HDMI_OUT_CONFIG_LEN  (37)
-Xuint8 iic_hdmi_out_config[IIC_HDMI_OUT_CONFIG_LEN][3] =
+u8 iic_hdmi_out_config[IIC_HDMI_OUT_CONFIG_LEN][3] =
 {
     //
     // Power-up the Tx (HPD must be high)
@@ -1204,7 +1206,7 @@ Xuint8 iic_hdmi_out_config[IIC_HDMI_OUT_CONFIG_LEN][3] =
 };
 
 #define IIC_HDMI_OUT_EMBEDDED_SYNC_CONFIG_LEN  (6)
-Xuint8 iic_hdmi_out_embedded_sync_config[IIC_HDMI_OUT_EMBEDDED_SYNC_CONFIG_LEN][3] =
+u8 iic_hdmi_out_embedded_sync_config[IIC_HDMI_OUT_EMBEDDED_SYNC_CONFIG_LEN][3] =
 {
     //
     // Configure for 1080p60 16-bit bus embedded syncs
@@ -1228,13 +1230,13 @@ Xuint8 iic_hdmi_out_embedded_sync_config[IIC_HDMI_OUT_EMBEDDED_SYNC_CONFIG_LEN][
 * @note     None.
 *
 ******************************************************************************/
-int fmc_hdmi_cam_hdmio_init( fmc_hdmi_cam_t *pContext, Xuint32 Enable, fmc_hdmi_cam_video_timing_t *pTiming, Xuint32 WaitForHPD )
+int fmc_hdmi_cam_hdmio_init( fmc_hdmi_cam_t *pContext, u32 Enable, fmc_hdmi_cam_video_timing_t *pTiming, u32 WaitForHPD )
 {
-    Xuint8 i2c_dev;
-    Xuint8 i2c_addr;
-    Xuint8 i2c_data;
-    Xuint8 num_bytes;
-    Xuint32 timeout;
+    u8 i2c_dev;
+    u8 i2c_addr;
+    u8 i2c_data;
+    u8 num_bytes;
+    u32 timeout;
 
     if ( !Enable )
     {
@@ -1280,15 +1282,15 @@ int fmc_hdmi_cam_hdmio_init( fmc_hdmi_cam_t *pContext, Xuint32 Enable, fmc_hdmi_
         fmc_hdmi_cam_iic_config3( pContext, iic_hdmi_out_config, IIC_HDMI_OUT_CONFIG_LEN);
 
         // Adjust Embedded Sync Generation based on specified video timing
-        iic_hdmi_out_embedded_sync_config[0][2] = (Xuint8)((pTiming->HFrontPorch >> 2) & 0xFF);
-        iic_hdmi_out_embedded_sync_config[1][2] = (Xuint8)((pTiming->HFrontPorch << 6) & 0xC0) |
-                                                    (Xuint8)((pTiming->HSyncWidth  >> 4) & 0x3F);
-        iic_hdmi_out_embedded_sync_config[2][2] = (Xuint8)((pTiming->HSyncWidth  << 4) & 0xF0) |
-                                                    (Xuint8)((pTiming->VFrontPorch >> 6) & 0x0F);
-        iic_hdmi_out_embedded_sync_config[3][2] = (Xuint8)((pTiming->VFrontPorch << 2) & 0xFC) |
-                                                    (Xuint8)((pTiming->VSyncWidth  >> 8) & 0x03);
-        iic_hdmi_out_embedded_sync_config[4][2] = (Xuint8)((pTiming->VSyncWidth  >> 0) & 0xFF);
-        iic_hdmi_out_embedded_sync_config[5][2] = 0x00; // (Xuint8)( ... pTiming->HSyncPolarity .. pTiming->VSyncPolarity ... )
+        iic_hdmi_out_embedded_sync_config[0][2] = (u8)((pTiming->HFrontPorch >> 2) & 0xFF);
+        iic_hdmi_out_embedded_sync_config[1][2] = (u8)((pTiming->HFrontPorch << 6) & 0xC0) |
+                                                    (u8)((pTiming->HSyncWidth  >> 4) & 0x3F);
+        iic_hdmi_out_embedded_sync_config[2][2] = (u8)((pTiming->HSyncWidth  << 4) & 0xF0) |
+                                                    (u8)((pTiming->VFrontPorch >> 6) & 0x0F);
+        iic_hdmi_out_embedded_sync_config[3][2] = (u8)((pTiming->VFrontPorch << 2) & 0xFC) |
+                                                    (u8)((pTiming->VSyncWidth  >> 8) & 0x03);
+        iic_hdmi_out_embedded_sync_config[4][2] = (u8)((pTiming->VSyncWidth  >> 0) & 0xFF);
+        iic_hdmi_out_embedded_sync_config[5][2] = 0x00; // (u8)( ... pTiming->HSyncPolarity .. pTiming->VSyncPolarity ... )
 
         if ( pContext->bVerbose )
         {
@@ -1354,11 +1356,11 @@ int fmc_hdmi_cam_hdmio_init( fmc_hdmi_cam_t *pContext, Xuint32 Enable, fmc_hdmi_
 * @note     None.
 *
 ******************************************************************************/
-int fmc_hdmi_cam_hdmio_set_pd( fmc_hdmi_cam_t *pContext, Xuint32 PowerDown )
+int fmc_hdmi_cam_hdmio_set_pd( fmc_hdmi_cam_t *pContext, u32 PowerDown )
 {
-    Xuint8 reg_addr;
-    Xuint8 reg_data;
-    Xuint8 num_bytes;
+    u8 reg_addr;
+    u8 reg_data;
+    u8 num_bytes;
 
     fmc_hdmi_cam_iic_mux( pContext, FMC_HDMI_CAM_I2C_SELECT_IO_EXP );
 
@@ -1387,11 +1389,11 @@ int fmc_hdmi_cam_hdmio_set_pd( fmc_hdmi_cam_t *pContext, Xuint32 PowerDown )
 * @note     None.
 *
 ******************************************************************************/
-int fmc_hdmi_cam_hdmio_get_hpd( fmc_hdmi_cam_t *pContext, Xuint32 *pHotPlugDetect )
+int fmc_hdmi_cam_hdmio_get_hpd( fmc_hdmi_cam_t *pContext, u32 *pHotPlugDetect )
 {
-    Xuint8 reg_addr;
-    Xuint8 reg_data;
-    Xuint8 num_bytes;
+    u8 reg_addr;
+    u8 reg_data;
+    u8 num_bytes;
     int hdmio_hpd;
 
     fmc_hdmi_cam_iic_mux( pContext, FMC_HDMI_CAM_I2C_SELECT_IO_EXP );
@@ -1426,9 +1428,9 @@ int fmc_hdmi_cam_hdmio_get_hpd( fmc_hdmi_cam_t *pContext, Xuint32 *pHotPlugDetec
 * @note     None.
 *
 ******************************************************************************/
-int fmc_hdmi_cam_hdmii_read_edid( fmc_hdmi_cam_t *pContext, Xuint8 pData[256] )
+int fmc_hdmi_cam_hdmii_read_edid( fmc_hdmi_cam_t *pContext, u8 pData[256] )
 {
-    Xuint8 num_bytes = 0;
+    u8 num_bytes = 0;
     int    idx;
 
     // Mux Selection
@@ -1454,10 +1456,10 @@ int fmc_hdmi_cam_hdmii_read_edid( fmc_hdmi_cam_t *pContext, Xuint8 pData[256] )
 * @note     None.
 *
 ******************************************************************************/
-int fmc_hdmi_cam_hdmii_write_edid( fmc_hdmi_cam_t *pContext, Xuint8 pData[256] )
+int fmc_hdmi_cam_hdmii_write_edid( fmc_hdmi_cam_t *pContext, u8 pData[256] )
 {
-    Xuint8 num_bytes = 0;
-    //Xuint8 dummy_data;
+    u8 num_bytes = 0;
+    //u8 dummy_data;
     int    idx;
 
     // Mux Selection
@@ -1488,9 +1490,9 @@ int fmc_hdmi_cam_hdmii_write_edid( fmc_hdmi_cam_t *pContext, Xuint8 pData[256] )
 * @note     None.
 *
 ******************************************************************************/
-int fmc_hdmi_cam_hdmio_read_edid( fmc_hdmi_cam_t *pContext, Xuint8 pData[256] )
+int fmc_hdmi_cam_hdmio_read_edid( fmc_hdmi_cam_t *pContext, u8 pData[256] )
 {
-    Xuint8 num_bytes = 0;
+    u8 num_bytes = 0;
     int    idx;
 
     // Mux Selection
@@ -1522,11 +1524,10 @@ int fmc_hdmi_cam_hdmio_read_edid( fmc_hdmi_cam_t *pContext, Xuint8 pData[256] )
 extern void usleep(unsigned int useconds);
 void fmc_hdmi_cam_wait_usec(unsigned int delay)
 {
-    #if SIM
+#if SIM
     // no delay for simulation
     return;
-    #endif
+#endif
 
     usleep(delay);
 }
-

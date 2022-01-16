@@ -54,14 +54,15 @@
 
 #include <stdio.h>
 
-#include "xbasic_types.h"
+//#include "xbasic_types.h"
+#include "xil_types.h"
 
 #define FMC_IIC_CONTEXT_BUFFER_SIZE 32
 
 struct struct_fmc_iic_t
 {
     // software library version
-    Xuint32 uVersion;
+    u32 uVersion;
 
     // instantiation-specific name
     char szName[32];
@@ -73,33 +74,33 @@ struct struct_fmc_iic_t
     unsigned char ContextBuffer[FMC_IIC_CONTEXT_BUFFER_SIZE];
 
     // function pointers to implementation-specific code
-    int (*fpGpoRead )(struct struct_fmc_iic_t *, Xuint32 *pGpoData );
-    int (*fpGpoWrite)(struct struct_fmc_iic_t *, Xuint32 GpoData );
-    int (*fpIicRead )(struct struct_fmc_iic_t *, Xuint8 ChipAddress,
-                                                 Xuint8 RegAddress,
-                                                 Xuint8 *pBuffer,
-                                                 Xuint8 ByteCount );
-    int (*fpIicWrite)(struct struct_fmc_iic_t *, Xuint8 ChipAddress,
-                                                 Xuint8 RegAddress,
-                                                 Xuint8 *pBuffer,
-                                                 Xuint8 ByteCount );
-    int (*fpIicERead )(struct struct_fmc_iic_t *, Xuint8 ChipAddress,
-                                                  Xuint16 RegAddress,
-                                                  Xuint8 *pBuffer,
-                                                  Xuint8 ByteCount );
-    int (*fpIicEWrite)(struct struct_fmc_iic_t *, Xuint8 ChipAddress,
-                                                  Xuint16 RegAddress,
-                                                  Xuint8 *pBuffer,
-                                                  Xuint8 ByteCount );
+    int (*fpGpoRead )(struct struct_fmc_iic_t *, u32 *pGpoData );
+    int (*fpGpoWrite)(struct struct_fmc_iic_t *, u32 GpoData );
+    int (*fpIicRead )(struct struct_fmc_iic_t *, u8 ChipAddress,
+                                                 u8 RegAddress,
+                                                 u8 *pBuffer,
+                                                 u8 ByteCount );
+    int (*fpIicWrite)(struct struct_fmc_iic_t *, u8 ChipAddress,
+                                                 u8 RegAddress,
+                                                 u8 *pBuffer,
+                                                 u8 ByteCount );
+    int (*fpIicERead )(struct struct_fmc_iic_t *, u8 ChipAddress,
+                                                  u16 RegAddress,
+                                                  u8 *pBuffer,
+                                                  u8 ByteCount );
+    int (*fpIicEWrite)(struct struct_fmc_iic_t *, u8 ChipAddress,
+                                                  u16 RegAddress,
+                                                  u8 *pBuffer,
+                                                  u8 ByteCount );
 };
 typedef struct struct_fmc_iic_t fmc_iic_t;
 
 // Initialization routine for XPS_IIC implementation
-int fmc_iic_axi_init( fmc_iic_t *pIIC, char szName[], Xuint32 CoreAddress );
+int fmc_iic_axi_init( fmc_iic_t *pIIC, char szName[], u32 CoreAddress );
 // define for backward compatibility with previous _xps_ name
 #define fmc_iic_xps_init fmc_iic_axi_init
 
 // Initialization routine for SG_I2C_CONTROLLER_PLBW implementation
-int fmc_iic_sg_init( fmc_iic_t *pIIC, char szName[], void *pConfig, Xuint32 delay );
+int fmc_iic_sg_init( fmc_iic_t *pIIC, char szName[], void *pConfig, u32 delay );
 
 #endif // __FMC_IIC_H__

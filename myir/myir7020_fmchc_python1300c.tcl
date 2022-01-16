@@ -2248,9 +2248,6 @@ proc create_root_design { parentCell } {
 create_root_design ""
 
 
-
-
-
 ####### end board specific block diagram #######s
 
 # Add Project source files
@@ -2289,13 +2286,18 @@ if {![file exists ${projects_folder}/${project}.runs/impl_1/${project}_wrapper.b
 # create xsa file
 set hw_name  "fmchc_python1300c_hw"
 set hw_file ${projects_folder}/${hw_name}.xsa
-write_hw_platform -fixed -include_bit -force -file ${hw_file}
+if {![file exists ${hw_file}]} {
+    puts "***** Creating XSA file ..."
+    write_hw_platform -fixed -include_bit -force -file ${hw_file}
+    puts "***** Done creating XSA file ..."
+} else {
+    puts "**** XSA file already done ..."
+}
 
 ####### make #######
 
 if {[string match -nocase "no" $jtag]} {
     puts "***** Building Binary..."
-    #source ./bin_helper.tcl -notrace
 
     # if using for development, can set this to yes to just use the script
     # to build your project in Vivado
@@ -2314,22 +2316,12 @@ if {[string match -nocase "no" $jtag]} {
 
     # attempt to build SDK portion
     if {[string match -nocase "yes" $sdk]} {
-        pwd
         puts "Attempting to Build SDK..."
-        cd ${projects_folder}
         # Change starting with 2018.2 (Ultra96v2 validation test, Nov 2018) to use xsct instead of xsdk
         # https://www.xilinx.com/html_docs/xilinx2018_2/SDK_Doc/xsct/use_cases/xsct_howtoruntclscriptfiles.html
         # added the Board variable so it could be used when needed - see uz_petalinux SDK build script for
         # how to use this
-        file copy -force ${repo_folder}/myir/$project\_sdk.tcl ./
-        exec >@stdout 2>@stderr xsct $project\_sdk.tcl -notrace ${repo_folder} $board $vivado_ver $hw_file  ${hw_name}
-        ## Build a BOOT.bin file only if a BIF file exists for the project.
-        #if {[file exists ${repo_folder}/myir/$project\_sd.bif]} {
-        #    file copy -force ${repo_folder}/myir/$project\_sd.bif ./
-        #    puts "Generating BOOT.BIN..."
-        #    exec >@stdout 2>@stderr bootgen -arch $dev_arch -image $project\_sd.bif -w -o BOOT.bin
-        #}
-        cd ${scripts_folder}
+        exec >@stdout 2>@stderr xsct ${repo_folder}/myir/${project}_sdk.tcl -notrace ${repo_folder} ${projects_folder} $board $vivado_ver $hw_file  ${hw_name}
     }
 
     # run Tagging script

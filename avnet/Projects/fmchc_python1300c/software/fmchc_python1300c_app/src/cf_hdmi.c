@@ -173,6 +173,7 @@ void InitHdmiVideoPcore(unsigned short horizontalActiveTime,
             unsigned short verticalSyncOffset,
             unsigned short verticalSyncPulseWidth)
 {
+#if 0
     unsigned short horizontalCount	   = 0;
     unsigned short verticalCount	   = 0;
     unsigned short horizontalBackPorch = 0;
@@ -255,6 +256,7 @@ void InitHdmiVideoPcore(unsigned short horizontalActiveTime,
         (horizontalActiveTime*4)); // h size
     Xil_Out32((VDMA_BASEADDR + AXI_VDMA_REG_V_SIZE),
         verticalActiveTime); // v size
+#endif
 #endif
 #endif
 }

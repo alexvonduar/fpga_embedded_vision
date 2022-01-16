@@ -359,7 +359,7 @@ int
 transfer_avnet_console_serial_data()
 {
     char inchar;
-    int input;
+    //int input;
 
 #if defined(LINUX_CODE)
     if (( input = getchar() ) != EOF )

@@ -90,30 +90,30 @@ typedef struct {
     fmc_hdmi_cam_t *pfmc_hdmi_cam;
     onsemi_python_t *ppython_receiver;
 
-    Xuint32 hdmii_locked;
-    Xuint32 hdmii_width;
-    Xuint32 hdmii_height;
+    u32 hdmii_locked;
+    u32 hdmii_width;
+    u32 hdmii_height;
     fmc_hdmi_cam_video_timing_t hdmii_timing;
 
-    Xuint32 hdmio_width;
-    Xuint32 hdmio_height;
+    u32 hdmio_width;
+    u32 hdmio_height;
     fmc_hdmi_cam_video_timing_t hdmio_timing;
 
     // general commands
     int bVerbose;
 
     // fmc-hami-cam commands
-    Xuint32 adv7611_llc_polarity;
-    Xuint32 adv7611_llc_delay;
+    u32 adv7611_llc_polarity;
+    u32 adv7611_llc_delay;
 
     // cam commands
-    Xuint32 cam_aec;
-    Xuint32 cam_again;
-    Xuint32 cam_dgain;
-    Xuint32 cam_exposure;
+    unsigned cam_aec;
+    unsigned cam_again;
+    unsigned cam_dgain;
+    unsigned cam_exposure;
 
     // video ip commands
-    Xuint32 cam_bayer;
+    u32 cam_bayer;
 
     // start commands
     int cam_enable;
@@ -123,7 +123,7 @@ typedef struct {
 
 } demo_t;
 
-extern Xuint8 fmc_hdmi_cam_hdmii_edid_content[256];
+extern u8 fmc_hdmi_cam_hdmii_edid_content[256];
 
 int demo_init( demo_t *pdemo );
 void demo_hdmi_out_status( demo_t * pdemo );
@@ -133,6 +133,5 @@ int demo_init_frame_buffer( demo_t *pdemo );
 int demo_stop_frame_buffer( demo_t *pdemo );
 int demo_start_frame_buffer( demo_t *pdemo );
 int demo_set_video_mixer(demo_t * pdemo);
-
 
 #endif // _DEMO_H_

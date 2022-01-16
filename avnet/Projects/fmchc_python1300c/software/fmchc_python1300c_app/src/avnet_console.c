@@ -55,7 +55,7 @@
 #include <stdarg.h>
 
 // Located in: microblaze_0/include/
-#include "xbasic_types.h"
+//#include "xbasic_types.h"
 #include "xparameters.h"
 #include "xstatus.h"
 
@@ -458,7 +458,7 @@ void avnet_console_verbose_command( avnet_console_t *pConsole, int cargc, char *
 
 void avnet_console_delay_command( avnet_console_t *pConsole, int cargc, char ** cargv )
 {
-    Xuint32 delay;
+    unsigned delay;
 
     int bDispSyntax = 0;
 
@@ -507,13 +507,13 @@ void avnet_console_delay_command( avnet_console_t *pConsole, int cargc, char ** 
 
 }
 
-void avnet_console_mem_command( avnet_console_t *pConsole, int cargc, char ** cargv, Xuint32 base_address )
+void avnet_console_mem_command( avnet_console_t *pConsole, int cargc, char ** cargv, uint32_t base_address )
 {
-    Xuint32 *pMemory;
+    uint32_t *pMemory;
 
-    Xuint32 address, address2;
-    Xuint32 data, data2;
-    Xuint32 mask;
+    unsigned address, address2;
+    unsigned data, data2;
+    unsigned mask;
 
     int bDispSyntax = 0;
 
@@ -540,7 +540,7 @@ void avnet_console_mem_command( avnet_console_t *pConsole, int cargc, char ** ca
                 {
                     pConsole->io_hprintf( pConsole->io_handle, "\taddress = 0x%08X\n\r", address);
                 }
-                pMemory = (Xuint32 *)(base_address + address);
+                pMemory = (uint32_t *)(base_address + address);
                 data = *pMemory;
                 pConsole->io_hprintf( pConsole->io_handle, "\t0x%08X => 0x%08X\n\r", pMemory, data );
             }
@@ -560,7 +560,7 @@ void avnet_console_mem_command( avnet_console_t *pConsole, int cargc, char ** ca
                     pConsole->io_hprintf( pConsole->io_handle, "\taddress = 0x%08X\n\r", address);
                     pConsole->io_hprintf( pConsole->io_handle, "\tdata = 0x%08X\n\r", data);
                 }
-                pMemory = (Xuint32 *)(base_address + address);
+                pMemory = (uint32_t *)(base_address + address);
                 *pMemory = data;
                 pConsole->io_hprintf( pConsole->io_handle, "\t0x%08X <= 0x%08X\n\r", pMemory, data );
             }
@@ -582,7 +582,7 @@ void avnet_console_mem_command( avnet_console_t *pConsole, int cargc, char ** ca
                     pConsole->io_hprintf( pConsole->io_handle, "\tdata = 0x%08X\n\r", data);
                     pConsole->io_hprintf( pConsole->io_handle, "\tmask = 0x%08X\n\r", mask);
                 }
-                pMemory = (Xuint32 *)(base_address + address);
+                pMemory = (uint32_t *)(base_address + address);
                 do
                 {
                     data2 = *pMemory;
@@ -608,7 +608,7 @@ void avnet_console_mem_command( avnet_console_t *pConsole, int cargc, char ** ca
                     pConsole->io_hprintf( pConsole->io_handle, "\tdata = 0x%08X\n\r", data);
                     pConsole->io_hprintf( pConsole->io_handle, "\tmask = 0x%08X\n\r", mask);
                 }
-                pMemory = (Xuint32 *)(base_address + address);
+                pMemory = (uint32_t *)(base_address + address);
                 // Read
                 data2 = *pMemory;
                 pConsole->io_hprintf( pConsole->io_handle, "\t0x%08X => 0x%08X\n\r", pMemory, data2 );
@@ -637,7 +637,7 @@ void avnet_console_mem_command( avnet_console_t *pConsole, int cargc, char ** ca
                 }
                 for ( ; address <= address2; address += 4 )
                 {
-                    pMemory = (Xuint32 *)(base_address + address);
+                    pMemory = (uint32_t *)(base_address + address);
                     data = *pMemory;
                     pConsole->io_hprintf( pConsole->io_handle, "\t0x%08X => 0x%08X\n\r", pMemory, data );
                 }
@@ -660,11 +660,11 @@ void avnet_console_mem_command( avnet_console_t *pConsole, int cargc, char ** ca
 
 void avnet_console_iic_command( avnet_console_t *pConsole, int cargc, char ** cargv, fmc_iic_t *pIIC )
 {
-    Xuint32 tmp;
-    Xuint8 device;
-    Xuint8 address, address2;
-    Xuint8 data, data2;
-    Xuint8 mask;
+    unsigned tmp;
+    u8 device;
+    u8 address, address2;
+    u8 data, data2;
+    u8 mask;
     int num_bytes;
 
     int bDispSyntax = 0;
@@ -681,18 +681,18 @@ void avnet_console_iic_command( avnet_console_t *pConsole, int cargc, char ** ca
     {
         if ( strcmp( cargv[1], "scan") == 0 )
         {
-            Xuint8 dev;
+            u8 dev;
             address = 0x00;
             pConsole->io_hprintf( pConsole->io_handle, "\tScanning for I2C devices ...\n\r" );
             for ( dev = 1; dev < 128; dev++ )
             {
-            device = (dev<<1);
-            num_bytes = pIIC->fpIicRead( pIIC, (device>>1), address, &data, 1 );
-            if ( num_bytes > 0 )
-            {
-                pConsole->io_hprintf( pConsole->io_handle, "\t\t0x%02X\n\r", device );
+                device = (dev<<1);
+                num_bytes = pIIC->fpIicRead( pIIC, (device>>1), address, &data, 1 );
+                if ( num_bytes > 0 )
+                {
+                    pConsole->io_hprintf( pConsole->io_handle, "\t\t0x%02X\n\r", device );
+                }
             }
-        }
         }
         else if ( strcmp( cargv[1], "read") == 0 )
         {
@@ -702,8 +702,8 @@ void avnet_console_iic_command( avnet_console_t *pConsole, int cargc, char ** ca
         }
         else
         {
-                scanhex(cargv[2],&tmp); device = (Xuint8)tmp;
-            scanhex(cargv[3],&tmp); address = (Xuint8)tmp;
+            scanhex(cargv[2],&tmp); device = (u8)tmp;
+            scanhex(cargv[3],&tmp); address = (u8)tmp;
             if ( pConsole->verbose )
             {
                 pConsole->io_hprintf( pConsole->io_handle, "\tdevice = 0x%02X\n\r", device);
@@ -721,12 +721,12 @@ void avnet_console_iic_command( avnet_console_t *pConsole, int cargc, char ** ca
             }
             else
             {
-                scanhex(cargv[2],&tmp); device = (Xuint8)tmp;
-                scanhex(cargv[3],&tmp); address = (Xuint8)tmp;
-                scanhex(cargv[4],&tmp); data = (Xuint8)tmp;
+                scanhex(cargv[2],&tmp); device = (u8)tmp;
+                scanhex(cargv[3],&tmp); address = (u8)tmp;
+                scanhex(cargv[4],&tmp); data = (u8)tmp;
             if ( pConsole->verbose )
             {
-                    pConsole->io_hprintf( pConsole->io_handle, "\tdevice = 0x%02X\n\r", device);
+                pConsole->io_hprintf( pConsole->io_handle, "\tdevice = 0x%02X\n\r", device);
                 pConsole->io_hprintf( pConsole->io_handle, "\taddress = 0x%02X\n\r", address);
                 pConsole->io_hprintf( pConsole->io_handle, "\tdata = 0x%02X\n\r", data);
             }
@@ -742,20 +742,20 @@ void avnet_console_iic_command( avnet_console_t *pConsole, int cargc, char ** ca
             }
             else
             {
-                scanhex(cargv[2],&tmp); device = (Xuint8)tmp;
-                scanhex(cargv[3],&tmp); address = (Xuint8)tmp;
-                scanhex(cargv[4],&tmp); data = (Xuint8)tmp;
-            scanhex(cargv[5],&tmp); mask = (Xuint8)tmp;
+                scanhex(cargv[2],&tmp); device = (u8)tmp;
+                scanhex(cargv[3],&tmp); address = (u8)tmp;
+                scanhex(cargv[4],&tmp); data = (u8)tmp;
+            scanhex(cargv[5],&tmp); mask = (u8)tmp;
             if ( pConsole->verbose )
             {
-                    pConsole->io_hprintf( pConsole->io_handle, "\tdevice = 0x%02X\n\r", device);
+                pConsole->io_hprintf( pConsole->io_handle, "\tdevice = 0x%02X\n\r", device);
                 pConsole->io_hprintf( pConsole->io_handle, "\taddress = 0x%02X\n\r", address);
                 pConsole->io_hprintf( pConsole->io_handle, "\tdata = 0x%02X\n\r", data);
                 pConsole->io_hprintf( pConsole->io_handle, "\tmask = 0x%02X\n\r", mask);
             }
             do
             {
-                    num_bytes = pIIC->fpIicRead( pIIC, (device>>1), address, &data2, 1 );
+                num_bytes = pIIC->fpIicRead( pIIC, (device>>1), address, &data2, 1 );
                 pConsole->io_hprintf( pConsole->io_handle, "\t0x%02X[0x%02X] => 0x%02X (polling for 0x%02X & 0x%02X)\n\r", device, address, data2, data, mask );
             }
             while ( data != (data2 & mask) );
@@ -765,14 +765,14 @@ void avnet_console_iic_command( avnet_console_t *pConsole, int cargc, char ** ca
         {
             if ( cargc < 6 )
             {
-            bDispSyntax = 1;
+                bDispSyntax = 1;
             }
             else
             {
-                scanhex(cargv[2],&tmp); device = (Xuint8)tmp;
-                scanhex(cargv[3],&tmp); address = (Xuint8)tmp;
-                scanhex(cargv[4],&tmp); data = (Xuint8)tmp;
-                scanhex(cargv[5],&tmp); mask = (Xuint8)tmp;
+                scanhex(cargv[2],&tmp); device = (u8)tmp;
+                scanhex(cargv[3],&tmp); address = (u8)tmp;
+                scanhex(cargv[4],&tmp); data = (u8)tmp;
+                scanhex(cargv[5],&tmp); mask = (u8)tmp;
                 if ( pConsole->verbose )
                 {
                     pConsole->io_hprintf( pConsole->io_handle, "\tdevice = 0x%02X\n\r", device);
@@ -780,44 +780,44 @@ void avnet_console_iic_command( avnet_console_t *pConsole, int cargc, char ** ca
                     pConsole->io_hprintf( pConsole->io_handle, "\tdata = 0x%02X\n\r", data);
                     pConsole->io_hprintf( pConsole->io_handle, "\tmask = 0x%02X\n\r", mask);
                 }
-            // Read
+                // Read
                 num_bytes = pIIC->fpIicRead( pIIC, (device>>1), address, &data2, 1 );
-            pConsole->io_hprintf( pConsole->io_handle, "\t0x%02X[0x%02X] => 0x%02X\n\r", device, address, data2 );
-            // Modify
-            data2 &= ~mask;
-            data2 |=  data;
-            // Write
+                pConsole->io_hprintf( pConsole->io_handle, "\t0x%02X[0x%02X] => 0x%02X\n\r", device, address, data2 );
+                // Modify
+                data2 &= ~mask;
+                data2 |=  data;
+                // Write
                 num_bytes = pIIC->fpIicWrite( pIIC, (device>>1), address, &data2, 1 );
-            pConsole->io_hprintf( pConsole->io_handle, "\t0x%02X[0x%02X] <= 0x%02X\n\r", device, address, data2 );
+                pConsole->io_hprintf( pConsole->io_handle, "\t0x%02X[0x%02X] <= 0x%02X\n\r", device, address, data2 );
             }
         }
         else if ( strcmp( cargv[1], "dump") == 0 )
         {
             if ( cargc < 5 )
             {
-            bDispSyntax = 1;
+                bDispSyntax = 1;
             }
             else
             {
-                scanhex(cargv[2],&tmp); device = (Xuint8)tmp;
-                scanhex(cargv[3],&tmp); address = (Xuint8)tmp;
-                scanhex(cargv[4],&tmp); address2 = (Xuint8)tmp;
+                scanhex(cargv[2],&tmp); device = (u8)tmp;
+                scanhex(cargv[3],&tmp); address = (u8)tmp;
+                scanhex(cargv[4],&tmp); address2 = (u8)tmp;
                 if ( pConsole->verbose )
                 {
                     pConsole->io_hprintf( pConsole->io_handle, "\tdevice = 0x%02X\n\r", device);
                     pConsole->io_hprintf( pConsole->io_handle, "\taddress(start) = 0x%02X\n\r", address);
                     pConsole->io_hprintf( pConsole->io_handle, "\taddress( end ) = 0x%02X\n\r", address2);
                 }
-            for ( ; address <= address2; address += 1 )
-            {
+                for ( ; address <= address2; address += 1 )
+                {
                     num_bytes = pIIC->fpIicRead( pIIC, (device>>1), address, &data, 1 );
-                pConsole->io_hprintf( pConsole->io_handle, "\t0x%02X[0x%02X] => 0x%02X\n\r", device, address, data );
-            }
+                    pConsole->io_hprintf( pConsole->io_handle, "\t0x%02X[0x%02X] => 0x%02X\n\r", device, address, data );
+                }
             }
         }
         else if ( strcmp( cargv[1], "gpio") == 0 )
         {
-            Xuint32 gpio;
+            unsigned gpio;
             if ( cargc < 3 )
             {
                 num_bytes = pIIC->fpGpoRead( pIIC, &gpio );
@@ -858,9 +858,9 @@ void avnet_console_iic_command( avnet_console_t *pConsole, int cargc, char ** ca
 void avnet_console_adv7611_command( avnet_console_t *pConsole, int cargc, char ** cargv )
 {
     int bDispSyntax = 0;
-    Xuint32 llc_polarity;
-    Xuint32 llc_delay;
-    int i;
+    unsigned llc_polarity;
+    unsigned llc_delay;
+    //int i;
 
     if ( cargc > 1 && !strcmp(cargv[1],"help") )
     {
@@ -904,161 +904,161 @@ void avnet_console_adv7611_command( avnet_console_t *pConsole, int cargc, char *
 #define ADV7511_CSC_CONFIG_LEN  (24)
 
 // ADV7511 Default Values
-Xuint8 adv7511_csc_config_00[ADV7511_CSC_CONFIG_LEN][3] =
+u8 adv7511_csc_config_00[ADV7511_CSC_CONFIG_LEN][3] =
 {
-    IIC_ADV7511_BASE_ADDR>>1, 0x18, 0xC6,
-    IIC_ADV7511_BASE_ADDR>>1, 0x19, 0x62,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1A, 0x04,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1B, 0xA8,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1C, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1D, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1E, 0x1C,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1F, 0x84,
-    IIC_ADV7511_BASE_ADDR>>1, 0x20, 0x1C,
-    IIC_ADV7511_BASE_ADDR>>1, 0x21, 0xBF,
-    IIC_ADV7511_BASE_ADDR>>1, 0x22, 0x04,
-    IIC_ADV7511_BASE_ADDR>>1, 0x23, 0xA8,
-    IIC_ADV7511_BASE_ADDR>>1, 0x24, 0x1E,
-    IIC_ADV7511_BASE_ADDR>>1, 0x25, 0x70,
-    IIC_ADV7511_BASE_ADDR>>1, 0x26, 0x02,
-    IIC_ADV7511_BASE_ADDR>>1, 0x27, 0x1E,
-    IIC_ADV7511_BASE_ADDR>>1, 0x28, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x29, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2A, 0x04,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2B, 0xA8,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2C, 0x08,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2D, 0x12,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2E, 0x1B,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2F, 0xAC
+    {IIC_ADV7511_BASE_ADDR>>1, 0x18, 0xC6},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x19, 0x62},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1A, 0x04},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1B, 0xA8},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1C, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1D, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1E, 0x1C},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1F, 0x84},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x20, 0x1C},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x21, 0xBF},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x22, 0x04},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x23, 0xA8},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x24, 0x1E},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x25, 0x70},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x26, 0x02},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x27, 0x1E},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x28, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x29, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2A, 0x04},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2B, 0xA8},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2C, 0x08},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2D, 0x12},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2E, 0x1B},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2F, 0xAC}
 };
 
 // HDTV YCbCr (16to235) to RGB (16to235)
-Xuint8 adv7511_csc_config_01[ADV7511_CSC_CONFIG_LEN][3] =
+u8 adv7511_csc_config_01[ADV7511_CSC_CONFIG_LEN][3] =
 {
-    IIC_ADV7511_BASE_ADDR>>1, 0x18, 0xAC,
-    IIC_ADV7511_BASE_ADDR>>1, 0x19, 0x53,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1A, 0x08,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1B, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1C, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1D, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1E, 0x19,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1F, 0xD6,
-    IIC_ADV7511_BASE_ADDR>>1, 0x20, 0x1C,
-    IIC_ADV7511_BASE_ADDR>>1, 0x21, 0x56,
-    IIC_ADV7511_BASE_ADDR>>1, 0x22, 0x08,
-    IIC_ADV7511_BASE_ADDR>>1, 0x23, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x24, 0x1E,
-    IIC_ADV7511_BASE_ADDR>>1, 0x25, 0x88,
-    IIC_ADV7511_BASE_ADDR>>1, 0x26, 0x02,
-    IIC_ADV7511_BASE_ADDR>>1, 0x27, 0x91,
-    IIC_ADV7511_BASE_ADDR>>1, 0x28, 0x1F,
-    IIC_ADV7511_BASE_ADDR>>1, 0x29, 0xFF,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2A, 0x08,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2B, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2C, 0x0E,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2D, 0x85,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2E, 0x18,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2F, 0xBE
+    {IIC_ADV7511_BASE_ADDR>>1, 0x18, 0xAC},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x19, 0x53},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1A, 0x08},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1B, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1C, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1D, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1E, 0x19},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1F, 0xD6},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x20, 0x1C},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x21, 0x56},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x22, 0x08},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x23, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x24, 0x1E},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x25, 0x88},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x26, 0x02},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x27, 0x91},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x28, 0x1F},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x29, 0xFF},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2A, 0x08},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2B, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2C, 0x0E},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2D, 0x85},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2E, 0x18},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2F, 0xBE}
 };
 
 // HDTV YCbCr (16to235) to RGB (0to255)
-Xuint8 adv7511_csc_config_02[ADV7511_CSC_CONFIG_LEN][3] =
+u8 adv7511_csc_config_02[ADV7511_CSC_CONFIG_LEN][3] =
 {
-    IIC_ADV7511_BASE_ADDR>>1, 0x18, 0xE7,
-    IIC_ADV7511_BASE_ADDR>>1, 0x19, 0x34,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1A, 0x04,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1B, 0xAD,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1C, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1D, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1E, 0x1C,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1F, 0x1B,
-    IIC_ADV7511_BASE_ADDR>>1, 0x20, 0x1D,
-    IIC_ADV7511_BASE_ADDR>>1, 0x21, 0xDC,
-    IIC_ADV7511_BASE_ADDR>>1, 0x22, 0x04,
-    IIC_ADV7511_BASE_ADDR>>1, 0x23, 0xAD,
-    IIC_ADV7511_BASE_ADDR>>1, 0x24, 0x1F,
-    IIC_ADV7511_BASE_ADDR>>1, 0x25, 0x24,
-    IIC_ADV7511_BASE_ADDR>>1, 0x26, 0x01,
-    IIC_ADV7511_BASE_ADDR>>1, 0x27, 0x35,
-    IIC_ADV7511_BASE_ADDR>>1, 0x28, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x29, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2A, 0x04,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2B, 0xAD,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2C, 0x08,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2D, 0x7C,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2E, 0x1B,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2F, 0x77
+    {IIC_ADV7511_BASE_ADDR>>1, 0x18, 0xE7},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x19, 0x34},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1A, 0x04},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1B, 0xAD},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1C, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1D, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1E, 0x1C},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1F, 0x1B},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x20, 0x1D},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x21, 0xDC},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x22, 0x04},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x23, 0xAD},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x24, 0x1F},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x25, 0x24},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x26, 0x01},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x27, 0x35},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x28, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x29, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2A, 0x04},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2B, 0xAD},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2C, 0x08},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2D, 0x7C},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2E, 0x1B},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2F, 0x77}
 };
 
 // SDTV YCbCr (16to235) to RGB (16to235)
-Xuint8 adv7511_csc_config_03[ADV7511_CSC_CONFIG_LEN][3] =
+u8 adv7511_csc_config_03[ADV7511_CSC_CONFIG_LEN][3] =
 {
-    IIC_ADV7511_BASE_ADDR>>1, 0x18, 0xAA,
-    IIC_ADV7511_BASE_ADDR>>1, 0x19, 0xF8,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1A, 0x08,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1B, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1C, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1D, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1E, 0x1A,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1F, 0x84,
-    IIC_ADV7511_BASE_ADDR>>1, 0x20, 0x1A,
-    IIC_ADV7511_BASE_ADDR>>1, 0x21, 0x6A,
-    IIC_ADV7511_BASE_ADDR>>1, 0x22, 0x08,
-    IIC_ADV7511_BASE_ADDR>>1, 0x23, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x24, 0x1D,
-    IIC_ADV7511_BASE_ADDR>>1, 0x25, 0x50,
-    IIC_ADV7511_BASE_ADDR>>1, 0x26, 0x04,
-    IIC_ADV7511_BASE_ADDR>>1, 0x27, 0x23,
-    IIC_ADV7511_BASE_ADDR>>1, 0x28, 0x1F,
-    IIC_ADV7511_BASE_ADDR>>1, 0x29, 0xFC,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2A, 0x08,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2B, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2C, 0x0D,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2D, 0xDE,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2E, 0x19,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2F, 0x13
+    {IIC_ADV7511_BASE_ADDR>>1, 0x18, 0xAA},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x19, 0xF8},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1A, 0x08},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1B, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1C, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1D, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1E, 0x1A},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1F, 0x84},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x20, 0x1A},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x21, 0x6A},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x22, 0x08},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x23, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x24, 0x1D},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x25, 0x50},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x26, 0x04},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x27, 0x23},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x28, 0x1F},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x29, 0xFC},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2A, 0x08},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2B, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2C, 0x0D},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2D, 0xDE},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2E, 0x19},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2F, 0x13}
 };
 
 // SDTV YCbCr (16to235) to RGB (0to255)
-Xuint8 adv7511_csc_config_04[ADV7511_CSC_CONFIG_LEN][3] =
+u8 adv7511_csc_config_04[ADV7511_CSC_CONFIG_LEN][3] =
 {
-    IIC_ADV7511_BASE_ADDR>>1, 0x18, 0xE6,
-    IIC_ADV7511_BASE_ADDR>>1, 0x19, 0x69,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1A, 0x04,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1B, 0xAC,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1C, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1D, 0x00,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1E, 0x1C,
-    IIC_ADV7511_BASE_ADDR>>1, 0x1F, 0x81,
-    IIC_ADV7511_BASE_ADDR>>1, 0x20, 0x1C,
-    IIC_ADV7511_BASE_ADDR>>1, 0x21, 0xBC,
-    IIC_ADV7511_BASE_ADDR>>1, 0x22, 0x04,
-    IIC_ADV7511_BASE_ADDR>>1, 0x23, 0xAD,
-    IIC_ADV7511_BASE_ADDR>>1, 0x24, 0x1E,
-    IIC_ADV7511_BASE_ADDR>>1, 0x25, 0x6E,
-    IIC_ADV7511_BASE_ADDR>>1, 0x26, 0x02,
-    IIC_ADV7511_BASE_ADDR>>1, 0x27, 0x20,
-    IIC_ADV7511_BASE_ADDR>>1, 0x28, 0x1F,
-    IIC_ADV7511_BASE_ADDR>>1, 0x29, 0xFE,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2A, 0x04,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2B, 0xAD,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2C, 0x08,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2D, 0x1A,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2E, 0x1B,
-    IIC_ADV7511_BASE_ADDR>>1, 0x2F, 0xA9,
+    {IIC_ADV7511_BASE_ADDR>>1, 0x18, 0xE6},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x19, 0x69},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1A, 0x04},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1B, 0xAC},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1C, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1D, 0x00},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1E, 0x1C},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x1F, 0x81},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x20, 0x1C},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x21, 0xBC},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x22, 0x04},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x23, 0xAD},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x24, 0x1E},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x25, 0x6E},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x26, 0x02},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x27, 0x20},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x28, 0x1F},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x29, 0xFE},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2A, 0x04},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2B, 0xAD},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2C, 0x08},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2D, 0x1A},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2E, 0x1B},
+    {IIC_ADV7511_BASE_ADDR>>1, 0x2F, 0xA9}
 };
 
-Xuint8 adv7511_clk_delay[1][3] =
+u8 adv7511_clk_delay[1][3] =
 {
-    IIC_ADV7511_BASE_ADDR>>1, 0xBA, 0xA0 // 101 = 0.8ns
+    {IIC_ADV7511_BASE_ADDR>>1, 0xBA, 0xA0} // 101 = 0.8ns
 };
 
 
 void avnet_console_adv7511_command( avnet_console_t *pConsole, int cargc, char ** cargv )
 {
     int bDispSyntax = 0;
-    Xuint32 csc_idx;
-    Xuint32 clk_delay;
+    unsigned csc_idx;
+    unsigned clk_delay;
     int i;
 
     if ( cargc > 1 && !strcmp(cargv[1],"help") )
@@ -1149,59 +1149,66 @@ void avnet_console_adv7511_command( avnet_console_t *pConsole, int cargc, char *
 
 // CDCE913
 #define MAX_IIC_CDCE913_SSC 3
-static Xuint8 iic_cdce913_ssc_off[MAX_IIC_CDCE913_SSC][2]=
+static u8 iic_cdce913_ssc_off[MAX_IIC_CDCE913_SSC][2]=
 {
-    0x10, 0x00, // SSC = 000 (off)
-    0x11, 0x00, //
-    0x12, 0x00  //
+    {0x10, 0x00}, // SSC = 000 (off)
+    {0x11, 0x00}, //
+    {0x12, 0x00}  //
 };
-static Xuint8 iic_cdce913_ssc_0_25[MAX_IIC_CDCE913_SSC][2]=
+
+static u8 iic_cdce913_ssc_0_25[MAX_IIC_CDCE913_SSC][2]=
 {
-    0x10, 0x24, // SSC = 001 (0.25%)
-    0x11, 0x92, //
-    0x12, 0x49  //
+    {0x10, 0x24}, // SSC = 001 (0.25%)
+    {0x11, 0x92}, //
+    {0x12, 0x49}  //
 };
-static Xuint8 iic_cdce913_ssc_0_50[MAX_IIC_CDCE913_SSC][2]=
+
+static u8 iic_cdce913_ssc_0_50[MAX_IIC_CDCE913_SSC][2]=
 {
-    0x10, 0x49, // SSC = 010 (0.50%)
-    0x11, 0x24, //
-    0x12, 0x92  //
+    {0x10, 0x49}, // SSC = 010 (0.50%)
+    {0x11, 0x24}, //
+    {0x12, 0x92}  //
 };
-static Xuint8 iic_cdce913_ssc_0_75[MAX_IIC_CDCE913_SSC][2]=
+
+static u8 iic_cdce913_ssc_0_75[MAX_IIC_CDCE913_SSC][2]=
 {
-    0x10, 0x6D, // SSC = 011 (0.75%)
-    0x11, 0xB6, //
-    0x12, 0xDB  //
+    {0x10, 0x6D}, // SSC = 011 (0.75%)
+    {0x11, 0xB6}, //
+    {0x12, 0xDB}  //
 };
-static Xuint8 iic_cdce913_ssc_1_00[MAX_IIC_CDCE913_SSC][2]=
+
+static u8 iic_cdce913_ssc_1_00[MAX_IIC_CDCE913_SSC][2]=
 {
-    0x10, 0x92, // SSC = 100 (1.00%)
-    0x11, 0x49, //
-    0x12, 0x24  //
+    {0x10, 0x92}, // SSC = 100 (1.00%)
+    {0x11, 0x49}, //
+    {0x12, 0x24}  //
 };
-static Xuint8 iic_cdce913_ssc_1_25[MAX_IIC_CDCE913_SSC][2]=
+
+static u8 iic_cdce913_ssc_1_25[MAX_IIC_CDCE913_SSC][2]=
 {
-    0x10, 0xB6, // SSC = 101 (1.25%)
-    0x11, 0xDB, //
-    0x12, 0x6D  //
+    {0x10, 0xB6}, // SSC = 101 (1.25%)
+    {0x11, 0xDB}, //
+    {0x12, 0x6D}  //
 };
-static Xuint8 iic_cdce913_ssc_1_50[MAX_IIC_CDCE913_SSC][2]=
+
+static u8 iic_cdce913_ssc_1_50[MAX_IIC_CDCE913_SSC][2]=
 {
-    0x10, 0xDB, // SSC = 110 (1.50%)
-    0x11, 0x6D, //
-    0x12, 0xB6  //
+    {0x10, 0xDB}, // SSC = 110 (1.50%)
+    {0x11, 0x6D}, //
+    {0x12, 0xB6}  //
 };
-static Xuint8 iic_cdce913_ssc_2_00[MAX_IIC_CDCE913_SSC][2]=
+
+static u8 iic_cdce913_ssc_2_00[MAX_IIC_CDCE913_SSC][2]=
 {
-    0x10, 0xFF, // SSC = 111 (2.00%)
-    0x11, 0xFF, //
-    0x12, 0xFF  //
+    {0x10, 0xFF}, // SSC = 111 (2.00%)
+    {0x11, 0xFF}, //
+    {0x12, 0xFF}  //
 };
 
 void avnet_console_cdce913_command( avnet_console_t *pConsole, int cargc, char ** cargv )
 {
     int bDispSyntax = 0;
-    Xuint8 num_bytes;
+    //u8 num_bytes;
     int i;
 
     if ( cargc > 1 && !strcmp(cargv[1],"help") )
@@ -1218,7 +1225,7 @@ void avnet_console_cdce913_command( avnet_console_t *pConsole, int cargc, char *
             {
                 for ( i = 0; i < MAX_IIC_CDCE913_SSC; i++ )
                 {
-                num_bytes = pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
+                    /*num_bytes = */pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
                         (0x80 | iic_cdce913_ssc_off[i][0]), &(iic_cdce913_ssc_off[i][1]), 1);
                 }
             }
@@ -1226,7 +1233,7 @@ void avnet_console_cdce913_command( avnet_console_t *pConsole, int cargc, char *
             {
                 for ( i = 0; i < MAX_IIC_CDCE913_SSC; i++ )
                 {
-                    num_bytes = pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
+                    /*num_bytes = */pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
                         (0x80 | iic_cdce913_ssc_0_25[i][0]), &(iic_cdce913_ssc_0_25[i][1]), 1);
                 }
             }
@@ -1234,7 +1241,7 @@ void avnet_console_cdce913_command( avnet_console_t *pConsole, int cargc, char *
             {
                 for ( i = 0; i < MAX_IIC_CDCE913_SSC; i++ )
                 {
-                    num_bytes = pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
+                    /*num_bytes = */pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
                         (0x80 | iic_cdce913_ssc_0_50[i][0]), &(iic_cdce913_ssc_0_50[i][1]), 1);
                 }
             }
@@ -1242,7 +1249,7 @@ void avnet_console_cdce913_command( avnet_console_t *pConsole, int cargc, char *
             {
                 for ( i = 0; i < MAX_IIC_CDCE913_SSC; i++ )
                 {
-                    num_bytes = pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
+                    /*num_bytes = */pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
                         (0x80 | iic_cdce913_ssc_0_75[i][0]), &(iic_cdce913_ssc_0_75[i][1]), 1);
                 }
             }
@@ -1250,7 +1257,7 @@ void avnet_console_cdce913_command( avnet_console_t *pConsole, int cargc, char *
             {
                 for ( i = 0; i < MAX_IIC_CDCE913_SSC; i++ )
                 {
-                    num_bytes = pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
+                    /*num_bytes = */pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
                         (0x80 | iic_cdce913_ssc_1_00[i][0]), &(iic_cdce913_ssc_1_00[i][1]), 1);
                 }
             }
@@ -1258,7 +1265,7 @@ void avnet_console_cdce913_command( avnet_console_t *pConsole, int cargc, char *
             {
                 for ( i = 0; i < MAX_IIC_CDCE913_SSC; i++ )
                 {
-                    num_bytes = pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
+                    /*num_bytes = */pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
                         (0x80 | iic_cdce913_ssc_1_25[i][0]), &(iic_cdce913_ssc_1_25[i][1]), 1);
                 }
             }
@@ -1266,7 +1273,7 @@ void avnet_console_cdce913_command( avnet_console_t *pConsole, int cargc, char *
             {
                 for ( i = 0; i < MAX_IIC_CDCE913_SSC; i++ )
                 {
-                    num_bytes = pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
+                    /*num_bytes = */pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
                         (0x80 | iic_cdce913_ssc_1_50[i][0]), &(iic_cdce913_ssc_1_50[i][1]), 1);
                 }
             }
@@ -1274,7 +1281,7 @@ void avnet_console_cdce913_command( avnet_console_t *pConsole, int cargc, char *
             {
                 for ( i = 0; i < MAX_IIC_CDCE913_SSC; i++ )
                 {
-                    num_bytes = pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
+                    /*num_bytes = */pdemo->pfmc_hdmi_cam_iic->fpIicWrite( pdemo->pfmc_hdmi_cam_iic, FMC_HDMI_CAM_VID_CLK_ADDR,
                         (0x80 | iic_cdce913_ssc_2_00[i][0]), &(iic_cdce913_ssc_2_00[i][1]), 1);
                 }
             }
@@ -1327,10 +1334,10 @@ void avnet_console_cam_command( avnet_console_t *pConsole, int cargc, char ** ca
 
 void avnet_console_cam_spi_command( avnet_console_t *pConsole, int cargc, char ** cargv )
 {
-    Xuint32 tmp;
-    Xuint16 address, address2;
-    Xuint16 data, data2;
-    Xuint16 mask;
+    unsigned tmp;
+    u16 address, address2;
+    u16 data, data2;
+    u16 mask;
 
     int bDispSyntax = 0;
 
@@ -1352,7 +1359,7 @@ void avnet_console_cam_spi_command( avnet_console_t *pConsole, int cargc, char *
             }
             else
             {
-                scanhex(cargv[2],&tmp); address = (Xuint16)tmp;
+                scanhex(cargv[2],&tmp); address = (u16)tmp;
                 if ( pConsole->verbose )
                 {
                     pConsole->io_hprintf( pConsole->io_handle, "\taddress = 0x%04X\n\r", address);
@@ -1369,8 +1376,8 @@ void avnet_console_cam_spi_command( avnet_console_t *pConsole, int cargc, char *
             }
             else
             {
-                scanhex(cargv[2],&tmp); address = (Xuint16)tmp;
-                scanhex(cargv[3],&tmp); data = (Xuint16)tmp;
+                scanhex(cargv[2],&tmp); address = (u16)tmp;
+                scanhex(cargv[3],&tmp); data = (u16)tmp;
                 if ( pConsole->verbose )
                 {
                     pConsole->io_hprintf( pConsole->io_handle, "\taddress = 0x%04X\n\r", address);
@@ -1388,9 +1395,9 @@ void avnet_console_cam_spi_command( avnet_console_t *pConsole, int cargc, char *
             }
             else
             {
-                scanhex(cargv[2],&tmp); address = (Xuint16)tmp;
-                scanhex(cargv[3],&tmp); data = (Xuint16)tmp;
-                scanhex(cargv[4],&tmp); mask = (Xuint16)tmp;
+                scanhex(cargv[2],&tmp); address = (u16)tmp;
+                scanhex(cargv[3],&tmp); data = (u16)tmp;
+                scanhex(cargv[4],&tmp); mask = (u16)tmp;
                 if ( pConsole->verbose )
                 {
                     pConsole->io_hprintf( pConsole->io_handle, "\taddress = 0x%04X\n\r", address);
@@ -1413,9 +1420,9 @@ void avnet_console_cam_spi_command( avnet_console_t *pConsole, int cargc, char *
             }
             else
             {
-                scanhex(cargv[2],&tmp); address = (Xuint16)tmp;
-                scanhex(cargv[3],&tmp); data = (Xuint16)tmp;
-                scanhex(cargv[4],&tmp); mask = (Xuint16)tmp;
+                scanhex(cargv[2],&tmp); address = (u16)tmp;
+                scanhex(cargv[3],&tmp); data = (u16)tmp;
+                scanhex(cargv[4],&tmp); mask = (u16)tmp;
                 if ( pConsole->verbose )
                 {
                     pConsole->io_hprintf( pConsole->io_handle, "\taddress = 0x%04X\n\r", address);
@@ -1441,8 +1448,8 @@ void avnet_console_cam_spi_command( avnet_console_t *pConsole, int cargc, char *
             }
             else
             {
-                scanhex(cargv[2],&tmp); address = (Xuint16)tmp;
-                scanhex(cargv[3],&tmp); address2 = (Xuint16)tmp;
+                scanhex(cargv[2],&tmp); address = (u16)tmp;
+                scanhex(cargv[3],&tmp); address2 = (u16)tmp;
                 if ( pConsole->verbose )
                 {
                     pConsole->io_hprintf( pConsole->io_handle, "\tstart address = 0x%04X\n\r", address);
@@ -1473,14 +1480,14 @@ void avnet_console_cam_spi_command( avnet_console_t *pConsole, int cargc, char *
 #if 0
 void avnet_console_cam_trigger_command( avnet_console_t *pConsole, int cargc, char ** cargv )
 {
-    Xuint32 vitaTrigGenControl;
-    Xuint32 vitaTrigGenDefaultFreq;
-    Xuint32 vitaTrigGenTrig0High;
-    Xuint32 vitaTrigGenTrig0Low;
-    Xuint32 vitaTrigGenTrig1High;
-    Xuint32 vitaTrigGenTrig1Low;
-    Xuint32 vitaTrigGenTrig2High;
-    Xuint32 vitaTrigGenTrig2Low;
+    uint32_t vitaTrigGenControl;
+    uint32_t vitaTrigGenDefaultFreq;
+    uint32_t vitaTrigGenTrig0High;
+    uint32_t vitaTrigGenTrig0Low;
+    uint32_t vitaTrigGenTrig1High;
+    uint32_t vitaTrigGenTrig1Low;
+    uint32_t vitaTrigGenTrig2High;
+    uint32_t vitaTrigGenTrig2Low;
 
     int bDispSyntax = 0;
 
@@ -1536,8 +1543,8 @@ void avnet_console_cam_trigger_command( avnet_console_t *pConsole, int cargc, ch
         }
         else if ( !strcmp(cargv[1],"internal") )
         {
-            Xuint32 trigFramesPerSec = 60;
-            Xuint32 trigDutyCycle    = pdemo->cam_exposure;
+            uint32_t trigFramesPerSec = 60;
+            uint32_t trigDutyCycle    = pdemo->cam_exposure;
             vitaTrigGenDefaultFreq = (((1920+88+44+148)*(1080+4+5+36))>>2) - 2;
             //vitaTrigGenDefaultFreq = (((1920+88+44+132)*(1080+4+5+36))>>2) - 2;
 
@@ -1604,25 +1611,25 @@ void avnet_console_cam_trigger_command( avnet_console_t *pConsole, int cargc, ch
 #endif
 
 #define VITA_AUTOEXP_ON_QTY  2
-Xuint16 local_vita_autoexp_on_seq[VITA_AUTOEXP_ON_QTY][3] = {
+u16 local_vita_autoexp_on_seq[VITA_AUTOEXP_ON_QTY][3] = {
     // Auto-Exposure ON
     {160, 0x0001, 0x0001}, // [  4] Auto Exposure enable
     {161, 0x03FF, 0x00B8}  // [9:0] Desired Intensity Level
 };
 
 #define VITA_AUTOEXP_OFF_QTY  1
-Xuint16 local_vita_autoexp_off_seq[VITA_AUTOEXP_OFF_QTY][3] = {
+u16 local_vita_autoexp_off_seq[VITA_AUTOEXP_OFF_QTY][3] = {
     // Auto-Exposure OFF
     {160, 0x0001, 0x0000}, // [  4] Auto Exposure disable
-    {161, 0x03FF, 0x00B8}  // [9:0] Desired Intensity Level
+    //{161, 0x03FF, 0x00B8}  // [9:0] Desired Intensity Level
 };
 
 void avnet_console_cam_aec_command( avnet_console_t *pConsole, int cargc, char ** cargv )
 {
-    Xuint16 **seqData;
+    u16 **seqData;
     int seqLen;
     int bDispSyntax = 0;
-    Xuint32 desiredLevel;
+    unsigned desiredLevel;
 
     if ( cargc > 1 && !strcmp(cargv[1],"help") )
     {

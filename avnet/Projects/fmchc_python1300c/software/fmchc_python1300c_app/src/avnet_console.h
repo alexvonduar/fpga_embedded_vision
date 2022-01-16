@@ -52,7 +52,7 @@
 
 #include <stdio.h>
 #include "demo.h"
-#include "xbasic_types.h"
+//#include "xbasic_types.h"
 
 #define MAX_LINE_LENGTH             256
 #define MAX_ARGC                    16
@@ -68,7 +68,7 @@ struct struct_avnet_console_t
 {
     // For input:
     // - new character received from user
-    Xint32 inchar;
+    int inchar;
     char inline_buffer[MAX_LINE_LENGTH];
     int inline_count;
 
@@ -94,7 +94,7 @@ int web_pipeprintf( void *web_handle, const char * fmt, ...);
 
 void avnet_console_verbose_command( avnet_console_t *pConsole, int cargc, char ** cargv );
 void avnet_console_delay_command( avnet_console_t *pConsole, int cargc, char ** cargv );
-void avnet_console_mem_command( avnet_console_t *pConsole, int cargc, char ** cargv, Xuint32 baseAddress );
+void avnet_console_mem_command( avnet_console_t *pConsole, int cargc, char ** cargv, u32 baseAddress );
 void avnet_console_iic_command( avnet_console_t *pConsole, int cargc, char ** cargv, fmc_iic_t *pIIC );
 
 void avnet_console_adv7611_command( avnet_console_t *pConsole, int cargc, char ** cargv );
