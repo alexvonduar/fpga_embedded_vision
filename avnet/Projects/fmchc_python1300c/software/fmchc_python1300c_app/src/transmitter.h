@@ -54,8 +54,8 @@
 #define TRANSMITTER_DBG_MSG		if(TransmitterParm.DebugControl)DBG_MSG
 
 typedef struct {
-	UCHAR			CurrMuteState;	/* Current mute state of A/V        */
-	TX_STATUS_PKT	TxStatus;		/* State of TX hardware */
+    UCHAR			CurrMuteState;	/* Current mute state of A/V        */
+    TX_STATUS_PKT	TxStatus;		/* State of TX hardware */
 } TRANSMITTER_TX_VARS;
 
 TRANSMITTER_TX_VARS	TransmitterTxVars;

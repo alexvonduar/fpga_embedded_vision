@@ -5,12 +5,12 @@
 //   / \===\   \==/
 //  /___\===\___\/  AVNET
 //       \======/
-//        \====/    
+//        \====/
 //---------------------------------------------------------------
 //
 // This design is the property of Avnet.  Publication of this
 // design is not authorized without written consent from Avnet.
-// 
+//
 // Please direct any questions to:  technical.support@avnet.com
 //
 // Disclaimer:
@@ -39,7 +39,7 @@
 //                      - HDMI Input Configuration
 //                      - HDMI Output Configuration
 //
-// Dependencies:        
+// Dependencies:
 //
 // Revision:            Jun 16, 2015: 2.01 Copied from FMC-IMAGEON
 //
@@ -82,46 +82,46 @@
 
 struct struct_fmc_hdmi_cam_t
 {
-   // software library version
-   Xuint32 uVersion;
+    // software library version
+    Xuint32 uVersion;
 
-   // instantiation-specific name
-   char szName[32];
+    // instantiation-specific name
+    char szName[32];
 
-   // pointer to FMC-IIC instance
-   fmc_iic_t *pIIC;
+    // pointer to FMC-IIC instance
+    fmc_iic_t *pIIC;
 
-   // GPIO value
-   Xuint32 GpioData;
+    // GPIO value
+    Xuint32 GpioData;
 
-   // Verblse
-   Xuint32 bVerbose;
+    // Verblse
+    Xuint32 bVerbose;
 };
 typedef struct struct_fmc_hdmi_cam_t fmc_hdmi_cam_t;
 
 struct struct_fmc_hdmi_cam_video_timing_t
 {
-   //char *pName;
-   
-   // General info
-   Xuint32 IsHDMI;
-   Xuint32 IsEncrypted;
-   Xuint32 IsInterlaced;
-   Xuint32 ColorDepth;
+    //char *pName;
 
-   // Horizontal Timing
-   Xuint32 HActiveVideo;
-   Xuint32 HFrontPorch;
-   Xuint32 HSyncWidth;
-   Xuint32 HBackPorch;
-   Xuint32 HSyncPolarity;
+    // General info
+    Xuint32 IsHDMI;
+    Xuint32 IsEncrypted;
+    Xuint32 IsInterlaced;
+    Xuint32 ColorDepth;
 
-   // Vertical Timing   
-   Xuint32 VActiveVideo;
-   Xuint32 VFrontPorch;
-   Xuint32 VSyncWidth;
-   Xuint32 VBackPorch;
-   Xuint32 VSyncPolarity;
+    // Horizontal Timing
+    Xuint32 HActiveVideo;
+    Xuint32 HFrontPorch;
+    Xuint32 HSyncWidth;
+    Xuint32 HBackPorch;
+    Xuint32 HSyncPolarity;
+
+    // Vertical Timing
+    Xuint32 VActiveVideo;
+    Xuint32 VFrontPorch;
+    Xuint32 VSyncWidth;
+    Xuint32 VBackPorch;
+    Xuint32 VSyncPolarity;
 };
 typedef struct struct_fmc_hdmi_cam_video_timing_t fmc_hdmi_cam_video_timing_t;
 
@@ -144,10 +144,10 @@ void fmc_hdmi_cam_iic_mux( fmc_hdmi_cam_t *pContext, Xuint32 MuxSelect );
 #define FMC_HDMI_CAM_I2C_SELECT_HDMI       8 // select both HDMI_IN and HDMI_OUT
 
 // General I2C Configuration Functions
-void fmc_hdmi_cam_iic_config2( fmc_hdmi_cam_t *pContext, Xuint8 ChipAddress, 
-                              Xuint8 ConfigData[][2], Xuint32 ConfigLength );
-void fmc_hdmi_cam_iic_config3( fmc_hdmi_cam_t *pContext, 
-                              Xuint8 ConfigData[][3], Xuint32 ConfigLength );
+void fmc_hdmi_cam_iic_config2( fmc_hdmi_cam_t *pContext, Xuint8 ChipAddress,
+                                Xuint8 ConfigData[][2], Xuint32 ConfigLength );
+void fmc_hdmi_cam_iic_config3( fmc_hdmi_cam_t *pContext,
+                                Xuint8 ConfigData[][3], Xuint32 ConfigLength );
 
 // Video Clock Synthesizer Functions
 void fmc_hdmi_cam_vclk_init( fmc_hdmi_cam_t *pContext );

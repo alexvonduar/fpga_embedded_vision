@@ -1,32 +1,32 @@
 // ----------------------------------------------------------------------------
-//  
-//        ** **        **          **  ****      **  **********  ********** ® 
-//       **   **        **        **   ** **     **  **              ** 
-//      **     **        **      **    **  **    **  **              ** 
-//     **       **        **    **     **   **   **  *********       ** 
-//    **         **        **  **      **    **  **  **              ** 
-//   **           **        ****       **     ** **  **              ** 
-//  **  .........  **        **        **      ****  **********      ** 
-//     ........... 
-//                                     Reach Further™ 
-//  
+//
+//        ** **        **          **  ****      **  **********  ********** ®
+//       **   **        **        **   ** **     **  **              **
+//      **     **        **      **    **  **    **  **              **
+//     **       **        **    **     **   **   **  *********       **
+//    **         **        **  **      **    **  **  **              **
+//   **           **        ****       **     ** **  **              **
+//  **  .........  **        **        **      ****  **********      **
+//     ...........
+//                                     Reach Further™
+//
 // ----------------------------------------------------------------------------
-// 
-// This design is the property of Avnet.  Publication of this 
-// design is not authorized without written consent from Avnet. 
-// 
-// Please direct any questions to the PicoZed community support forum: 
-//    http://www.zedboard.org/forum 
-// 
-// Disclaimer: 
-//    Avnet, Inc. makes no warranty for the use of this code or design. 
-//    This code is provided  "As Is". Avnet, Inc assumes no responsibility for 
-//    any errors, which may appear in this code, nor does it make a commitment 
-//    to update the information contained herein. Avnet, Inc specifically 
-//    disclaims any implied warranties of fitness for a particular purpose. 
-//                     Copyright(c) 2017 Avnet, Inc. 
-//                             All rights reserved. 
-// 
+//
+// This design is the property of Avnet.  Publication of this
+// design is not authorized without written consent from Avnet.
+//
+// Please direct any questions to the PicoZed community support forum:
+//    http://www.zedboard.org/forum
+//
+// Disclaimer:
+//    Avnet, Inc. makes no warranty for the use of this code or design.
+//    This code is provided  "As Is". Avnet, Inc assumes no responsibility for
+//    any errors, which may appear in this code, nor does it make a commitment
+//    to update the information contained herein. Avnet, Inc specifically
+//    disclaims any implied warranties of fitness for a particular purpose.
+//                     Copyright(c) 2017 Avnet, Inc.
+//                             All rights reserved.
+//
 // ----------------------------------------------------------------------------
 //
 // Create Date:         Nov 18, 2011
@@ -38,7 +38,7 @@
 //
 // Description:         PYTHON1300-C Getting Started Demo application
 //
-// Dependencies:        
+// Dependencies:
 //
 // Revision:            Jun 01, 2017: 1.03 Add CFA command to set bayer
 //
@@ -98,7 +98,7 @@ int demo_init( demo_t *pdemo )
 
     ret = XVidC_SetVideoStream(&pdemo->mixer_stream_in, XVIDC_VM_1080_60_P, XVIDC_CSF_YCRCB_422, XVIDC_BPC_8, XVIDC_PPC_1);
     if (ret != XST_SUCCESS) {
-    	xil_printf("Set Mixer Video stream In failed\n\r");
+        xil_printf("Set Mixer Video stream In failed\n\r");
     }
 
     //ret = XVidC_SetVideoStream(&pdemo->mixer_stream1_in, XVIDC_VM_1080_60_P, XVIDC_CSF_YCRCB_422, XVIDC_BPC_8, XVIDC_PPC_1);
@@ -108,12 +108,12 @@ int demo_init( demo_t *pdemo )
 
     ret = XVidC_SetVideoStream(&pdemo->mixer_stream2_in, XVIDC_VM_1280x1024_60_P, XVIDC_CSF_YCRCB_422, XVIDC_BPC_8, XVIDC_PPC_1);
     if (ret != XST_SUCCESS) {
-    	xil_printf("Set Mixer Video 2 stream In failed\n\r");
+        xil_printf("Set Mixer Video 2 stream In failed\n\r");
     }
 
     ret = XVidC_SetVideoStream(&pdemo->csc_stream_in, XVIDC_VM_1280x1024_60_P, XVIDC_CSF_RGB, XVIDC_BPC_8, XVIDC_PPC_1);
     if (ret != XST_SUCCESS) {
-    	xil_printf("Set Chroma Resample Video stream In failed\n\r");
+        xil_printf("Set Chroma Resample Video stream In failed\n\r");
     }
 
     xil_printf( "FMC-HDMI-CAM Initialization ...\n\r" );
@@ -205,7 +205,7 @@ int demo_init( demo_t *pdemo )
                                    1,                      // hdmioEnable = 1
                                    &(pdemo->hdmio_timing), // pTiming
                                    0                       // waitHPD = 0
-                                   );
+                                );
     if ( !status )
     {
         xil_printf( "ERROR : Failed to init HDMI Output Interface\n\r" );
@@ -228,7 +228,7 @@ int demo_init( demo_t *pdemo )
 }
 
 void demo_hdmi_out_status( demo_t * pdemo ) {
-	int stat;
+    int stat;
     fmc_hdmi_cam_iic_mux(pdemo->pfmc_hdmi_cam, FMC_HDMI_CAM_I2C_SELECT_HDMI_OUT);
     //HAL_SetI2CHandler(pdemo->pfmc_hdmi_cam_iic);
     TX_STATUS status;
@@ -236,26 +236,26 @@ void demo_hdmi_out_status( demo_t * pdemo ) {
     if (ret == ATVERR_OK) {
 
         if (status.ChipPd) {
-        	xil_printf("chip power down: %d\n\r", status.ChipPd);
-        	xil_printf("TMDS power down: %d\n\r", status.TmdsPd);
-        	xil_printf("HPD: %d\n\r", status.Hpd);
-        	xil_printf("Monitor Sense: %d\n\r", status.MonSen);
-        	xil_printf("HDMI mode: %d\n\r", status.OutputHdmi);
-        	xil_printf("PLL locked: %d\n\r", status.PllLocked);
-        	xil_printf("Video Muted: %d\n\r", status.VideoMuted);
-        	xil_printf("Clear AV Mute: %d\n\r", status.ClearAVMute);
-        	xil_printf("Set AV Mute: %d\n\r", status.SetAVMute);
-        	xil_printf("Audio Repeat: %d\n\r", status.AudioRep);
-        	xil_printf("Spdif Enable: %d\n\r", status.SpdifEnable);
-        	xil_printf("I2S Enable: 0x%0xd\n\r", status.I2SEnable);
-        	xil_printf("Detected VIC: %d\n\r", status.DetectedVic);
-        	xil_printf("Last HDCP Errors: %d\n\r", status.LastHdcpErr);
+            xil_printf("chip power down: %d\n\r", status.ChipPd);
+            xil_printf("TMDS power down: %d\n\r", status.TmdsPd);
+            xil_printf("HPD: %d\n\r", status.Hpd);
+            xil_printf("Monitor Sense: %d\n\r", status.MonSen);
+            xil_printf("HDMI mode: %d\n\r", status.OutputHdmi);
+            xil_printf("PLL locked: %d\n\r", status.PllLocked);
+            xil_printf("Video Muted: %d\n\r", status.VideoMuted);
+            xil_printf("Clear AV Mute: %d\n\r", status.ClearAVMute);
+            xil_printf("Set AV Mute: %d\n\r", status.SetAVMute);
+            xil_printf("Audio Repeat: %d\n\r", status.AudioRep);
+            xil_printf("Spdif Enable: %d\n\r", status.SpdifEnable);
+            xil_printf("I2S Enable: 0x%0xd\n\r", status.I2SEnable);
+            xil_printf("Detected VIC: %d\n\r", status.DetectedVic);
+            xil_printf("Last HDCP Errors: %d\n\r", status.LastHdcpErr);
             xil_printf( "HDMI Output Initialization ...\n\r" );
             stat = fmc_hdmi_cam_hdmio_init( pdemo->pfmc_hdmi_cam,
                                            1,                      // hdmioEnable = 1
                                            &(pdemo->hdmio_timing), // pTiming
                                            0                       // waitHPD = 0
-                                           );
+                                        );
             if ( !stat )
             {
                 xil_printf( "ERROR : Failed to init HDMI Output Interface\n\r" );
@@ -274,40 +274,40 @@ int demo_start_hdmi_in( demo_t *pdemo )
 
     xil_printf("HDMI Input Initialization\r\n");
     status = fmc_hdmi_cam_hdmii_init2( pdemo->pfmc_hdmi_cam,
-                                 1, // hdmiiEnable = 1
-                                 1, // editInit = 1
-                                 fmc_hdmi_cam_hdmii_edid_content,
-                                 pdemo->adv7611_llc_polarity, //0, //llc_polarity,
-                                 pdemo->adv7611_llc_delay //0  //llc_delay
-                                 );
+                                1, // hdmiiEnable = 1
+                                1, // editInit = 1
+                                fmc_hdmi_cam_hdmii_edid_content,
+                                pdemo->adv7611_llc_polarity, //0, //llc_polarity,
+                                pdemo->adv7611_llc_delay //0  //llc_delay
+                                );
     if ( !status )
     {
-      xil_printf( "ERROR : Failed to init HDMI Input Interface\n\r" );
-      exit(0);
+        xil_printf( "ERROR : Failed to init HDMI Input Interface\n\r" );
+        exit(0);
     }
 
-   xil_printf( "Waiting for ADV7611 to locked on incoming video ...\n\r" );
-   pdemo->hdmii_locked = 0;
-   timeout = 100;
-   while ( !(pdemo->hdmii_locked) && timeout-- )
-   {
-      usleep(100000); // wait 100msec ...
-      pdemo->hdmii_locked = fmc_hdmi_cam_hdmii_get_lock( pdemo->pfmc_hdmi_cam );
-   }
-   if ( !(pdemo->hdmii_locked) )
-   {
-      xil_printf( "\tERROR : ADV7611 has NOT locked on incoming video, aborting !\n\r" );
-   }
-   else
-   {
-       xil_printf( "\tADV7611 Video Input LOCKED\n\r" );
-       usleep(100000); // wait 100msec for timing to stabilize
+    xil_printf( "Waiting for ADV7611 to locked on incoming video ...\n\r" );
+    pdemo->hdmii_locked = 0;
+    timeout = 100;
+    while ( !(pdemo->hdmii_locked) && timeout-- )
+    {
+        usleep(100000); // wait 100msec ...
+        pdemo->hdmii_locked = fmc_hdmi_cam_hdmii_get_lock( pdemo->pfmc_hdmi_cam );
+    }
+    if ( !(pdemo->hdmii_locked) )
+    {
+        xil_printf( "\tERROR : ADV7611 has NOT locked on incoming video, aborting !\n\r" );
+    }
+    else
+    {
+        xil_printf( "\tADV7611 Video Input LOCKED\n\r" );
+        usleep(100000); // wait 100msec for timing to stabilize
 
-       // Get Video Input information
-       fmc_hdmi_cam_hdmii_get_timing( pdemo->pfmc_hdmi_cam, &(pdemo->hdmii_timing) );
-       pdemo->hdmii_width  = pdemo->hdmii_timing.HActiveVideo;
-       pdemo->hdmii_height = pdemo->hdmii_timing.VActiveVideo;
-       xil_printf( "\tInput resolution = %d X %d\n\r", pdemo->hdmii_width, pdemo->hdmii_height );
+        // Get Video Input information
+        fmc_hdmi_cam_hdmii_get_timing( pdemo->pfmc_hdmi_cam, &(pdemo->hdmii_timing) );
+        pdemo->hdmii_width  = pdemo->hdmii_timing.HActiveVideo;
+        pdemo->hdmii_height = pdemo->hdmii_timing.VActiveVideo;
+        xil_printf( "\tInput resolution = %d X %d\n\r", pdemo->hdmii_width, pdemo->hdmii_height );
     }
 
     pdemo->hdmi_enable = 1;
@@ -390,51 +390,50 @@ int demo_start_cam_in( demo_t *pdemo )
 
 int demo_init_frame_buffer( demo_t *pdemo )
 {
+    // Clear frame stores
+    if ( pdemo->bVerbose )
+    {
+        xil_printf( "Video Frame Buffer Initialization ...\n\r" );
+    }
+    Xuint32 frame, row, col;
+    Xuint16 pixel;
+    volatile Xuint16 *pStorageMem;
 
-   // Clear frame stores
-   if ( pdemo->bVerbose )
-   {
-       xil_printf( "Video Frame Buffer Initialization ...\n\r" );
-   }
-   Xuint32 frame, row, col;
-   Xuint16 pixel;
-   volatile Xuint16 *pStorageMem;
+    // Fill HDMI frame buffer with Gray ramps
+    pStorageMem = (Xuint16 *)0x10000000;
+    volatile Xuint16 *pStorageMem2 = (Xuint16 *)0x18000000;
+    for ( frame = 0; frame < 3; frame++ )
+    {
+        //for ( row = 0; row < pdemo->hdmio_height; row++ )
+        for ( row = 0; row < 2048; row++ )
+        {
+            //for ( col = 0; col < pdemo->hdmio_width; col++ )
+            for ( col = 0; col < 2048; col++ )
+            {
+                pixel = 0x8000 | (col & 0x00FF); // Grey ramp
+                *pStorageMem++ = pixel;
+            }
+        }
+    }
 
-   // Fill HDMI frame buffer with Gray ramps
-   pStorageMem = (Xuint16 *)0x10000000;
-   volatile Xuint16 *pStorageMem2 = (Xuint16 *)0x18000000;
-   for ( frame = 0; frame < 3; frame++ )
-   {
-      //for ( row = 0; row < pdemo->hdmio_height; row++ )
-      for ( row = 0; row < 2048; row++ )
-      {
-         //for ( col = 0; col < pdemo->hdmio_width; col++ )
-          for ( col = 0; col < 2048; col++ )
-         {
-            pixel = 0x8000 | (col & 0x00FF); // Grey ramp
-            *pStorageMem++ = pixel;
-         }
-      }
-   }
+    // Fill Camera frame buffer with green screen
+    pStorageMem = (Xuint16 *)0x18000000;
+    for ( frame = 0; frame < 3; frame++ )
+    {
+        //for ( row = 0; row < pdemo->hdmio_height; row++ )
+        for ( row = 0; row < 2048; row++ )
+        {
+            //for ( col = 0; col < pdemo->hdmio_width; col++ )
+            for ( col = 0; col < 2048; col++ )
+            {
+                pixel = 0x0000; // Green
+                *pStorageMem++ = pixel;
+            }
+        }
+    }
 
-   // Fill Camera frame buffer with green screen
-   pStorageMem = (Xuint16 *)0x18000000;
-   for ( frame = 0; frame < 3; frame++ )
-   {
-      //for ( row = 0; row < pdemo->hdmio_height; row++ )
-      for ( row = 0; row < 2048; row++ )
-      {
-         //for ( col = 0; col < pdemo->hdmio_width; col++ )
-          for ( col = 0; col < 2048; col++ )
-         {
-            pixel = 0x0000; // Green
-            *pStorageMem++ = pixel;
-         }
-      }
-   }
-
-   // Wait for DMA to synchronize
-   Xil_DCacheFlush();
+    // Wait for DMA to synchronize
+    Xil_DCacheFlush();
 
     return 1;
 }
@@ -449,15 +448,15 @@ int demo_stop_frame_buffer( demo_t *pdemo )
 
 int demo_start_frame_buffer( demo_t *pdemo )
 {
-	u32 ret;
+    u32 ret;
 
-	/* VTC Configuration */
+    /* VTC Configuration */
     //XVtc_Timing XVtc_Timingconf;
     //XVtc_ConvVideoMode2Timing(pdemo->pvtc, XVTC_VMODE_1080P,&XVtc_Timingconf);
     //XVtc_SetGeneratorTiming(pdemo->pvtc, &(pdemo->vtctiming));
     //XVtc_RegUpdate(pdemo->pvtc);
 
-	/* End of VTC Configuration */
+    /* End of VTC Configuration */
 
     //Start the VTC generator
     //XVtc_EnableGenerator(pdemo->pvtc);
@@ -505,11 +504,11 @@ int demo_start_frame_buffer( demo_t *pdemo )
     XVprocSs_SetSubsystemConfig(pdemo->pcsc);
     ret = XVprocSs_SetSubsystemConfig(pdemo->pcsc);
     if (ret != XST_SUCCESS) {
-    	xil_printf("color space converter failed\n\r");
-    	XVprocSs_ReportSubsystemConfig(pdemo->pcsc);
-    	XVprocSs_ReportSubsystemCoreInfo(pdemo->pcsc);
-    	XVprocSs_ReportSubcoreStatus(pdemo->pcsc, XVPROCSS_SUBCORE_CSC);
-    	XVprocSs_LogDisplay(pdemo->pcsc);
+        xil_printf("color space converter failed\n\r");
+        XVprocSs_ReportSubsystemConfig(pdemo->pcsc);
+        XVprocSs_ReportSubsystemCoreInfo(pdemo->pcsc);
+        XVprocSs_ReportSubcoreStatus(pdemo->pcsc, XVPROCSS_SUBCORE_CSC);
+        XVprocSs_LogDisplay(pdemo->pcsc);
     }
     XVprocSs_Start(pdemo->pcsc);
     xil_printf("Color Spece Converter started\n\r");
@@ -594,7 +593,7 @@ int demo_set_video_mixer(demo_t * pdemo)
     //XVMix_SetBackgndColor(pdemo->pmixer, XVMIX_BKGND_BLUE, stream.ColorDepth);
 
     if (pdemo->hdmi_enable) {
-    	xil_printf("enable hdmi layer\n\r");
+        xil_printf("enable hdmi layer\n\r");
         Status = XVMix_LayerEnable(pdemo->pmixer, XVMIX_LAYER_1);
         if(Status != XST_SUCCESS) {
             xil_printf("<ERROR:: Command Failed>\r\n");
@@ -603,7 +602,7 @@ int demo_set_video_mixer(demo_t * pdemo)
         }
     }
     if (pdemo->cam_enable) {
-    	xil_printf("enable cam layer\n\r");
+        xil_printf("enable cam layer\n\r");
         Status = XVMix_LayerEnable(pdemo->pmixer, XVMIX_LAYER_2);
         if(Status != XST_SUCCESS) {
             xil_printf("<ERROR:: Command Failed>\r\n");

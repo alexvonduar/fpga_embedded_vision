@@ -1,32 +1,32 @@
 // ----------------------------------------------------------------------------
-//  
-//        ** **        **          **  ****      **  **********  ********** ® 
-//       **   **        **        **   ** **     **  **              ** 
-//      **     **        **      **    **  **    **  **              ** 
-//     **       **        **    **     **   **   **  *********       ** 
-//    **         **        **  **      **    **  **  **              ** 
-//   **           **        ****       **     ** **  **              ** 
-//  **  .........  **        **        **      ****  **********      ** 
-//     ........... 
-//                                     Reach Further™ 
-//  
+//
+//        ** **        **          **  ****      **  **********  ********** ®
+//       **   **        **        **   ** **     **  **              **
+//      **     **        **      **    **  **    **  **              **
+//     **       **        **    **     **   **   **  *********       **
+//    **         **        **  **      **    **  **  **              **
+//   **           **        ****       **     ** **  **              **
+//  **  .........  **        **        **      ****  **********      **
+//     ...........
+//                                     Reach Further™
+//
 // ----------------------------------------------------------------------------
-// 
-// This design is the property of Avnet.  Publication of this 
-// design is not authorized without written consent from Avnet. 
-// 
-// Please direct any questions to the PicoZed community support forum: 
-//    http://www.zedboard.org/forum 
-// 
-// Disclaimer: 
-//    Avnet, Inc. makes no warranty for the use of this code or design. 
-//    This code is provided  "As Is". Avnet, Inc assumes no responsibility for 
-//    any errors, which may appear in this code, nor does it make a commitment 
-//    to update the information contained herein. Avnet, Inc specifically 
-//    disclaims any implied warranties of fitness for a particular purpose. 
-//                     Copyright(c) 2017 Avnet, Inc. 
-//                             All rights reserved. 
-// 
+//
+// This design is the property of Avnet.  Publication of this
+// design is not authorized without written consent from Avnet.
+//
+// Please direct any questions to the PicoZed community support forum:
+//    http://www.zedboard.org/forum
+//
+// Disclaimer:
+//    Avnet, Inc. makes no warranty for the use of this code or design.
+//    This code is provided  "As Is". Avnet, Inc assumes no responsibility for
+//    any errors, which may appear in this code, nor does it make a commitment
+//    to update the information contained herein. Avnet, Inc specifically
+//    disclaims any implied warranties of fitness for a particular purpose.
+//                     Copyright(c) 2017 Avnet, Inc.
+//                             All rights reserved.
+//
 // ----------------------------------------------------------------------------
 //
 // Create Date:         Nov 18, 2011
@@ -38,7 +38,7 @@
 //
 // Description:         Text-based console for application XXX
 //
-// Dependencies:        
+// Dependencies:
 //
 // Revision:            Nov 18, 2010: 1.01 Initial version
 //                      Sep 17, 2012: 1.02 Remove video multiplexers
@@ -66,24 +66,24 @@
 //   for example: serial port, ethernet connection, etc...
 struct struct_avnet_console_t
 {
-   // For input:
-   // - new character received from user
-   Xint32 inchar;
-   char inline_buffer[MAX_LINE_LENGTH];
-   int inline_count;
-   
-   // For output:
-   // - context handle
-   // - function pointer to formatted print routine
-	void * io_handle;
-	void (*io_hprintf)( void *h, const char *fmt, ... );
-	void (*pipe_hprintf)( void *h, const char *fmt, ... );
+    // For input:
+    // - new character received from user
+    Xint32 inchar;
+    char inline_buffer[MAX_LINE_LENGTH];
+    int inline_count;
 
-	// General status:
-	int pipe;
-	int verbose;
-	int echo;
-	int quit;
+    // For output:
+    // - context handle
+    // - function pointer to formatted print routine
+    void * io_handle;
+    void (*io_hprintf)( void *h, const char *fmt, ... );
+    void (*pipe_hprintf)( void *h, const char *fmt, ... );
+
+    // General status:
+    int pipe;
+    int verbose;
+    int echo;
+    int quit;
 };
 typedef struct struct_avnet_console_t avnet_console_t;
 

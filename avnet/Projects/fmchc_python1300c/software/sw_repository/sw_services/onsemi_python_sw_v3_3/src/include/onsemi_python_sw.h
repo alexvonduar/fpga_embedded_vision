@@ -1,32 +1,32 @@
 // ----------------------------------------------------------------------------
-//  
-//        ** **        **          **  ****      **  **********  ********** ® 
-//       **   **        **        **   ** **     **  **              ** 
-//      **     **        **      **    **  **    **  **              ** 
-//     **       **        **    **     **   **   **  *********       ** 
-//    **         **        **  **      **    **  **  **              ** 
-//   **           **        ****       **     ** **  **              ** 
-//  **  .........  **        **        **      ****  **********      ** 
-//     ........... 
-//                                     Reach Further™ 
-//  
+//
+//        ** **        **          **  ****      **  **********  ********** ®
+//       **   **        **        **   ** **     **  **              **
+//      **     **        **      **    **  **    **  **              **
+//     **       **        **    **     **   **   **  *********       **
+//    **         **        **  **      **    **  **  **              **
+//   **           **        ****       **     ** **  **              **
+//  **  .........  **        **        **      ****  **********      **
+//     ...........
+//                                     Reach Further™
+//
 // ----------------------------------------------------------------------------
-// 
-// This design is the property of Avnet.  Publication of this 
-// design is not authorized without written consent from Avnet. 
-// 
-// Please direct any questions to the PicoZed community support forum: 
-//    http://www.zedboard.org/forum 
-// 
-// Disclaimer: 
-//    Avnet, Inc. makes no warranty for the use of this code or design. 
-//    This code is provided  "As Is". Avnet, Inc assumes no responsibility for 
-//    any errors, which may appear in this code, nor does it make a commitment 
-//    to update the information contained herein. Avnet, Inc specifically 
-//    disclaims any implied warranties of fitness for a particular purpose. 
-//                     Copyright(c) 2017 Avnet, Inc. 
-//                             All rights reserved. 
-// 
+//
+// This design is the property of Avnet.  Publication of this
+// design is not authorized without written consent from Avnet.
+//
+// Please direct any questions to the PicoZed community support forum:
+//    http://www.zedboard.org/forum
+//
+// Disclaimer:
+//    Avnet, Inc. makes no warranty for the use of this code or design.
+//    This code is provided  "As Is". Avnet, Inc assumes no responsibility for
+//    any errors, which may appear in this code, nor does it make a commitment
+//    to update the information contained herein. Avnet, Inc specifically
+//    disclaims any implied warranties of fitness for a particular purpose.
+//                     Copyright(c) 2017 Avnet, Inc.
+//                             All rights reserved.
+//
 // ----------------------------------------------------------------------------
 //
 // Create Date:         Sep 19, 2011
@@ -47,10 +47,10 @@
 //                      - SPI Read routine
 //                      - SPI Write routine
 //
-// Dependencies:        
+// Dependencies:
 //
 // Revision:            Sep 15, 2011: 1.00 Initial version:
-//                                         - VITA SPI controller 
+//                                         - VITA SPI controller
 //                      Sep 22, 2011: 1.01 Added:
 //                                         - ISERDES interface
 //                      Sep 28, 2011: 1.02 Added:
@@ -81,10 +81,10 @@
 //                      Feb 23, 2015: 3.1  Add core_version/core_id registers
 //                      Jul 09, 2015: 3.2  Change sensor's sample point to fix
 //                                         sampling issue (intermittent across different hw)
-//                      Nov 17, 2015: 3.3  Update driver 
+//                      Nov 17, 2015: 3.3  Update driver
 //                                         - Update code to detect PYTHON-1300 image sensor
 //                                         - Update init sequence to resolve intermittent issues
-//                                            - Reset the camera receiver before starting the sensor 
+//                                            - Reset the camera receiver before starting the sensor
 //                                            - Move start of capture to new SENSOR_INIT_STREAMON sequence
 //                                              (corresponds to linux V4L VIDIOC_STREAMON)
 //----------------------------------------------------------------
@@ -106,7 +106,7 @@
 #define onsemi_python_spi_read              onsemi_vita_spi_read
 #define onsemi_python_spi_write             onsemi_vita_spi_write
 #define onsemi_python_spi_nop               onsemi_vita_spi_nop
-#define onsemi_python_spi_write_sequence    onsemi_vita_spi_write_sequence	
+#define onsemi_python_spi_write_sequence    onsemi_vita_spi_write_sequence
 #define onsemi_python_spi_display_sequence  onsemi_vita_spi_display_sequence
 #define onsemi_python_sensor_initialize     onsemi_vita_sensor_initialize
 #define onsemi_python_get_status            onsemi_vita_get_status
@@ -227,9 +227,9 @@
  *
  */
 #define ONSEMI_VITA_SPI_mWriteReg(BaseAddress, RegOffset, Data) \
- 	Xil_Out32((BaseAddress) + (RegOffset), (Xuint32)(Data))
+    Xil_Out32((BaseAddress) + (RegOffset), (Xuint32)(Data))
 #define ONSEMI_VITA_CAM_mWriteReg(BaseAddress, RegOffset, Data) \
- 	Xil_Out32((BaseAddress) + (RegOffset), (Xuint32)(Data))
+    Xil_Out32((BaseAddress) + (RegOffset), (Xuint32)(Data))
 
 /**
  *
@@ -249,9 +249,9 @@
  *
  */
 #define ONSEMI_VITA_SPI_mReadReg(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (RegOffset))
+    Xil_In32((BaseAddress) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadReg(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (RegOffset))
+    Xil_In32((BaseAddress) + (RegOffset))
 
 
 /**
@@ -273,153 +273,153 @@
 
 // ONSEMI_VITA_SPI definitions
 #define ONSEMI_VITA_SPI_mWriteSlaveReg0(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG0_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG0_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_SPI_mWriteSlaveReg1(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG1_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG1_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_SPI_mWriteSlaveReg2(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG2_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG2_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_SPI_mWriteSlaveReg3(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG3_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG3_OFFSET) + (RegOffset), (Xuint32)(Value))
 //
 #define ONSEMI_VITA_SPI_mReadSlaveReg0(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG0_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG0_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_SPI_mReadSlaveReg1(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG1_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG1_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_SPI_mReadSlaveReg2(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG2_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG2_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_SPI_mReadSlaveReg3(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG3_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_SPI_S00_AXI_SLV_REG3_OFFSET) + (RegOffset))
 
 // ONSEMI_VITA_CAM definitions
 #define ONSEMI_VITA_CAM_mWriteSlaveReg0(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG0_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG0_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg1(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG1_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG1_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg2(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG2_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG2_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg3(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG3_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG3_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg4(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG4_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG4_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg5(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG5_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG5_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg6(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG6_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG6_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg7(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_LV_REG7_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_LV_REG7_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg8(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG8_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG8_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg9(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG9_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG9_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg10(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG10_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG10_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg11(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG11_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG11_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg12(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG12_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG12_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg13(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG13_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG13_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg14(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG14_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG14_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg15(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG15_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG15_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg16(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG16_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG16_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg17(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG17_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG17_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg18(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG18_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG18_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg19(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG19_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG19_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg20(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG20_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG20_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg21(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG21_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG21_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg22(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG22_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG22_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg23(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG23_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG23_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg24(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG24_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG24_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg25(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG25_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG25_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg26(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG26_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG26_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg27(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG27_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG27_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg28(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG28_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG28_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg29(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG29_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG29_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg30(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG30_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG30_OFFSET) + (RegOffset), (Xuint32)(Value))
 #define ONSEMI_VITA_CAM_mWriteSlaveReg31(BaseAddress, RegOffset, Value) \
- 	Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG31_OFFSET) + (RegOffset), (Xuint32)(Value))
+    Xil_Out32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG31_OFFSET) + (RegOffset), (Xuint32)(Value))
 //
 #define ONSEMI_VITA_CAM_mReadSlaveReg0(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG0_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG0_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg1(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG1_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG1_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg2(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG2_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG2_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg3(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG3_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG3_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg4(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG4_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG4_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg5(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG5_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG5_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg6(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG6_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG6_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg7(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG7_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG7_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg8(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG8_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG8_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg9(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG9_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG9_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg10(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG10_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG10_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg11(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG11_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG11_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg12(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG12_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG12_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg13(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG13_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG13_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg14(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG14_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG14_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg15(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG15_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG15_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg16(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG16_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG16_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg17(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG17_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG17_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg18(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG18_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG18_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg19(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG19_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG19_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg20(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG20_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG20_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg21(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG21_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG21_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg22(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG22_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG22_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg23(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG23_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG23_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg24(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG24_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG24_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg25(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG25_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG25_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg26(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG26_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG26_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg27(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG27_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG27_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg28(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG28_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG28_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg29(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG29_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG29_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg30(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG30_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG30_OFFSET) + (RegOffset))
 #define ONSEMI_VITA_CAM_mReadSlaveReg31(BaseAddress, RegOffset) \
- 	Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG31_OFFSET) + (RegOffset))
+    Xil_In32((BaseAddress) + (ONSEMI_VITA_CAM_S00_AXI_SLV_REG31_OFFSET) + (RegOffset))
 
 /************************** Function Prototypes ****************************/
 
@@ -437,49 +437,49 @@
 // ONSEMI_VITA_SPI definitions
 
 #define ONSEMI_VITA_SPI_CORE_VERSION_REG    0x00000000
-   #define ONSEMI_VITA_SPI_CORE_VERSION_VAL 0x03030000 // 3.3.0
+#define ONSEMI_VITA_SPI_CORE_VERSION_VAL    0x03030000 // 3.3.0
 #define ONSEMI_VITA_SPI_CORE_ID_REG         0x00000004
-   #define ONSEMI_VITA_SPI_CORE_ID_VAL      0x4F4E5653 // ASCI for "ONVS"
+#define ONSEMI_VITA_SPI_CORE_ID_VAL         0x4F4E5653 // ASCI for "ONVS"
 
 #define ONSEMI_VITA_SPI_CONTROL_REG         0x00000010
 #define ONSEMI_VITA_SPI_STATUS_REG          0x00000010
-   #define ONSEMI_VITA_SPI_RESET_BIT        0x00000002
-   #define ONSEMI_VITA_SPI_ERROR_BIT        0x00000100
-   #define ONSEMI_VITA_SPI_BUSY_BIT         0x00000200
-   #define ONSEMI_VITA_SPI_TXFIFO_FULL_BIT  0x00010000
-   #define ONSEMI_VITA_SPI_RXFIFO_EMPTY_BIT 0x01000000
+#define ONSEMI_VITA_SPI_RESET_BIT           0x00000002
+#define ONSEMI_VITA_SPI_ERROR_BIT           0x00000100
+#define ONSEMI_VITA_SPI_BUSY_BIT            0x00000200
+#define ONSEMI_VITA_SPI_TXFIFO_FULL_BIT     0x00010000
+#define ONSEMI_VITA_SPI_RXFIFO_EMPTY_BIT    0x01000000
 #define ONSEMI_VITA_SPI_TIMING_REG          0x00000014
 #define ONSEMI_VITA_SPI_TXFIFO_REG          0x00000018
 #define ONSEMI_VITA_SPI_RXFIFO_REG          0x0000001C
-   #define ONSEMI_VITA_SPI_SYNC2_BIT        0x80000000
-   #define ONSEMI_VITA_SPI_SYNC1_BIT        0x40000000
-   #define ONSEMI_VITA_SPI_NOP_BIT          0x20000000
-   #define ONSEMI_VITA_SPI_READ_BIT         0x10000000
-   #define ONSEMI_VITA_SPI_WRITE_BIT        0x00000000
+#define ONSEMI_VITA_SPI_SYNC2_BIT           0x80000000
+#define ONSEMI_VITA_SPI_SYNC1_BIT           0x40000000
+#define ONSEMI_VITA_SPI_NOP_BIT             0x20000000
+#define ONSEMI_VITA_SPI_READ_BIT            0x10000000
+#define ONSEMI_VITA_SPI_WRITE_BIT           0x00000000
 
 // ONSEMI_VITA_CAM definition
 
 #define ONSEMI_VITA_CAM_CORE_VERSION_REG              0x00000000
-   #define ONSEMI_VITA_CAM_CORE_VERSION_VAL           0x03030000 // 3.3.0
+#define ONSEMI_VITA_CAM_CORE_VERSION_VAL              0x03030000 // 3.3.0
 #define ONSEMI_VITA_CAM_CORE_ID_REG                   0x00000004
-   #define ONSEMI_VITA_CAM_CORE_ID_VAL                0x4F4E5643 // ASCI for "ONVC"
-   
+#define ONSEMI_VITA_CAM_CORE_ID_VAL                   0x4F4E5643 // ASCI for "ONVC"
+
 #define ONSEMI_VITA_CAM_CONTROL_REG                   0x0000000C
 #define ONSEMI_VITA_CAM_STATUS_REG                    0x0000000C
-   #define ONSEMI_VITA_CAM_VITA_RESET_BIT             0x00000001
+#define ONSEMI_VITA_CAM_VITA_RESET_BIT                0x00000001
 
 #define ONSEMI_VITA_CAM_ISERDES_CONTROL_REG           0x00000010
-   #define ONSEMI_VITA_CAM_ISERDES_RESET_BIT          0x00000001
-   #define ONSEMI_VITA_CAM_ISERDES_AUTO_ALIGN_BIT     0x00000002
-   #define ONSEMI_VITA_CAM_ISERDES_ALIGN_START_BIT    0x00000004
-   #define ONSEMI_VITA_CAM_ISERDES_FIFO_ENABLE_BIT    0x00000008
+#define ONSEMI_VITA_CAM_ISERDES_RESET_BIT             0x00000001
+#define ONSEMI_VITA_CAM_ISERDES_AUTO_ALIGN_BIT        0x00000002
+#define ONSEMI_VITA_CAM_ISERDES_ALIGN_START_BIT       0x00000004
+#define ONSEMI_VITA_CAM_ISERDES_FIFO_ENABLE_BIT       0x00000008
 #define ONSEMI_VITA_CAM_ISERDES_STATUS_REG            0x00000010
 #define ONSEMI_VITA_CAM_ISERDES_TRAINING_REG          0x00000014
 #define ONSEMI_VITA_CAM_ISERDES_MANUAL_TAP_REG        0x00000018
 
 #define ONSEMI_VITA_CAM_DECODER_CONTROL_REG           0x00000020
-   #define ONSEMI_VITA_CAM_DECODER_RESET_BIT          0x00000001
-   #define ONSEMI_VITA_CAM_DECODER_ENABLE_BIT         0x00000002
+#define ONSEMI_VITA_CAM_DECODER_RESET_BIT             0x00000001
+#define ONSEMI_VITA_CAM_DECODER_ENABLE_BIT            0x00000002
 #define ONSEMI_VITA_CAM_DECODER_STARTODDEVEN_REG      0x00000024
 #define ONSEMI_VITA_CAM_DECODER_CODES_LS_LE_REG       0x00000028
 #define ONSEMI_VITA_CAM_DECODER_CODES_FS_FE_REG       0x0000002C
@@ -501,8 +501,8 @@
 #define ONSEMI_VITA_CAM_SYNCGEN_VTIMING2_REG          0x0000006C
 
 #define ONSEMI_VITA_CAM_CRC_CONTROL_REG               0x00000070
-   #define ONSEMI_VITA_CAM_CRC_RESET_BIT              0x00000001
-   #define ONSEMI_VITA_CAM_CRC_INITVALUE_BIT          0x00000002
+#define ONSEMI_VITA_CAM_CRC_RESET_BIT                 0x00000001
+#define ONSEMI_VITA_CAM_CRC_INITVALUE_BIT             0x00000002
 #define ONSEMI_VITA_CAM_CRC_STATUS_REG                0x00000074
 
 #define ONSEMI_VITA_CAM_REMAPPER_CONTROL_REG          0x00000078
@@ -534,23 +534,23 @@
 
 struct struct_onsemi_vita_t
 {
-   // software library version
-   Xuint32 uVersion;
+    // software library version
+    Xuint32 uVersion;
 
-   // instantiation-specific name
-   char szName[32];
+    // instantiation-specific name
+    char szName[32];
 
-   // Base Address
-   Xuint32 uBaseAddr_SPI;
-   Xuint32 uBaseAddr_CAM;
+    // Base Address
+    Xuint32 uBaseAddr_SPI;
+    Xuint32 uBaseAddr_CAM;
 
-   // Manual Tap
-   Xuint32 uManualTap;
+    // Manual Tap
+    Xuint32 uManualTap;
 
-   // Gain/Exposure
-   Xuint32 uAnalogGain;
-   Xuint32 uDigitalGain;
-   Xuint32 uExposureTime;
+    // Gain/Exposure
+    Xuint32 uAnalogGain;
+    Xuint32 uDigitalGain;
+    Xuint32 uExposureTime;
 };
 typedef struct struct_onsemi_vita_t onsemi_vita_t;
 
@@ -564,19 +564,19 @@ typedef struct struct_fpn_prnu_value_t fpn_prnu_value_t;
 
 struct struct_onsemi_vita_status_t
 {
-   // Sync Channel Decoder status
-   Xuint32 cntBlackLines;
-   Xuint32 cntImageLines;
-   Xuint32 cntBlackPixels;
-   Xuint32 cntImagePixels;
-   Xuint32 cntFrames;
-   Xuint32 cntWindows;
-   Xuint32 cntStartLines;
-   Xuint32 cntEndLines;
-   Xuint32 cntClocks;
+    // Sync Channel Decoder status
+    Xuint32 cntBlackLines;
+    Xuint32 cntImageLines;
+    Xuint32 cntBlackPixels;
+    Xuint32 cntImagePixels;
+    Xuint32 cntFrames;
+    Xuint32 cntWindows;
+    Xuint32 cntStartLines;
+    Xuint32 cntEndLines;
+    Xuint32 cntClocks;
 
-   // CRC status
-   Xuint32 crcStatus;
+    // CRC status
+    Xuint32 crcStatus;
 
 };
 typedef struct struct_onsemi_vita_status_t onsemi_vita_status_t;

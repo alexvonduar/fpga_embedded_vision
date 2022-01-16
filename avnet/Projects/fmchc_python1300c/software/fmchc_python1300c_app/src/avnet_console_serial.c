@@ -1,32 +1,32 @@
 // ----------------------------------------------------------------------------
-//  
-//        ** **        **          **  ****      **  **********  ********** ® 
-//       **   **        **        **   ** **     **  **              ** 
-//      **     **        **      **    **  **    **  **              ** 
-//     **       **        **    **     **   **   **  *********       ** 
-//    **         **        **  **      **    **  **  **              ** 
-//   **           **        ****       **     ** **  **              ** 
-//  **  .........  **        **        **      ****  **********      ** 
-//     ........... 
-//                                     Reach Further™ 
-//  
+//
+//        ** **        **          **  ****      **  **********  ********** ®
+//       **   **        **        **   ** **     **  **              **
+//      **     **        **      **    **  **    **  **              **
+//     **       **        **    **     **   **   **  *********       **
+//    **         **        **  **      **    **  **  **              **
+//   **           **        ****       **     ** **  **              **
+//  **  .........  **        **        **      ****  **********      **
+//     ...........
+//                                     Reach Further™
+//
 // ----------------------------------------------------------------------------
-// 
-// This design is the property of Avnet.  Publication of this 
-// design is not authorized without written consent from Avnet. 
-// 
-// Please direct any questions to the PicoZed community support forum: 
-//    http://www.zedboard.org/forum 
-// 
-// Disclaimer: 
-//    Avnet, Inc. makes no warranty for the use of this code or design. 
-//    This code is provided  "As Is". Avnet, Inc assumes no responsibility for 
-//    any errors, which may appear in this code, nor does it make a commitment 
-//    to update the information contained herein. Avnet, Inc specifically 
-//    disclaims any implied warranties of fitness for a particular purpose. 
-//                     Copyright(c) 2017 Avnet, Inc. 
-//                             All rights reserved. 
-// 
+//
+// This design is the property of Avnet.  Publication of this
+// design is not authorized without written consent from Avnet.
+//
+// Please direct any questions to the PicoZed community support forum:
+//    http://www.zedboard.org/forum
+//
+// Disclaimer:
+//    Avnet, Inc. makes no warranty for the use of this code or design.
+//    This code is provided  "As Is". Avnet, Inc assumes no responsibility for
+//    any errors, which may appear in this code, nor does it make a commitment
+//    to update the information contained herein. Avnet, Inc specifically
+//    disclaims any implied warranties of fitness for a particular purpose.
+//                     Copyright(c) 2017 Avnet, Inc.
+//                             All rights reserved.
+//
 // ----------------------------------------------------------------------------
 //
 // Create Date:         Nov 18, 2011
@@ -75,21 +75,21 @@ void *serial_handle = NULL;
 // use alternate implementation instead ...
 int serial_hprintf( void *serial_handle, const char * fmt, ...)
 {
-	static char buf[1024];
-	va_list marker;
-	int n;
-	int i;
+    static char buf[1024];
+    va_list marker;
+    int n;
+    int i;
 
-	va_start( marker, fmt);
-	n = vsnprintf( buf, sizeof buf, fmt, marker);
-	va_end( marker);
+    va_start( marker, fmt);
+    n = vsnprintf( buf, sizeof buf, fmt, marker);
+    va_end( marker);
 
-	for ( i = 0; i < n; i++ )
-	{
-	   OS_PUTCHAR( buf[i] );
-	}
+    for ( i = 0; i < n; i++ )
+    {
+        OS_PUTCHAR( buf[i] );
+    }
 
-	return n;
+    return n;
 }
 #else
 /*---------------------------------------------------*/
@@ -153,7 +153,7 @@ static void outs( charptr lp, params_t *par)
 {
     /* pad on left if needed                         */
     par->len = strlen( lp);
-   padding( !(par->left_flag), par);
+    padding( !(par->left_flag), par);
 
     /* Move string to the buffer                     */
     while (*lp && (par->num2)--)
@@ -180,7 +180,7 @@ static void outnum( const long n, const long base, params_t *par)
     unsigned long num;
 
     /* Check if number is negative                   */
-   if (base == 10 && n < 0L) {
+    if (base == 10 && n < 0L) {
         negative = 1;
         num = -(n);
     }
@@ -267,7 +267,7 @@ void serial_hprintf( void *serial_handle, const char * fmt, ...)
         par.pad_character = ' ';
         par.num2=32767;
 
- try_next:
+try_next:
         ch = *(++ctrl);
 
         if (isdigit((int)ch)) {
@@ -358,31 +358,31 @@ static unsigned avnet_console_serial_server_running = 0;
 int
 transfer_avnet_console_serial_data()
 {
-   char inchar;
-   int input;
+    char inchar;
+    int input;
 
 #if defined(LINUX_CODE)
-   if (( input = getchar() ) != EOF )
-   {
-      inchar = (char)input;
+    if (( input = getchar() ) != EOF )
+    {
+        inchar = (char)input;
 #else
- #ifdef XPAR_XUARTPS_NUM_INSTANCES
-   if (XUartPs_IsReceiveData(STDIN_BASEADDRESS))
- #else
-   if (!XUartLite_IsReceiveEmpty(STDIN_BASEADDRESS))
- #endif
-   {
-      inchar = OS_GETCHAR();
+#ifdef XPAR_XUARTPS_NUM_INSTANCES
+    if (XUartPs_IsReceiveData(STDIN_BASEADDRESS))
+#else
+    if (!XUartLite_IsReceiveEmpty(STDIN_BASEADDRESS))
 #endif
-      serial_console.inchar = inchar;
+    {
+        inchar = OS_GETCHAR();
+#endif
+        serial_console.inchar = inchar;
 
-      avnet_console_process( &serial_console );
+        avnet_console_process( &serial_console );
 
-      if ( serial_console.quit == 1 )
-      {
-    	  return 1;
-      }
-   }
+        if ( serial_console.quit == 1 )
+        {
+            return 1;
+        }
+    }
 
     return 0;
 }

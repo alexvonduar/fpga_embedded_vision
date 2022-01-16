@@ -320,34 +320,34 @@ EXTERNAL CONSTANT UINT16 VicInfo[];
  * Enums and structures
  *=======================================*/
 typedef enum {
-	ATVERR_OK=0,
-	ATVERR_FALSE=0,
-	ATVERR_TRUE=1,
-	ATVERR_INV_PARM,
-	ATVERR_NOT_AVAILABLE,
-	ATVERR_FAILED
+    ATVERR_OK=0,
+    ATVERR_FALSE=0,
+    ATVERR_TRUE=1,
+    ATVERR_INV_PARM,
+    ATVERR_NOT_AVAILABLE,
+    ATVERR_FAILED
 } ATV_ERR;
 
 
 enum {
-	CEC_EVENT_RX_MSG,
-	CEC_EVENT_TX_DONE,
-	CEC_EVENT_TX_TIMEOUT,
-	CEC_EVENT_TX_ARB_LOST,
-	CEC_EVENT_LOG_ADDR_ALLOC,
-	CEC_EVENT_LOG_ADDR_LIST,
-	CEC_EVENT_RX_MSG_RESPOND
+    CEC_EVENT_RX_MSG,
+    CEC_EVENT_TX_DONE,
+    CEC_EVENT_TX_TIMEOUT,
+    CEC_EVENT_TX_ARB_LOST,
+    CEC_EVENT_LOG_ADDR_ALLOC,
+    CEC_EVENT_LOG_ADDR_LIST,
+    CEC_EVENT_RX_MSG_RESPOND
 };
 
 typedef struct {
-	BOOL TxReady;
-	BOOL RxReady;
-	BOOL ArbLost;
-	BOOL Timeout;
-	BOOL RxReady1;
-	BOOL RxReady2;
-	BOOL RxReady3;
-	UCHAR RxFrameOrder[CEC_TRIPLE_NUMBER];
+    BOOL TxReady;
+    BOOL RxReady;
+    BOOL ArbLost;
+    BOOL Timeout;
+    BOOL RxReady1;
+    BOOL RxReady2;
+    BOOL RxReady3;
+    UCHAR RxFrameOrder[CEC_TRIPLE_NUMBER];
 } CEC_INTERRUPTS;
 
 /*========================================
@@ -360,30 +360,30 @@ typedef struct {
 #define ATV_I2CGetMultiField(d,r,s,p)               HAL_I2CReadBlock(d,r,p,(UINT16)s)
 
 struct cec_status {
-	uint8_t tx_header;
-	uint8_t tx_tail;
-	uint8_t tx_cnt;
-	uint8_t tx_buf[CEC_TX_BUF_LEN];
+    uint8_t tx_header;
+    uint8_t tx_tail;
+    uint8_t tx_cnt;
+    uint8_t tx_buf[CEC_TX_BUF_LEN];
 };
 
 enum cec_tx_state_machine {
-	CEC_TX_STATE_DONE,
-	CEC_TX_STATE_BUSY
+    CEC_TX_STATE_DONE,
+    CEC_TX_STATE_BUSY
 };
 
 enum cec_operations {
-	CEC_OP_NONE,
-	CEC_OP_LOG_ADDR_ALLOC,
-	CEC_OP_GET_LOG_ADDR_LIST
+    CEC_OP_NONE,
+    CEC_OP_LOG_ADDR_ALLOC,
+    CEC_OP_GET_LOG_ADDR_LIST
 };
 
 void    HAL_DelayMs (UINT16 Counter);
 UCHAR   HAL_I2CReadByte (UCHAR Dev, UCHAR Reg, UCHAR *Data);
 UCHAR   HAL_I2CWriteByte (UCHAR Dev, UCHAR Reg, UCHAR Data);
 UINT16  HAL_I2CReadBlock (UCHAR Dev, UCHAR Reg, UCHAR *Data,
-			  UINT16 NumberBytes);
+                UINT16 NumberBytes);
 UINT16  HAL_I2CWriteBlock (UCHAR Dev, UCHAR Reg, UCHAR *Data,
-			   UINT16 NumberBytes);
+                UINT16 NumberBytes);
 UCHAR HAL_SetRxChipSelect(UCHAR DevIdx);
 void HAL_SetI2CHandler(fmc_iic_t * handler);
 void WaitMilliSec(unsigned int msec);
@@ -391,19 +391,19 @@ void DBG_Printf(const char *data, ...);
 
 
 UCHAR   ATV_I2CReadField8   (UCHAR DevAddr, UCHAR RegAddr, UCHAR Mask,
-			     UCHAR BitPos);
+                    UCHAR BitPos);
 void    ATV_I2CWriteField8  (UCHAR DevAddr, UCHAR RegAddr, UCHAR Mask,
-			     UCHAR BitPos,  UCHAR FieldVal);
+                    UCHAR BitPos,  UCHAR FieldVal);
 UINT32  ATV_I2CReadField32  (UCHAR DevAddr, UCHAR RegAddr, UCHAR MsbMask,
-			     UCHAR LsbMask, UCHAR LsbPos, UCHAR FldSpan);
+                    UCHAR LsbMask, UCHAR LsbPos, UCHAR FldSpan);
 UINT32  ATV_I2CReadField32LE   (UCHAR DevAddr, UCHAR RegAddr, UCHAR MsbMask,
-				UCHAR LsbMask, UCHAR LsbPos,  UCHAR FldSpan);
+                UCHAR LsbMask, UCHAR LsbPos,  UCHAR FldSpan);
 void    ATV_I2CWriteField32      (UCHAR DevAddr, UCHAR RegAddr, UCHAR MsbMask,
-				  UCHAR LsbMask, UCHAR LsbPos,  UCHAR FldSpan,
-				  UINT32 Val);
+                    UCHAR LsbMask, UCHAR LsbPos,  UCHAR FldSpan,
+                    UINT32 Val);
 void    ATV_I2CWriteField32LE    (UCHAR DevAddr, UCHAR RegAddr, UCHAR MsbMask,
-				  UCHAR LsbMask, UCHAR LsbPos,  UCHAR FldSpan,
-				  UINT32 Val);
+                    UCHAR LsbMask, UCHAR LsbPos,  UCHAR FldSpan,
+                    UINT32 Val);
 void    ATV_I2CWriteFields (UCHAR *Table, UCHAR EndVal);
 void    ATV_I2CWriteTable (UCHAR *Table, UCHAR EndVal);
 UINT16  ATV_LookupValue8 (UCHAR *Table, UCHAR Value, UCHAR EndVal, UINT16 Step);

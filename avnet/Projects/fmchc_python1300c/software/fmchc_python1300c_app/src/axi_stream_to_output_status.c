@@ -121,34 +121,33 @@ XGpio GpioInput;  /* The driver instance for GPIO Device configured as I/P */
 ******************************************************************************/
 int GpioRead(u16 DeviceId, unsigned channel, u32 *DataRead)
 {
-	 int Status;
+    int Status;
 
-	 /*
-	  * Initialize the GPIO driver so that it's ready to use,
-	  * specify the device ID that is generated in xparameters.h
-	  */
-	 Status = XGpio_Initialize(&GpioInput, DeviceId);
-	 if (Status != XST_SUCCESS) {
-		  return XST_FAILURE;
-	 }
+    /*
+    * Initialize the GPIO driver so that it's ready to use,
+    * specify the device ID that is generated in xparameters.h
+    */
+    Status = XGpio_Initialize(&GpioInput, DeviceId);
+    if (Status != XST_SUCCESS) {
+        return XST_FAILURE;
+    }
 
-	 /* Set the direction for all signals to be inputs */
-	 XGpio_SetDataDirection(&GpioInput, channel, 0xFFFFFFFF);
+    /* Set the direction for all signals to be inputs */
+    XGpio_SetDataDirection(&GpioInput, channel, 0xFFFFFFFF);
 
-	 /* Read the state of the data so that it can be  verified */
-	 *DataRead = XGpio_DiscreteRead(&GpioInput, channel);
+    /* Read the state of the data so that it can be  verified */
+    *DataRead = XGpio_DiscreteRead(&GpioInput, channel);
 
-	 return XST_SUCCESS;
+    return XST_SUCCESS;
 
 }
 
 void print_axi_stream_to_output_status()
 {
-	u32 data = 0;
-	GpioRead(XPAR_AXI_GPIO_VID_OUT_0_DEVICE_ID, STATUS_0_CHANNEL, &data);
-	xil_printf("AXI4-Stream to Video Out status 0: %0xd\n\r", data);
-	data = 0;
-	GpioRead(XPAR_AXI_GPIO_VID_OUT_0_DEVICE_ID, STATUS_1_CHANNEL, &data);
-	xil_printf("AXI4-Stream to Video Out status 1: %0xd\n\r", data);
+    u32 data = 0;
+    GpioRead(XPAR_AXI_GPIO_VID_OUT_0_DEVICE_ID, STATUS_0_CHANNEL, &data);
+    xil_printf("AXI4-Stream to Video Out status 0: %0xd\n\r", data);
+    data = 0;
+    GpioRead(XPAR_AXI_GPIO_VID_OUT_0_DEVICE_ID, STATUS_1_CHANNEL, &data);
+    xil_printf("AXI4-Stream to Video Out status 1: %0xd\n\r", data);
 }
-

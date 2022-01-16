@@ -60,8 +60,8 @@
 #define PLATFORM_ZED
 
 #if !defined(PLATFORM_AC701) && !defined(PLATFORM_KC705) && \
-	!defined(PLATFORM_VC707) && !defined(PLATFORM_ZC702) && \
-	!defined(PLATFORM_ZC706) && !defined(PLATFORM_ZED)
+    !defined(PLATFORM_VC707) && !defined(PLATFORM_ZC702) && \
+    !defined(PLATFORM_ZC706) && !defined(PLATFORM_ZED)
 #error "ERROR: Must define a platform in app_config.h"
 #endif
 

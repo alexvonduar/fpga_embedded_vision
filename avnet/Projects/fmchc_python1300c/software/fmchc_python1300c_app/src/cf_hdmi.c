@@ -63,63 +63,63 @@
 #define ABS(x)					(x < 0 ? -x : x)
 
 enum detailedTimingElement {
-	PIXEL_CLOCK,
-	H_ACTIVE_TIME,
-	H_BLANKING_TIME,
-	H_SYNC_OFFSET,
-	H_SYNC_WIDTH_PULSE,
-	V_ACTIVE_TIME,
-	V_BLANKING_TIME,
-	V_SYNC_OFFSET,
-	V_SYNC_WIDTH_PULSE
+    PIXEL_CLOCK,
+    H_ACTIVE_TIME,
+    H_BLANKING_TIME,
+    H_SYNC_OFFSET,
+    H_SYNC_WIDTH_PULSE,
+    V_ACTIVE_TIME,
+    V_BLANKING_TIME,
+    V_SYNC_OFFSET,
+    V_SYNC_WIDTH_PULSE
 };
 
 static const unsigned long detailedTiming[7][9] = {
-	{25180000, 640, 144, 16, 96, 480, 29, 10, 2},
-	{40000000, 800, 256, 40, 128, 600, 28, 1, 4},
-	{65000000, 1024, 320, 136, 24, 768, 38, 3, 6},
-	{74250000, 1280, 370, 110, 40, 720, 30, 5, 5},
-	{84750000, 1360, 416, 136, 72, 768, 30, 3, 5},
-	{108000000, 1600, 400, 32, 48, 900, 12, 3, 6},
-	{148500000, 1920, 280, 44, 88, 1080, 45, 4, 5}
+    {25180000, 640, 144, 16, 96, 480, 29, 10, 2},
+    {40000000, 800, 256, 40, 128, 600, 28, 1, 4},
+    {65000000, 1024, 320, 136, 24, 768, 38, 3, 6},
+    {74250000, 1280, 370, 110, 40, 720, 30, 5, 5},
+    {84750000, 1360, 416, 136, 72, 768, 30, 3, 5},
+    {108000000, 1600, 400, 32, 48, 900, 12, 3, 6},
+    {148500000, 1920, 280, 44, 88, 1080, 45, 4, 5}
 };
 
 /***************************************************************************//**
  * @brief DDRVideoWr.
 *******************************************************************************/
 void DDRVideoWr(unsigned short horizontalActiveTime,
-		unsigned short verticalActiveTime)
+        unsigned short verticalActiveTime)
 {
-	unsigned long  pixel      = 0;
-	unsigned long  backup     = 0;
-	unsigned short line       = 0;
-	unsigned long  index      = 0;
-	unsigned char  repetition = 0;
+    unsigned long  pixel      = 0;
+    unsigned long  backup     = 0;
+    unsigned short line       = 0;
+    unsigned long  index      = 0;
+    unsigned char  repetition = 0;
 
-	while(line < verticalActiveTime) {
-		for(index = 0; index < IMG_LENGTH; index++) {
-			for (repetition = 0; repetition < ((IMG_DATA[index]>>24) & 0xff);
-			     repetition++) {
-				backup = pixel;
-				while((pixel - line*horizontalActiveTime) < horizontalActiveTime) {
-					Xil_Out32((VIDEO_BASEADDR+(pixel*4)), (IMG_DATA[index] & 0xffffff));
-					pixel += 640;
-				}
-				pixel = backup;
-				if((pixel - line*horizontalActiveTime) < 639) {
-					pixel++;
-				} else {
-					line++;
-					if(line == verticalActiveTime) {
-						Xil_DCacheFlush();
-						return;
-					}
-					pixel = line*horizontalActiveTime;
-				}
-			}
-		}
-	}
-	Xil_DCacheFlush();
+    while(line < verticalActiveTime) {
+        for(index = 0; index < IMG_LENGTH; index++) {
+            for (repetition = 0; repetition < ((IMG_DATA[index]>>24) & 0xff);
+                repetition++) {
+                backup = pixel;
+                while((pixel - line*horizontalActiveTime) < horizontalActiveTime) {
+                    Xil_Out32((VIDEO_BASEADDR+(pixel*4)), (IMG_DATA[index] & 0xffffff));
+                    pixel += 640;
+                }
+                pixel = backup;
+                if((pixel - line*horizontalActiveTime) < 639) {
+                    pixel++;
+                } else {
+                    line++;
+                    if(line == verticalActiveTime) {
+                        Xil_DCacheFlush();
+                        return;
+                    }
+                    pixel = line*horizontalActiveTime;
+                }
+            }
+        }
+    }
+    Xil_DCacheFlush();
 }
 
 /***************************************************************************//**
@@ -127,134 +127,134 @@ void DDRVideoWr(unsigned short horizontalActiveTime,
 *******************************************************************************/
 void DDRAudioWr(void)
 {
-	u32 n     = 0;
-	u32 scnt  = 0;
-	u32 sincr = 0;
+    u32 n     = 0;
+    u32 scnt  = 0;
+    u32 sincr = 0;
 
-	sincr = (65536*2)/AUDIO_LENGTH;
+    sincr = (65536*2)/AUDIO_LENGTH;
 #if defined(PLATFORM_KC705) || defined(PLATFORM_AC701) || \
-	defined(PLATFORM_VC707)
-	for (n = 0; n < 32; n++) {
-		Xil_Out32((AUDIO_BASEADDR+(n*4)), 0x00); // init descriptors
-	}
-	Xil_Out32((AUDIO_BASEADDR+0x00), (AUDIO_BASEADDR + 0x40)); // next descriptor
-	Xil_Out32((AUDIO_BASEADDR+0x08), (AUDIO_BASEADDR + 0x80)); // start address
-	Xil_Out32((AUDIO_BASEADDR+0x40), (AUDIO_BASEADDR + 0x00)); // next descriptor
-	Xil_Out32((AUDIO_BASEADDR+0x48), (AUDIO_BASEADDR + 0x80)); // start address
-	Xil_Out32((AUDIO_BASEADDR+0x18),
-		  (0x8000000 | (AUDIO_LENGTH*8))); // no. of bytes
-	Xil_Out32((AUDIO_BASEADDR+0x58),
-		  (0x4000000 | (AUDIO_LENGTH*8))); // no. of bytes
-	Xil_Out32((AUDIO_BASEADDR+0x1c), 0x00); // status
-	Xil_Out32((AUDIO_BASEADDR+0x5c), 0x00); // status
+    defined(PLATFORM_VC707)
+    for (n = 0; n < 32; n++) {
+        Xil_Out32((AUDIO_BASEADDR+(n*4)), 0x00); // init descriptors
+    }
+    Xil_Out32((AUDIO_BASEADDR+0x00), (AUDIO_BASEADDR + 0x40)); // next descriptor
+    Xil_Out32((AUDIO_BASEADDR+0x08), (AUDIO_BASEADDR + 0x80)); // start address
+    Xil_Out32((AUDIO_BASEADDR+0x40), (AUDIO_BASEADDR + 0x00)); // next descriptor
+    Xil_Out32((AUDIO_BASEADDR+0x48), (AUDIO_BASEADDR + 0x80)); // start address
+    Xil_Out32((AUDIO_BASEADDR+0x18),
+          (0x8000000 | (AUDIO_LENGTH*8))); // no. of bytes
+    Xil_Out32((AUDIO_BASEADDR+0x58),
+          (0x4000000 | (AUDIO_LENGTH*8))); // no. of bytes
+    Xil_Out32((AUDIO_BASEADDR+0x1c), 0x00); // status
+    Xil_Out32((AUDIO_BASEADDR+0x5c), 0x00); // status
 #endif
-	for (n = 0; n < AUDIO_LENGTH; n++) {
+    for (n = 0; n < AUDIO_LENGTH; n++) {
 #if defined(PLATFORM_KC705) || defined(PLATFORM_AC701) || \
-	defined(PLATFORM_VC707)
-		Xil_Out32((AUDIO_BASEADDR+0x80+(n*4)), ((scnt << 16) | scnt));
+    defined(PLATFORM_VC707)
+        Xil_Out32((AUDIO_BASEADDR+0x80+(n*4)), ((scnt << 16) | scnt));
 #elif defined(PLATFORM_ZC702) || defined(PLATFORM_ZC706) || \
-		defined(PLATFORM_ZED)
-		Xil_Out32((AUDIO_BASEADDR+(n*4)), ((scnt << 16) | scnt));
+        defined(PLATFORM_ZED)
+        Xil_Out32((AUDIO_BASEADDR+(n*4)), ((scnt << 16) | scnt));
 #endif
-		scnt = (n > (AUDIO_LENGTH/2)) ? (scnt-sincr) : (scnt+sincr);
-	}
-	Xil_DCacheFlush();
+        scnt = (n > (AUDIO_LENGTH/2)) ? (scnt-sincr) : (scnt+sincr);
+    }
+    Xil_DCacheFlush();
 }
 
 /***************************************************************************//**
  * @brief InitHdmiVideoPcore.
 *******************************************************************************/
 void InitHdmiVideoPcore(unsigned short horizontalActiveTime,
-			unsigned short horizontalBlankingTime,
-			unsigned short horizontalSyncOffset,
-			unsigned short horizontalSyncPulseWidth,
-			unsigned short verticalActiveTime,
-			unsigned short verticalBlankingTime,
-			unsigned short verticalSyncOffset,
-			unsigned short verticalSyncPulseWidth)
+            unsigned short horizontalBlankingTime,
+            unsigned short horizontalSyncOffset,
+            unsigned short horizontalSyncPulseWidth,
+            unsigned short verticalActiveTime,
+            unsigned short verticalBlankingTime,
+            unsigned short verticalSyncOffset,
+            unsigned short verticalSyncPulseWidth)
 {
-	unsigned short horizontalCount	   = 0;
-	unsigned short verticalCount	   = 0;
-	unsigned short horizontalBackPorch = 0;
-	unsigned short verticalBackPorch   = 0;
-	unsigned short horizontalDeMin	   = 0;
-	unsigned short horizontalDeMax	   = 0;
-	unsigned short verticalDeMin	   = 0;
-	unsigned short verticalDeMax	   = 0;
+    unsigned short horizontalCount	   = 0;
+    unsigned short verticalCount	   = 0;
+    unsigned short horizontalBackPorch = 0;
+    unsigned short verticalBackPorch   = 0;
+    unsigned short horizontalDeMin	   = 0;
+    unsigned short horizontalDeMax	   = 0;
+    unsigned short verticalDeMin	   = 0;
+    unsigned short verticalDeMax	   = 0;
 
-	DDRVideoWr(horizontalActiveTime, verticalActiveTime);
+    DDRVideoWr(horizontalActiveTime, verticalActiveTime);
 
-	horizontalCount = horizontalActiveTime +
-			  horizontalBlankingTime;
-	verticalCount = verticalActiveTime +
-			verticalBlankingTime;
-	horizontalBackPorch = horizontalBlankingTime -
-			      horizontalSyncOffset -
-			      horizontalSyncPulseWidth;
-	verticalBackPorch = verticalBlankingTime -
-			    verticalSyncOffset -
-			    verticalSyncPulseWidth;
-	horizontalDeMin = horizontalSyncPulseWidth +
-			  horizontalBackPorch;
-	horizontalDeMax = horizontalDeMin +
-			  horizontalActiveTime;
-	verticalDeMin = verticalSyncPulseWidth +
-			verticalBackPorch;
-	verticalDeMax = verticalDeMin +
-			verticalActiveTime;
+    horizontalCount = horizontalActiveTime +
+            horizontalBlankingTime;
+    verticalCount = verticalActiveTime +
+            verticalBlankingTime;
+    horizontalBackPorch = horizontalBlankingTime -
+                horizontalSyncOffset -
+                horizontalSyncPulseWidth;
+    verticalBackPorch = verticalBlankingTime -
+                verticalSyncOffset -
+                verticalSyncPulseWidth;
+    horizontalDeMin = horizontalSyncPulseWidth +
+            horizontalBackPorch;
+    horizontalDeMax = horizontalDeMin +
+            horizontalActiveTime;
+    verticalDeMin = verticalSyncPulseWidth +
+            verticalBackPorch;
+    verticalDeMax = verticalDeMin +
+            verticalActiveTime;
 
 #if 0
-	Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_HTIMING1),
-		  ((horizontalActiveTime << 16) | horizontalCount));
-	Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_HTIMING2),
-		  horizontalSyncPulseWidth);
-	Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_HTIMING3),
-		  ((horizontalDeMax << 16) | horizontalDeMin));
-	Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_VTIMING1),
-		  ((verticalActiveTime << 16) | verticalCount));
-	Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_VTIMING2),
-		  verticalSyncPulseWidth);
-	Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_VTIMING3),
-		  ((verticalDeMax << 16) | verticalDeMin));
-	Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_RESET), 0x1);
-	Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_SOURCE_SEL), 0x0);
-	Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_SOURCE_SEL), 0x1);
+    Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_HTIMING1),
+        ((horizontalActiveTime << 16) | horizontalCount));
+    Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_HTIMING2),
+        horizontalSyncPulseWidth);
+    Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_HTIMING3),
+        ((horizontalDeMax << 16) | horizontalDeMin));
+    Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_VTIMING1),
+        ((verticalActiveTime << 16) | verticalCount));
+    Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_VTIMING2),
+        verticalSyncPulseWidth);
+    Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_VTIMING3),
+        ((verticalDeMax << 16) | verticalDeMin));
+    Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_RESET), 0x1);
+    Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_SOURCE_SEL), 0x0);
+    Xil_Out32((CFV_BASEADDR + AXI_HDMI_REG_SOURCE_SEL), 0x1);
 
 #if defined(PLATFORM_ZED) || defined(PLATFORM_ZC702) || \
-	defined(PLATFORM_ZC706)
-	Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_CTRL,
-		  0x0); // reset DMAC
-	Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_CTRL,
-		  AXI_DMAC_CTRL_ENABLE); // enable DMAC
-	Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_FLAGS,
-		  DMA_CYCLIC | DMA_LAST); // enable circular mode
-	Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_SRC_ADDRESS,
-		  VIDEO_BASEADDR); // start address
-	Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_X_LENGTH,
-		  ((horizontalActiveTime*4)-1)); // h size
+    defined(PLATFORM_ZC706)
+    Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_CTRL,
+        0x0); // reset DMAC
+    Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_CTRL,
+        AXI_DMAC_CTRL_ENABLE); // enable DMAC
+    Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_FLAGS,
+        DMA_CYCLIC | DMA_LAST); // enable circular mode
+    Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_SRC_ADDRESS,
+        VIDEO_BASEADDR); // start address
+    Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_X_LENGTH,
+        ((horizontalActiveTime*4)-1)); // h size
 
 
-	Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_SRC_STRIDE,
-		  (horizontalActiveTime*4)); // h offset
-	Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_Y_LENGTH,
-		  (verticalActiveTime-1)); // v size
-	Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_START_TRANSFER,
-		  0x1); // submit transfer	Xil_Out32(VDMA_BASEADDR + DMAC_REG_CTRL,
+    Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_SRC_STRIDE,
+        (horizontalActiveTime*4)); // h offset
+    Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_Y_LENGTH,
+        (verticalActiveTime-1)); // v size
+    Xil_Out32(VDMA_BASEADDR + AXI_DMAC_REG_START_TRANSFER,
+        0x1); // submit transfer	Xil_Out32(VDMA_BASEADDR + DMAC_REG_CTRL,
 #else
-	Xil_Out32((VDMA_BASEADDR + AXI_VDMA_REG_DMA_CTRL),
-		  0x00000003); // enable circular mode
-	Xil_Out32((VDMA_BASEADDR + AXI_VDMA_REG_START_1),
-		  VIDEO_BASEADDR); // start address
-	Xil_Out32((VDMA_BASEADDR + AXI_VDMA_REG_START_2),
-		  VIDEO_BASEADDR); // start address
-	Xil_Out32((VDMA_BASEADDR + AXI_VDMA_REG_START_3),
-		  VIDEO_BASEADDR); // start address
-	Xil_Out32((VDMA_BASEADDR + AXI_VDMA_REG_FRMDLY_STRIDE),
-		  (horizontalActiveTime*4)); // h offset
-	Xil_Out32((VDMA_BASEADDR + AXI_VDMA_REG_H_SIZE),
-		  (horizontalActiveTime*4)); // h size
-	Xil_Out32((VDMA_BASEADDR + AXI_VDMA_REG_V_SIZE),
-		  verticalActiveTime); // v size
+    Xil_Out32((VDMA_BASEADDR + AXI_VDMA_REG_DMA_CTRL),
+        0x00000003); // enable circular mode
+    Xil_Out32((VDMA_BASEADDR + AXI_VDMA_REG_START_1),
+        VIDEO_BASEADDR); // start address
+    Xil_Out32((VDMA_BASEADDR + AXI_VDMA_REG_START_2),
+        VIDEO_BASEADDR); // start address
+    Xil_Out32((VDMA_BASEADDR + AXI_VDMA_REG_START_3),
+        VIDEO_BASEADDR); // start address
+    Xil_Out32((VDMA_BASEADDR + AXI_VDMA_REG_FRMDLY_STRIDE),
+        (horizontalActiveTime*4)); // h offset
+    Xil_Out32((VDMA_BASEADDR + AXI_VDMA_REG_H_SIZE),
+        (horizontalActiveTime*4)); // h size
+    Xil_Out32((VDMA_BASEADDR + AXI_VDMA_REG_V_SIZE),
+        verticalActiveTime); // v size
 #endif
 #endif
 }
@@ -264,15 +264,15 @@ void InitHdmiVideoPcore(unsigned short horizontalActiveTime,
 *******************************************************************************/
 void SetVideoResolution(/*struct axi_clkgen *clkgen, */unsigned char resolution)
 {
-	//axi_clkgen_set_rate(clkgen, detailedTiming[resolution][PIXEL_CLOCK]);
-	InitHdmiVideoPcore(detailedTiming[resolution][H_ACTIVE_TIME],
-			   detailedTiming[resolution][H_BLANKING_TIME],
-			   detailedTiming[resolution][H_SYNC_OFFSET],
-			   detailedTiming[resolution][H_SYNC_WIDTH_PULSE],
-			   detailedTiming[resolution][V_ACTIVE_TIME],
-			   detailedTiming[resolution][V_BLANKING_TIME],
-			   detailedTiming[resolution][V_SYNC_OFFSET],
-			   detailedTiming[resolution][V_SYNC_WIDTH_PULSE]);
+    //axi_clkgen_set_rate(clkgen, detailedTiming[resolution][PIXEL_CLOCK]);
+    InitHdmiVideoPcore(detailedTiming[resolution][H_ACTIVE_TIME],
+            detailedTiming[resolution][H_BLANKING_TIME],
+            detailedTiming[resolution][H_SYNC_OFFSET],
+            detailedTiming[resolution][H_SYNC_WIDTH_PULSE],
+            detailedTiming[resolution][V_ACTIVE_TIME],
+            detailedTiming[resolution][V_BLANKING_TIME],
+            detailedTiming[resolution][V_SYNC_OFFSET],
+            detailedTiming[resolution][V_SYNC_WIDTH_PULSE]);
 }
 
 /***************************************************************************//**
@@ -281,20 +281,20 @@ void SetVideoResolution(/*struct axi_clkgen *clkgen, */unsigned char resolution)
 void InitHdmiAudioPcore(void)
 {
 #if defined(PLATFORM_KC705) || defined(PLATFORM_AC701) || \
-	defined(PLATFORM_VC707)
-	DDRAudioWr();
+    defined(PLATFORM_VC707)
+    DDRAudioWr();
 #endif
 
 #if  0
-	Xil_Out32((CFA_BASEADDR + 0x04), 0x040); // sample frequency
+    Xil_Out32((CFA_BASEADDR + 0x04), 0x040); // sample frequency
 #if defined(PLATFORM_KC705) || defined(PLATFORM_AC701) || \
-	defined(PLATFORM_VC707)
-	Xil_Out32((CFA_BASEADDR + 0x00),
-		  0xc03); // clock ratio, data enable & signal enable
+    defined(PLATFORM_VC707)
+    Xil_Out32((CFA_BASEADDR + 0x00),
+        0xc03); // clock ratio, data enable & signal enable
 #elif defined(PLATFORM_ZC702) || defined(PLATFORM_ZC706) || \
-		defined(PLATFORM_ZED)
-	Xil_Out32((CFA_BASEADDR + 0x00),
-		  0x103); // clock ratio, data enable & signal enable
+        defined(PLATFORM_ZED)
+    Xil_Out32((CFA_BASEADDR + 0x00),
+        0x103); // clock ratio, data enable & signal enable
 #endif
 #endif
 }
@@ -306,55 +306,55 @@ void AudioClick(void)
 {
 #if 0
 #if defined(PLATFORM_KC705) || defined(PLATFORM_AC701) || \
-	defined(PLATFORM_VC707)
-	/* Generating audio clicks. */
-	Xil_Out32((AUDIO_BASEADDR+0x1c), 0x00); // status
-	Xil_Out32((AUDIO_BASEADDR+0x5c), 0x00); // status
-	Xil_DCacheFlush();
-	Xil_Out32((ADMA_BASEADDR + 0x00), 0); // clear dma operations
-	Xil_Out32((ADMA_BASEADDR + 0x08), AUDIO_BASEADDR); // head descr.
-	Xil_Out32((ADMA_BASEADDR + 0x00), 1); // enable dma operations
-	Xil_Out32((ADMA_BASEADDR + 0x10), (AUDIO_BASEADDR+0x40)); // tail descr.
+    defined(PLATFORM_VC707)
+    /* Generating audio clicks. */
+    Xil_Out32((AUDIO_BASEADDR+0x1c), 0x00); // status
+    Xil_Out32((AUDIO_BASEADDR+0x5c), 0x00); // status
+    Xil_DCacheFlush();
+    Xil_Out32((ADMA_BASEADDR + 0x00), 0); // clear dma operations
+    Xil_Out32((ADMA_BASEADDR + 0x08), AUDIO_BASEADDR); // head descr.
+    Xil_Out32((ADMA_BASEADDR + 0x00), 1); // enable dma operations
+    Xil_Out32((ADMA_BASEADDR + 0x10), (AUDIO_BASEADDR+0x40)); // tail descr.
 #elif defined(PLATFORM_ZC702) || defined(PLATFORM_ZC706) || \
-		defined(PLATFORM_ZED)
-	u32 			Status;
-	XDmaPs_Cmd		DmaCmd;
-	XDmaPs			DmaInstance;
-	XDmaPs			*DmaInst = &DmaInstance;
-	XDmaPs_Config	*DmaCfg;
+        defined(PLATFORM_ZED)
+    u32 			Status;
+    XDmaPs_Cmd		DmaCmd;
+    XDmaPs			DmaInstance;
+    XDmaPs			*DmaInst = &DmaInstance;
+    XDmaPs_Config	*DmaCfg;
 
-	memset(&DmaCmd, 0, sizeof DmaCmd);
+    memset(&DmaCmd, 0, sizeof DmaCmd);
 
-	DmaCmd.ChanCtrl.EndianSwapSize	= 0;
-	DmaCmd.ChanCtrl.DstCacheCtrl 	= 0;
-	DmaCmd.ChanCtrl.DstProtCtrl 	= 0;
-	DmaCmd.ChanCtrl.DstBurstLen 	= 1;
-	DmaCmd.ChanCtrl.DstBurstSize 	= 4;
-	DmaCmd.ChanCtrl.DstInc 			= 0;
-	DmaCmd.ChanCtrl.SrcCacheCtrl 	= 0;
-	DmaCmd.ChanCtrl.SrcProtCtrl 	= 0;
-	DmaCmd.ChanCtrl.SrcBurstLen 	= 1;
-	DmaCmd.ChanCtrl.SrcBurstSize 	= 4;
-	DmaCmd.ChanCtrl.SrcInc 			= 1;
-	DmaCmd.BD.SrcAddr = (u32) AUDIO_BASEADDR;
-	DmaCmd.BD.DstAddr = (u32) (CFA_BASEADDR + 0x0C);
-	DmaCmd.BD.Length = AUDIO_LENGTH * 4;
+    DmaCmd.ChanCtrl.EndianSwapSize	= 0;
+    DmaCmd.ChanCtrl.DstCacheCtrl 	= 0;
+    DmaCmd.ChanCtrl.DstProtCtrl 	= 0;
+    DmaCmd.ChanCtrl.DstBurstLen 	= 1;
+    DmaCmd.ChanCtrl.DstBurstSize 	= 4;
+    DmaCmd.ChanCtrl.DstInc 			= 0;
+    DmaCmd.ChanCtrl.SrcCacheCtrl 	= 0;
+    DmaCmd.ChanCtrl.SrcProtCtrl 	= 0;
+    DmaCmd.ChanCtrl.SrcBurstLen 	= 1;
+    DmaCmd.ChanCtrl.SrcBurstSize 	= 4;
+    DmaCmd.ChanCtrl.SrcInc 			= 1;
+    DmaCmd.BD.SrcAddr = (u32) AUDIO_BASEADDR;
+    DmaCmd.BD.DstAddr = (u32) (CFA_BASEADDR + 0x0C);
+    DmaCmd.BD.Length = AUDIO_LENGTH * 4;
 
-	/* DMAC Program */
+    /* DMAC Program */
 
-	DmaCfg = XDmaPs_LookupConfig(ADMA_DEVICE_ID);
-	if (DmaCfg == NULL)
-		xil_printf("XDmaPs_LookupConfig() Failed\n\r");
+    DmaCfg = XDmaPs_LookupConfig(ADMA_DEVICE_ID);
+    if (DmaCfg == NULL)
+        xil_printf("XDmaPs_LookupConfig() Failed\n\r");
 
-	Status = XDmaPs_CfgInitialize(DmaInst, DmaCfg, DmaCfg->BaseAddress);
-	if (Status != XST_SUCCESS)
-		xil_printf("XDmaPs_CfgInitialize() Failed\n\r");
+    Status = XDmaPs_CfgInitialize(DmaInst, DmaCfg, DmaCfg->BaseAddress);
+    if (Status != XST_SUCCESS)
+        xil_printf("XDmaPs_CfgInitialize() Failed\n\r");
 
-	DDRAudioWr();
+    DDRAudioWr();
 
-	Status = XDmaPs_Start(DmaInst, 0, &DmaCmd, 0);
-	if (Status != XST_SUCCESS)
-		xil_printf("XDmaPs_Start() Failed\n\r");
+    Status = XDmaPs_Start(DmaInst, 0, &DmaCmd, 0);
+    if (Status != XST_SUCCESS)
+        xil_printf("XDmaPs_Start() Failed\n\r");
 #endif
 #endif
 }

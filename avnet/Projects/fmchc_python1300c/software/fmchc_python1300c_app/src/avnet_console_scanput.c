@@ -1,32 +1,32 @@
 // ----------------------------------------------------------------------------
-//  
-//        ** **        **          **  ****      **  **********  ********** ® 
-//       **   **        **        **   ** **     **  **              ** 
-//      **     **        **      **    **  **    **  **              ** 
-//     **       **        **    **     **   **   **  *********       ** 
-//    **         **        **  **      **    **  **  **              ** 
-//   **           **        ****       **     ** **  **              ** 
-//  **  .........  **        **        **      ****  **********      ** 
-//     ........... 
-//                                     Reach Further™ 
-//  
+//
+//        ** **        **          **  ****      **  **********  ********** ®
+//       **   **        **        **   ** **     **  **              **
+//      **     **        **      **    **  **    **  **              **
+//     **       **        **    **     **   **   **  *********       **
+//    **         **        **  **      **    **  **  **              **
+//   **           **        ****       **     ** **  **              **
+//  **  .........  **        **        **      ****  **********      **
+//     ...........
+//                                     Reach Further™
+//
 // ----------------------------------------------------------------------------
-// 
-// This design is the property of Avnet.  Publication of this 
-// design is not authorized without written consent from Avnet. 
-// 
-// Please direct any questions to the PicoZed community support forum: 
-//    http://www.zedboard.org/forum 
-// 
-// Disclaimer: 
-//    Avnet, Inc. makes no warranty for the use of this code or design. 
-//    This code is provided  "As Is". Avnet, Inc assumes no responsibility for 
-//    any errors, which may appear in this code, nor does it make a commitment 
-//    to update the information contained herein. Avnet, Inc specifically 
-//    disclaims any implied warranties of fitness for a particular purpose. 
-//                     Copyright(c) 2017 Avnet, Inc. 
-//                             All rights reserved. 
-// 
+//
+// This design is the property of Avnet.  Publication of this
+// design is not authorized without written consent from Avnet.
+//
+// Please direct any questions to the PicoZed community support forum:
+//    http://www.zedboard.org/forum
+//
+// Disclaimer:
+//    Avnet, Inc. makes no warranty for the use of this code or design.
+//    This code is provided  "As Is". Avnet, Inc assumes no responsibility for
+//    any errors, which may appear in this code, nor does it make a commitment
+//    to update the information contained herein. Avnet, Inc specifically
+//    disclaims any implied warranties of fitness for a particular purpose.
+//                     Copyright(c) 2017 Avnet, Inc.
+//                             All rights reserved.
+//
 // ----------------------------------------------------------------------------
 //--
 //-- Title:
@@ -37,15 +37,15 @@
 //-- Date:
 //--
 //-- Purpose:
-//--    This file implements the interface for printing and scanning 
+//--    This file implements the interface for printing and scanning
 //--    special numerical types.
 //--
 //-- Disclaimer:
 //--    Avnet, Inc. makes no warranty for the use of this code or design.
-//--    This code is provided  "As Is". Avnet, Inc assumes no responsibility 
-//--    for any errors, which may appear in this code, nor does it make a 
-//--    commitment to update the information contained herein. Avnet, Inc 
-//--    specifically disclaims any implied warranties of fitness for a 
+//--    This code is provided  "As Is". Avnet, Inc assumes no responsibility
+//--    for any errors, which may appear in this code, nor does it make a
+//--    commitment to update the information contained herein. Avnet, Inc
+//--    specifically disclaims any implied warranties of fitness for a
 //--    particular purpose.
 //--                     Copyright (c) 2008 Avnet, Inc.
 //--                         All rights reserved.
@@ -63,7 +63,7 @@
 #include "os.h"
 
 // ---------------------------------------------------------------------------
-// Local includes. 
+// Local includes.
 #include "avnet_console_scanput.h"
 
 // ---------------------------------------------------------------------------
@@ -77,7 +77,7 @@ void putdecwf(unsigned n, unsigned width, char fill)
     char buf[12];
     char * p;
     unsigned i;
-    
+
     if (n == 0) {
         for (i = 1; i < width; i++)
             OS_PUTCHAR(fill);
@@ -94,9 +94,9 @@ void putdecwf(unsigned n, unsigned width, char fill)
         }
         p--;
         for (i = p-buf+1; i < width; i++)
-        	OS_PUTCHAR(fill);
+            OS_PUTCHAR(fill);
         for (; p >= buf; p--)
-        	OS_PUTCHAR(*p);
+            OS_PUTCHAR(*p);
     }
 }
 
@@ -117,7 +117,7 @@ void puthexbyte(unsigned char hex_byte)
 {
     unsigned char lower_nibble = hex_byte & 0xf;
     unsigned char upper_nibble = hex_byte >> 4;
-        
+
     OS_PUTCHAR(hex_digits[upper_nibble]);
     OS_PUTCHAR(hex_digits[lower_nibble]);
 }
@@ -128,13 +128,13 @@ int scandec(char   * dec_string,
 {
     char * p;
     unsigned digit;
-    
+
     *pval = 0;
     if (!*dec_string)
         return 0;
-    
+
     p = dec_string;
-    
+
     for (; *p; p++) {
         if ((*p >= '0') && (*p <= '9'))
             digit = *p - '0';
@@ -143,7 +143,7 @@ int scandec(char   * dec_string,
         *pval *= 10;
         *pval += digit;
     }
-    
+
     return 1;
 }
 
@@ -153,11 +153,11 @@ int scanhex(char * hex_string,
 {
     char * p;
     unsigned nybble;
-    
+
     *pval = 0;
     if (!*hex_string)
         return 0;
-    
+
     p = hex_string;
     if ( (p[0] == '0') && ((p[1] == 'x') || (p[1] == 'X')) )
     {
@@ -165,10 +165,10 @@ int scanhex(char * hex_string,
     }
     else
     {
-    	// If not prefixed with 0x, assume a decimal value
-    	return scandec( p, pval );
+        // If not prefixed with 0x, assume a decimal value
+        return scandec( p, pval );
     }
-    
+
     for (; *p; p++) {
         if ((*p >= '0') && (*p <= '9'))
             nybble = *p - '0';
@@ -181,7 +181,7 @@ int scanhex(char * hex_string,
         *pval <<= 4;
         *pval |= nybble;
     }
-    
+
     return 1;
 }
 
@@ -203,8 +203,8 @@ int scanfloat(char   * dec_string,
         if ((*p >= '0') && (*p <= '9'))
             digit = *p - '0';
         else if (*p == '.') {
-        	mode = 10;
-        	continue;
+            mode = 10;
+            continue;
         }
         else
             return 0;
@@ -214,8 +214,8 @@ int scanfloat(char   * dec_string,
             *pval += digit;
         }
         else {
-        	*pval += (float) digit / (float) mode;
-        	mode *= 10;
+            *pval += (float) digit / (float) mode;
+            mode *= 10;
         }
     }
 

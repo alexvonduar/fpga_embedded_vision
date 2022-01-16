@@ -64,26 +64,26 @@
 //#endif
 
 #if defined(PLATFORM_KC705) || defined(PLATFORM_AC701) || \
-	defined(PLATFORM_VC707)
+    defined(PLATFORM_VC707)
 #ifdef XPAR_DDR3_SDRAM_S_AXI_BASEADDR
 #define DDR_BASEADDR        XPAR_DDR3_SDRAM_S_AXI_BASEADDR
 #else
 #define DDR_BASEADDR		XPAR_AXI_DDR_CNTRL_BASEADDR
 #endif
 #elif defined(PLATFORM_ZC702) || defined(PLATFORM_ZC706) || \
-		defined(PLATFORM_ZED)
+        defined(PLATFORM_ZED)
 #define DDR_BASEADDR        XPAR_DDR_MEM_BASEADDR
 #endif
 
 #if defined(PLATFORM_KC705) || defined(PLATFORM_AC701) || \
-	defined(PLATFORM_VC707)
+    defined(PLATFORM_VC707)
 #ifdef XPAR_RS232_UART_1_BASEADDR
 #define UART_BASEADDR       XPAR_RS232_UART_1_BASEADDR
 #else
 #define UART_BASEADDR       XPAR_AXI_UART_BASEADDR
 #endif
 #elif defined(PLATFORM_ZC702) || defined(PLATFORM_ZC706) || \
-		defined(PLATFORM_ZED)
+        defined(PLATFORM_ZED)
 #define UART_BASEADDR       XPS_UART1_BASEADDR
 #endif
 
@@ -103,15 +103,15 @@
 #endif
 #endif
 #if defined(PLATFORM_ZC702) || defined(PLATFORM_ZC706) || \
-		defined(PLATFORM_ZED)
+        defined(PLATFORM_ZED)
 #define ADMA_DEVICE_ID		XPAR_XDMAPS_1_DEVICE_ID
 #endif
 
 #if defined(PLATFORM_KC705) || defined(PLATFORM_AC701) || \
-	defined(PLATFORM_VC707)
+    defined(PLATFORM_VC707)
 #define IIC_BASEADDR        XPAR_AXI_IIC_0_BASEADDR
 #elif defined(PLATFORM_ZC702) || defined(PLATFORM_ZC706) || \
-		defined(PLATFORM_ZED)
+        defined(PLATFORM_ZED)
 #define IIC_BASEADDR        XPS_I2C0_BASEADDR
 #endif
 
@@ -166,26 +166,26 @@
 #define MMCM_REG_FILTER2		0x4f
 
 enum videoResolution {
-	RESOLUTION_640x480,
-	RESOLUTION_800x600,
-	RESOLUTION_1024x768,
-	RESOLUTION_1280x720,
-	RESOLUTION_1360x768,
-	RESOLUTION_1600x900,
-	RESOLUTION_1920x1080
+    RESOLUTION_640x480,
+    RESOLUTION_800x600,
+    RESOLUTION_1024x768,
+    RESOLUTION_1280x720,
+    RESOLUTION_1360x768,
+    RESOLUTION_1600x900,
+    RESOLUTION_1920x1080
 };
 
 /******************************************************************************/
 /************************ Functions Declarations ******************************/
 /******************************************************************************/
 void InitHdmiVideoPcore(unsigned short horizontalActiveTime,
-			unsigned short horizontalBlankingTime,
-			unsigned short horizontalSyncOffset,
-			unsigned short horizontalSyncPulseWidth,
-			unsigned short verticalActiveTime,
-			unsigned short verticalBlankingTime,
-			unsigned short verticalSyncOffset,
-			unsigned short verticalSyncPulseWidth);
+            unsigned short horizontalBlankingTime,
+            unsigned short horizontalSyncOffset,
+            unsigned short horizontalSyncPulseWidth,
+            unsigned short verticalActiveTime,
+            unsigned short verticalBlankingTime,
+            unsigned short verticalSyncOffset,
+            unsigned short verticalSyncPulseWidth);
 void SetVideoResolution(/*struct axi_clkgen *clkgen, */unsigned char resolution);
 void InitHdmiAudioPcore(void);
 void AudioClick(void);

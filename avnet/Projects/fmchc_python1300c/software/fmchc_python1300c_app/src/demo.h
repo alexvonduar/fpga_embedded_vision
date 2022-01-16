@@ -1,32 +1,32 @@
 // ----------------------------------------------------------------------------
-//  
-//        ** **        **          **  ****      **  **********  ********** ® 
-//       **   **        **        **   ** **     **  **              ** 
-//      **     **        **      **    **  **    **  **              ** 
-//     **       **        **    **     **   **   **  *********       ** 
-//    **         **        **  **      **    **  **  **              ** 
-//   **           **        ****       **     ** **  **              ** 
-//  **  .........  **        **        **      ****  **********      ** 
-//     ........... 
-//                                     Reach Further™ 
-//  
+//
+//        ** **        **          **  ****      **  **********  ********** ®
+//       **   **        **        **   ** **     **  **              **
+//      **     **        **      **    **  **    **  **              **
+//     **       **        **    **     **   **   **  *********       **
+//    **         **        **  **      **    **  **  **              **
+//   **           **        ****       **     ** **  **              **
+//  **  .........  **        **        **      ****  **********      **
+//     ...........
+//                                     Reach Further™
+//
 // ----------------------------------------------------------------------------
-// 
-// This design is the property of Avnet.  Publication of this 
-// design is not authorized without written consent from Avnet. 
-// 
-// Please direct any questions to the PicoZed community support forum: 
-//    http://www.zedboard.org/forum 
-// 
-// Disclaimer: 
-//    Avnet, Inc. makes no warranty for the use of this code or design. 
-//    This code is provided  "As Is". Avnet, Inc assumes no responsibility for 
-//    any errors, which may appear in this code, nor does it make a commitment 
-//    to update the information contained herein. Avnet, Inc specifically 
-//    disclaims any implied warranties of fitness for a particular purpose. 
-//                     Copyright(c) 2017 Avnet, Inc. 
-//                             All rights reserved. 
-// 
+//
+// This design is the property of Avnet.  Publication of this
+// design is not authorized without written consent from Avnet.
+//
+// Please direct any questions to the PicoZed community support forum:
+//    http://www.zedboard.org/forum
+//
+// Disclaimer:
+//    Avnet, Inc. makes no warranty for the use of this code or design.
+//    This code is provided  "As Is". Avnet, Inc assumes no responsibility for
+//    any errors, which may appear in this code, nor does it make a commitment
+//    to update the information contained herein. Avnet, Inc specifically
+//    disclaims any implied warranties of fitness for a particular purpose.
+//                     Copyright(c) 2017 Avnet, Inc.
+//                             All rights reserved.
+//
 // ----------------------------------------------------------------------------
 //
 // Create Date:         Nov 18, 2011
@@ -38,7 +38,7 @@
 //
 // Description:         PYTHON1300-C Getting Started Demo application
 //
-// Dependencies:        
+// Dependencies:
 //
 // Revision:            Jun 01, 2017: 1.03 Add CFA command to set bayer
 //
@@ -63,10 +63,10 @@
 #include "xvprocss.h"
 
 typedef struct {
-	XAxiVdma axivdma0;
-	XAxiVdma axivdma1;
-	XV_Mix_l2 mixer;
-	XV_demosaic cfa;
+    XAxiVdma axivdma0;
+    XAxiVdma axivdma1;
+    XV_Mix_l2 mixer;
+    XV_demosaic cfa;
     XV_tpg tpg;
     XVprocSs csc;
     //XVtc vtc;
@@ -79,16 +79,16 @@ typedef struct {
     onsemi_python_status_t python_status_t2;
     XVidC_VideoStream csc_stream_in, mixer_stream_in, mixer_stream2_in;
 
-	XAxiVdma *paxivdma0;
-	XAxiVdma *paxivdma1;
-	XV_Mix_l2 *pmixer;
-	XV_demosaic *pcfa;
+    XAxiVdma *paxivdma0;
+    XAxiVdma *paxivdma1;
+    XV_Mix_l2 *pmixer;
+    XV_demosaic *pcfa;
     XV_tpg *ptpg;
     XVprocSs *pcsc;//, *pcresample;
     //XVtc *pvtc;
     fmc_iic_t *pfmc_hdmi_cam_iic;
     fmc_hdmi_cam_t *pfmc_hdmi_cam;
-	onsemi_python_t *ppython_receiver;
+    onsemi_python_t *ppython_receiver;
 
     Xuint32 hdmii_locked;
     Xuint32 hdmii_width;
@@ -99,7 +99,7 @@ typedef struct {
     Xuint32 hdmio_height;
     fmc_hdmi_cam_video_timing_t hdmio_timing;
 
-	// general commands
+    // general commands
     int bVerbose;
 
     // fmc-hami-cam commands
@@ -112,14 +112,14 @@ typedef struct {
     Xuint32 cam_dgain;
     Xuint32 cam_exposure;
 
-	// video ip commands
-	Xuint32 cam_bayer;
+    // video ip commands
+    Xuint32 cam_bayer;
 
     // start commands
-	int cam_enable;
-	int  hdmi_enable;
-	u16 cam_alpha;
-	u16 hdmi_alpha;
+    int cam_enable;
+    int  hdmi_enable;
+    u16 cam_alpha;
+    u16 hdmi_alpha;
 
 } demo_t;
 

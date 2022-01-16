@@ -12,7 +12,7 @@
 #include "xv_tpg.h"
 //#include "xclk_wiz.h"
 //#include "xvtc.h"
-	
+
 void tpg_set(XV_tpg *InstancePtr, u32 height, u32 width, u32 colorFormat, u32 bckgndId);
 void tpg_set_box(XV_tpg *InstancePtr, u32 boxSize, u32 motionSpeed);
 

@@ -5,12 +5,12 @@
 //   / \===\   \==/
 //  /___\===\___\/  AVNET
 //       \======/
-//        \====/    
+//        \====/
 //---------------------------------------------------------------
 //
 // This design is the property of Avnet.  Publication of this
 // design is not authorized without written consent from Avnet.
-// 
+//
 // Please direct any questions to:  technical.support@avnet.com
 //
 // Disclaimer:
@@ -37,7 +37,7 @@
 // Description:         IIC Hardware Abstraction Layer
 //                      => AXI_IIC implementation
 //
-// Dependencies:        
+// Dependencies:
 //
 // Revision:            Jun 30, 2009: 1.00 Initial version
 //                      Jan 12, 2010: 1.01 Add support for >256 EEPROMs
@@ -64,7 +64,7 @@
 
 #include "xiic.h"
 #include "xil_io.h"
-   
+
 /*
  * The page size determines how much data should be written at a time.
  * The write function should be called with this as a maximum byte count.
@@ -78,7 +78,7 @@
 
 struct struct_fmc_iic_axi_t
 {
-	Xuint32 CoreAddress;
+    Xuint32 CoreAddress;
 };
 typedef struct struct_fmc_iic_axi_t fmc_iic_axi_t;
 
@@ -89,13 +89,13 @@ typedef struct struct_fmc_iic_axi_t fmc_iic_axi_t;
 // Forward declarations
 int fmc_iic_axi_GpoRead ( fmc_iic_t *pIIC, Xuint32 *pGpioData );
 int fmc_iic_axi_GpoWrite( fmc_iic_t *pIIC, Xuint32 GpioData );
-int fmc_iic_axi_IicWrite( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress, 
+int fmc_iic_axi_IicWrite( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
                                            Xuint8 *pBuffer, Xuint8 ByteCount);
-int fmc_iic_axi_IicRead ( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress, 
+int fmc_iic_axi_IicRead ( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
                                            Xuint8 *pBuffer, Xuint8 ByteCount);
-int fmc_iic_axi_IicEWrite( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress, 
+int fmc_iic_axi_IicEWrite( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress,
                                             Xuint8 *pBuffer, Xuint8 ByteCount);
-int fmc_iic_axi_IicERead ( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress, 
+int fmc_iic_axi_IicERead ( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress,
                                             Xuint8 *pBuffer, Xuint8 ByteCount);
 
 /******************************************************************************
@@ -110,62 +110,62 @@ int fmc_iic_axi_IicERead ( fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddre
 ******************************************************************************/
 int fmc_iic_axi_init( fmc_iic_t *pIIC, char szName[], Xuint32 CoreAddress )
 {
-   XStatus Status;
-   Xuint8 StatusReg;
-   Xuint32 timeout = 10000;
+    XStatus Status;
+    Xuint8 StatusReg;
+    Xuint32 timeout = 10000;
 
-   //fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)malloc( sizeof(fmc_iic_axi_t) );
-   //if ( pContext == NULL )
-   //{
-   //   xil_printf("Failed to allocate context data for FMC-IIC-AXI implementation\n\r" );
-   //   return 0;
-   //}
-   fmc_iic_axi_t *pContext = (fmc_iic_axi_t *) (pIIC->ContextBuffer);
-   if ( sizeof(fmc_iic_axi_t) > FMC_IIC_CONTEXT_BUFFER_SIZE )
-   {
-      xil_printf("FMC_IIC_CONTEXT_BUFFER_SIZE is not large enough for fic_iic_xps_t structure (increase to %d)\n\r", sizeof(fmc_iic_axi_t) );
-      return 0;
-   }
+    //fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)malloc( sizeof(fmc_iic_axi_t) );
+    //if ( pContext == NULL )
+    //{
+    //   xil_printf("Failed to allocate context data for FMC-IIC-AXI implementation\n\r" );
+    //   return 0;
+    //}
+    fmc_iic_axi_t *pContext = (fmc_iic_axi_t *) (pIIC->ContextBuffer);
+    if ( sizeof(fmc_iic_axi_t) > FMC_IIC_CONTEXT_BUFFER_SIZE )
+    {
+        xil_printf("FMC_IIC_CONTEXT_BUFFER_SIZE is not large enough for fic_iic_xps_t structure (increase to %d)\n\r", sizeof(fmc_iic_axi_t) );
+        return 0;
+    }
 
-   pContext->CoreAddress = CoreAddress;
+    pContext->CoreAddress = CoreAddress;
 
-   /*
-    * Initialize the IIC Core.
-    */
-   Status = XIic_DynInit(pContext->CoreAddress);
-   if(Status != XST_SUCCESS)
-   {
-      xil_printf("Failed to initialize I2C chain\n\r" );
-      return 0;
-   }
+    /*
+        * Initialize the IIC Core.
+        */
+    Status = XIic_DynInit(pContext->CoreAddress);
+    if(Status != XST_SUCCESS)
+    {
+        xil_printf("Failed to initialize I2C chain\n\r" );
+        return 0;
+    }
 
-   /*
-    * Check to see if the core was initialized successfully
-	*/ 
-  do
-  {
-    StatusReg = Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET);
-    //xil_printf("[%s] Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET) => 0x%02X\n\r", pContext->szName, StatusReg );
-    StatusReg = StatusReg & (XIIC_SR_RX_FIFO_EMPTY_MASK |
-                             XIIC_SR_TX_FIFO_EMPTY_MASK |
-                             XIIC_SR_BUS_BUSY_MASK);
-  } while ( (timeout-- > 0) &&
-            (StatusReg != (XIIC_SR_RX_FIFO_EMPTY_MASK | XIIC_SR_TX_FIFO_EMPTY_MASK)) );
+    /*
+        * Check to see if the core was initialized successfully
+        */
+    do
+    {
+        StatusReg = Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET);
+        //xil_printf("[%s] Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET) => 0x%02X\n\r", pContext->szName, StatusReg );
+        StatusReg = StatusReg & (XIIC_SR_RX_FIFO_EMPTY_MASK |
+                                XIIC_SR_TX_FIFO_EMPTY_MASK |
+                                XIIC_SR_BUS_BUSY_MASK);
+    } while ( (timeout-- > 0) &&
+                (StatusReg != (XIIC_SR_RX_FIFO_EMPTY_MASK | XIIC_SR_TX_FIFO_EMPTY_MASK)) );
 
-   /*
-    * Initialize the IIC structure
-	*/ 
-   pIIC->uVersion = 1;
-   strcpy( pIIC->szName, szName );
-   pIIC->pContext = (void *)pContext;
-   pIIC->fpGpoRead   = &fmc_iic_axi_GpoRead;
-   pIIC->fpGpoWrite  = &fmc_iic_axi_GpoWrite;
-   pIIC->fpIicRead   = &fmc_iic_axi_IicRead;
-   pIIC->fpIicWrite  = &fmc_iic_axi_IicWrite;
-   pIIC->fpIicERead  = &fmc_iic_axi_IicERead;
-   pIIC->fpIicEWrite = &fmc_iic_axi_IicEWrite;
+    /*
+        * Initialize the IIC structure
+        */
+    pIIC->uVersion = 1;
+    strcpy( pIIC->szName, szName );
+    pIIC->pContext = (void *)pContext;
+    pIIC->fpGpoRead   = &fmc_iic_axi_GpoRead;
+    pIIC->fpGpoWrite  = &fmc_iic_axi_GpoWrite;
+    pIIC->fpIicRead   = &fmc_iic_axi_IicRead;
+    pIIC->fpIicWrite  = &fmc_iic_axi_IicWrite;
+    pIIC->fpIicERead  = &fmc_iic_axi_IicERead;
+    pIIC->fpIicEWrite = &fmc_iic_axi_IicEWrite;
 
-   return 1;
+    return 1;
 }
 
 /******************************************************************************
@@ -184,7 +184,7 @@ int fmc_iic_axi_GpoRead( fmc_iic_t *pIIC, Xuint32 *pGpioData )
 
    *pGpioData = Xil_In32((pContext->CoreAddress + 0x124));
 
-   return 1;
+    return 1;
 }
 
 /******************************************************************************
@@ -199,13 +199,13 @@ int fmc_iic_axi_GpoRead( fmc_iic_t *pIIC, Xuint32 *pGpioData )
 ******************************************************************************/
 int fmc_iic_axi_GpoWrite( fmc_iic_t *pIIC, Xuint32 GpioData )
 {
-   fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
+    fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
 
-   //xil_printf("[%s] Xil_Out32((pContext->CoreAddress + 0x124),data) => 0x%08X\n\r", pContext->szName, Xil_In32(pContext->CoreAddress + 0x124) );
-   Xil_Out32((pContext->CoreAddress + 0x124),GpioData);
-   //xil_printf("[%s] Xil_Out32((pContext->CoreAddress + 0x124),data) <= 0x%08X\n\r", pContext->szName, GpioData );
+    //xil_printf("[%s] Xil_Out32((pContext->CoreAddress + 0x124),data) => 0x%08X\n\r", pContext->szName, Xil_In32(pContext->CoreAddress + 0x124) );
+    Xil_Out32((pContext->CoreAddress + 0x124),GpioData);
+    //xil_printf("[%s] Xil_Out32((pContext->CoreAddress + 0x124),data) <= 0x%08X\n\r", pContext->szName, GpioData );
 
-   return 1;
+    return 1;
 }
 
 
@@ -216,7 +216,7 @@ int fmc_iic_axi_GpoWrite( fmc_iic_t *pIIC, Xuint32 GpioData )
 * @param    RegAddress contains the address of the register to write to.
 * @param    pBuffer contains the address of the data to write.
 * @param    ByteCount contains the number of bytes in the buffer to be written.
-*           Note that this should not exceed the page size as noted by the 
+*           Note that this should not exceed the page size as noted by the
 *           constant PAGE_SIZE.
 *
 * @return   The number of bytes written, a value less than that which was
@@ -225,51 +225,51 @@ int fmc_iic_axi_GpoWrite( fmc_iic_t *pIIC, Xuint32 GpioData )
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_axi_IicWrite(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress, 
+int fmc_iic_axi_IicWrite(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
                                           Xuint8 *pBuffer, Xuint8 ByteCount)
 {
-  Xuint8 SentByteCount;
-  Xuint8 WriteBuffer[PAGE_SIZE + 1];
-  Xuint8 Index;
-  Xuint8 StatusReg;
-  fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
+    Xuint8 SentByteCount;
+    Xuint8 WriteBuffer[PAGE_SIZE + 1];
+    Xuint8 Index;
+    Xuint8 StatusReg;
+    fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
 
 #if 1
-  // Make sure all the Fifo's are cleared and Bus is Not busy.
-  do
-  {
-    StatusReg = Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET);
-    //xil_printf("[%s] Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET) => 0x%02X\n\r", pContext->szName, StatusReg );
-    StatusReg = StatusReg & (XIIC_SR_RX_FIFO_EMPTY_MASK |
-                             XIIC_SR_TX_FIFO_EMPTY_MASK |
-                             XIIC_SR_BUS_BUSY_MASK);
-  } while (StatusReg != (XIIC_SR_RX_FIFO_EMPTY_MASK |
-			                XIIC_SR_TX_FIFO_EMPTY_MASK));
+    // Make sure all the Fifo's are cleared and Bus is Not busy.
+    do
+    {
+        StatusReg = Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET);
+        //xil_printf("[%s] Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET) => 0x%02X\n\r", pContext->szName, StatusReg );
+        StatusReg = StatusReg & (XIIC_SR_RX_FIFO_EMPTY_MASK |
+                                XIIC_SR_TX_FIFO_EMPTY_MASK |
+                                XIIC_SR_BUS_BUSY_MASK);
+    } while (StatusReg != (XIIC_SR_RX_FIFO_EMPTY_MASK |
+                                XIIC_SR_TX_FIFO_EMPTY_MASK));
 #endif
 
-  /*
-   * A temporary write buffer must be used which contains both the address
-   * and the data to be written, put the address in first 
-   */
-  WriteBuffer[0] = RegAddress;
+    /*
+    * A temporary write buffer must be used which contains both the address
+    * and the data to be written, put the address in first
+    */
+    WriteBuffer[0] = RegAddress;
 
-  /*
-   * Put the data in the write buffer following the address.
-   */
-  for (Index = 0; Index < ByteCount; Index++)
-  {
-    WriteBuffer[Index + 1] = pBuffer[Index];
-  }
+    /*
+    * Put the data in the write buffer following the address.
+    */
+    for (Index = 0; Index < ByteCount; Index++)
+    {
+        WriteBuffer[Index + 1] = pBuffer[Index];
+    }
 
-  /*
-   * Write data at the specified address.
-   */
-  SentByteCount = XIic_DynSend(pContext->CoreAddress, ChipAddress, WriteBuffer,
-                               ByteCount + 1, XIIC_STOP);
-  if (SentByteCount < 1) { SentByteCount = 1; }
-                               
-  // Return the number of bytes written.
-  return SentByteCount - 1;
+    /*
+    * Write data at the specified address.
+    */
+    SentByteCount = XIic_DynSend(pContext->CoreAddress, ChipAddress, WriteBuffer,
+                                ByteCount + 1, XIIC_STOP);
+    if (SentByteCount < 1) { SentByteCount = 1; }
+
+    // Return the number of bytes written.
+    return SentByteCount - 1;
 }
 
 
@@ -290,52 +290,52 @@ int fmc_iic_axi_IicWrite(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_axi_IicRead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress, 
+int fmc_iic_axi_IicRead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
                                          Xuint8 *pBuffer, Xuint8 ByteCount)
 {
-  Xuint8 ReceivedByteCount = 0;
-  Xuint8 SentByteCount = 0;
-  Xuint8 StatusReg;
-  XStatus TestStatus=XST_FAILURE;
-  int cnt = 0;
-  fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
+    Xuint8 ReceivedByteCount = 0;
+    Xuint8 SentByteCount = 0;
+    Xuint8 StatusReg;
+    XStatus TestStatus=XST_FAILURE;
+    int cnt = 0;
+    fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
 
 #if 1
-  // Make sure all the Fifo's are cleared and Bus is Not busy.
-  do
-  {
-    StatusReg = Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET);
-    //xil_printf("[%s] Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET) => 0x%02X\n\r", pContext->szName, StatusReg );
-    StatusReg = StatusReg & (XIIC_SR_RX_FIFO_EMPTY_MASK |
-	                          XIIC_SR_TX_FIFO_EMPTY_MASK |
-                             XIIC_SR_BUS_BUSY_MASK);
-  } while (StatusReg != (XIIC_SR_RX_FIFO_EMPTY_MASK |
-			                XIIC_SR_TX_FIFO_EMPTY_MASK));
+    // Make sure all the Fifo's are cleared and Bus is Not busy.
+    do
+    {
+        StatusReg = Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET);
+        //xil_printf("[%s] Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET) => 0x%02X\n\r", pContext->szName, StatusReg );
+        StatusReg = StatusReg & (XIIC_SR_RX_FIFO_EMPTY_MASK |
+                                XIIC_SR_TX_FIFO_EMPTY_MASK |
+                                XIIC_SR_BUS_BUSY_MASK);
+    } while (StatusReg != (XIIC_SR_RX_FIFO_EMPTY_MASK |
+                                XIIC_SR_TX_FIFO_EMPTY_MASK));
 #endif
 
-  // Position the Read pointer to specific location.
-  do
-  {
-    StatusReg = Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET);
-    //xil_printf("[%s] Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET) => 0x%02X\n\r", pContext->szName, StatusReg );
-    if(!(StatusReg & XIIC_SR_BUS_BUSY_MASK))
+    // Position the Read pointer to specific location.
+    do
     {
-      SentByteCount = XIic_DynSend(pContext->CoreAddress, ChipAddress, 
-                                  (Xuint8 *)&RegAddress, 1,
-    								        XIIC_REPEATED_START);
-    }
-    cnt++;
-  }while(SentByteCount != 1 && (cnt < 100));
-  
-  // Error writing chip address so return SentByteCount
-  if (SentByteCount < 1) { return SentByteCount; }
+        StatusReg = Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET);
+        //xil_printf("[%s] Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET) => 0x%02X\n\r", pContext->szName, StatusReg );
+        if(!(StatusReg & XIIC_SR_BUS_BUSY_MASK))
+        {
+        SentByteCount = XIic_DynSend(pContext->CoreAddress, ChipAddress,
+                                    (Xuint8 *)&RegAddress, 1,
+                                                XIIC_REPEATED_START);
+        }
+        cnt++;
+    }while(SentByteCount != 1 && (cnt < 100));
 
-  // Receive the data.
-  ReceivedByteCount = XIic_DynRecv(pContext->CoreAddress, ChipAddress, pBuffer, 
-                                   ByteCount);
+    // Error writing chip address so return SentByteCount
+    if (SentByteCount < 1) { return SentByteCount; }
 
-  // Return the number of bytes received.
-  return ReceivedByteCount;
+    // Receive the data.
+    ReceivedByteCount = XIic_DynRecv(pContext->CoreAddress, ChipAddress, pBuffer,
+                                    ByteCount);
+
+    // Return the number of bytes received.
+    return ReceivedByteCount;
 }
 
 /******************************************************************************
@@ -346,7 +346,7 @@ int fmc_iic_axi_IicRead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
 * @param    RegAddress contains the address of the register to write to.
 * @param    pBuffer contains the address of the data to write.
 * @param    ByteCount contains the number of bytes in the buffer to be written.
-*           Note that this should not exceed the page size as noted by the 
+*           Note that this should not exceed the page size as noted by the
 *           constant PAGE_SIZE.
 *
 * @return   The number of bytes written, a value less than that which was
@@ -355,52 +355,52 @@ int fmc_iic_axi_IicRead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint8 RegAddress,
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_axi_IicEWrite(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress, 
+int fmc_iic_axi_IicEWrite(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress,
                                           Xuint8 *pBuffer, Xuint8 ByteCount)
 {
-  Xuint8 SentByteCount;
-  Xuint8 WriteBuffer[PAGE_SIZE + 1];
-  Xuint8 Index;
-  Xuint8 StatusReg;
-  fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
+    Xuint8 SentByteCount;
+    Xuint8 WriteBuffer[PAGE_SIZE + 1];
+    Xuint8 Index;
+    Xuint8 StatusReg;
+    fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
 
 #if 1
-  // Make sure all the Fifo's are cleared and Bus is Not busy.
-  do
-  {
-    StatusReg = Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET);
-    //xil_printf("[%s] Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET) => 0x%02X\n\r", pContext->szName, StatusReg );
-    StatusReg = StatusReg & (XIIC_SR_RX_FIFO_EMPTY_MASK |
-                             XIIC_SR_TX_FIFO_EMPTY_MASK |
-                             XIIC_SR_BUS_BUSY_MASK);
-  } while (StatusReg != (XIIC_SR_RX_FIFO_EMPTY_MASK |
-			                XIIC_SR_TX_FIFO_EMPTY_MASK));
+    // Make sure all the Fifo's are cleared and Bus is Not busy.
+    do
+    {
+        StatusReg = Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET);
+        //xil_printf("[%s] Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET) => 0x%02X\n\r", pContext->szName, StatusReg );
+        StatusReg = StatusReg & (XIIC_SR_RX_FIFO_EMPTY_MASK |
+                                XIIC_SR_TX_FIFO_EMPTY_MASK |
+                                XIIC_SR_BUS_BUSY_MASK);
+    } while (StatusReg != (XIIC_SR_RX_FIFO_EMPTY_MASK |
+                                XIIC_SR_TX_FIFO_EMPTY_MASK));
 #endif
 
-  /*
-   * A temporary write buffer must be used which contains both the address
-   * and the data to be written, put the address in first 
-   */
-  WriteBuffer[0] = (Xuint8)((RegAddress>>8) & 0x00FF);
-  WriteBuffer[1] = (Xuint8)( RegAddress     & 0x00FF);
+    /*
+    * A temporary write buffer must be used which contains both the address
+    * and the data to be written, put the address in first
+    */
+    WriteBuffer[0] = (Xuint8)((RegAddress>>8) & 0x00FF);
+    WriteBuffer[1] = (Xuint8)( RegAddress     & 0x00FF);
 
-  /*
-   * Put the data in the write buffer following the address.
-   */
-  for (Index = 0; Index < ByteCount; Index++)
-  {
-    WriteBuffer[Index + 2] = pBuffer[Index];
-  }
+    /*
+    * Put the data in the write buffer following the address.
+    */
+    for (Index = 0; Index < ByteCount; Index++)
+    {
+        WriteBuffer[Index + 2] = pBuffer[Index];
+    }
 
-  /*
-   * Write data at the specified address.
-   */
-  SentByteCount = XIic_DynSend(pContext->CoreAddress, ChipAddress, WriteBuffer,
-                               ByteCount + 2, XIIC_STOP);
-  if (SentByteCount < 1) { SentByteCount = 1; }
-                               
-  // Return the number of bytes written.
-  return SentByteCount - 1;
+    /*
+    * Write data at the specified address.
+    */
+    SentByteCount = XIic_DynSend(pContext->CoreAddress, ChipAddress, WriteBuffer,
+                                ByteCount + 2, XIIC_STOP);
+    if (SentByteCount < 1) { SentByteCount = 1; }
+
+    // Return the number of bytes written.
+    return SentByteCount - 1;
 }
 
 
@@ -422,60 +422,60 @@ int fmc_iic_axi_IicEWrite(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddres
 * @note     None.
 *
 ******************************************************************************/
-int fmc_iic_axi_IicERead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress, 
+int fmc_iic_axi_IicERead(fmc_iic_t *pIIC, Xuint8 ChipAddress, Xuint16 RegAddress,
                                          Xuint8 *pBuffer, Xuint8 ByteCount)
 {
-  Xuint8 ReceivedByteCount = 0;
-  Xuint8 SentByteCount = 0;
-  Xuint8 WriteBuffer[2];
-  Xuint8 StatusReg;
-  XStatus TestStatus=XST_FAILURE;
-  int cnt = 0;
-  fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
+    Xuint8 ReceivedByteCount = 0;
+    Xuint8 SentByteCount = 0;
+    Xuint8 WriteBuffer[2];
+    Xuint8 StatusReg;
+    XStatus TestStatus=XST_FAILURE;
+    int cnt = 0;
+    fmc_iic_axi_t *pContext = (fmc_iic_axi_t *)(pIIC->pContext);
 
 #if 1
-  // Make sure all the Fifo's are cleared and Bus is Not busy.
-  do
-  {
-    StatusReg = Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET);
-    //xil_printf("[%s] Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET) => 0x%02X\n\r", pContext->szName, StatusReg );
-    StatusReg = StatusReg & (XIIC_SR_RX_FIFO_EMPTY_MASK |
-	                          XIIC_SR_TX_FIFO_EMPTY_MASK |
-                             XIIC_SR_BUS_BUSY_MASK);
-  } while (StatusReg != (XIIC_SR_RX_FIFO_EMPTY_MASK |
-			                XIIC_SR_TX_FIFO_EMPTY_MASK));
+    // Make sure all the Fifo's are cleared and Bus is Not busy.
+    do
+    {
+        StatusReg = Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET);
+        //xil_printf("[%s] Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET) => 0x%02X\n\r", pContext->szName, StatusReg );
+        StatusReg = StatusReg & (XIIC_SR_RX_FIFO_EMPTY_MASK |
+                                XIIC_SR_TX_FIFO_EMPTY_MASK |
+                                XIIC_SR_BUS_BUSY_MASK);
+    } while (StatusReg != (XIIC_SR_RX_FIFO_EMPTY_MASK |
+                                XIIC_SR_TX_FIFO_EMPTY_MASK));
 #endif
 
-  /*
-   * A temporary write buffer must be used which contains both the address
-   * and the data to be written, put the address in first 
-   */
-  WriteBuffer[0] = (Xuint8)((RegAddress>>8) & 0x00FF);
-  WriteBuffer[1] = (Xuint8)( RegAddress     & 0x00FF);
+    /*
+    * A temporary write buffer must be used which contains both the address
+    * and the data to be written, put the address in first
+    */
+    WriteBuffer[0] = (Xuint8)((RegAddress>>8) & 0x00FF);
+    WriteBuffer[1] = (Xuint8)( RegAddress     & 0x00FF);
 
-  // Position the Read pointer to specific location.
-  do
-  {
-    StatusReg = Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET);
-    //xil_printf("[%s] Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET) => 0x%02X\n\r", pContext->szName, StatusReg );
-    if(!(StatusReg & XIIC_SR_BUS_BUSY_MASK))
+    // Position the Read pointer to specific location.
+    do
     {
-      SentByteCount = XIic_DynSend(pContext->CoreAddress, ChipAddress, 
-                                            WriteBuffer, 2,
-    								        XIIC_REPEATED_START);
-    }
-    cnt++;
-  }while(SentByteCount != 1 && (cnt < 100));
-  
-  // Error writing chip address so return SentByteCount
-  if (SentByteCount < 1) { return SentByteCount; }
+        StatusReg = Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET);
+        //xil_printf("[%s] Xil_In8(pContext->CoreAddress + XIIC_SR_REG_OFFSET) => 0x%02X\n\r", pContext->szName, StatusReg );
+        if(!(StatusReg & XIIC_SR_BUS_BUSY_MASK))
+        {
+        SentByteCount = XIic_DynSend(pContext->CoreAddress, ChipAddress,
+                                                WriteBuffer, 2,
+                                                XIIC_REPEATED_START);
+        }
+        cnt++;
+    }while(SentByteCount != 1 && (cnt < 100));
 
-  // Receive the data.
-  ReceivedByteCount = XIic_DynRecv(pContext->CoreAddress, ChipAddress, pBuffer, 
-                                   ByteCount);
+    // Error writing chip address so return SentByteCount
+    if (SentByteCount < 1) { return SentByteCount; }
 
-  // Return the number of bytes received.
-  return ReceivedByteCount;
+    // Receive the data.
+    ReceivedByteCount = XIic_DynRecv(pContext->CoreAddress, ChipAddress, pBuffer,
+                                    ByteCount);
+
+    // Return the number of bytes received.
+    return ReceivedByteCount;
 }
 
 #endif // defined(XPAR_XIIC_NUM_INSTANCES)

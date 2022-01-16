@@ -1,32 +1,32 @@
 // ----------------------------------------------------------------------------
-//  
-//        ** **        **          **  ****      **  **********  ********** ® 
-//       **   **        **        **   ** **     **  **              ** 
-//      **     **        **      **    **  **    **  **              ** 
-//     **       **        **    **     **   **   **  *********       ** 
-//    **         **        **  **      **    **  **  **              ** 
-//   **           **        ****       **     ** **  **              ** 
-//  **  .........  **        **        **      ****  **********      ** 
-//     ........... 
-//                                     Reach Further™ 
-//  
+//
+//        ** **        **          **  ****      **  **********  ********** ®
+//       **   **        **        **   ** **     **  **              **
+//      **     **        **      **    **  **    **  **              **
+//     **       **        **    **     **   **   **  *********       **
+//    **         **        **  **      **    **  **  **              **
+//   **           **        ****       **     ** **  **              **
+//  **  .........  **        **        **      ****  **********      **
+//     ...........
+//                                     Reach Further™
+//
 // ----------------------------------------------------------------------------
-// 
-// This design is the property of Avnet.  Publication of this 
-// design is not authorized without written consent from Avnet. 
-// 
-// Please direct any questions to the PicoZed community support forum: 
-//    http://www.zedboard.org/forum 
-// 
-// Disclaimer: 
-//    Avnet, Inc. makes no warranty for the use of this code or design. 
-//    This code is provided  "As Is". Avnet, Inc assumes no responsibility for 
-//    any errors, which may appear in this code, nor does it make a commitment 
-//    to update the information contained herein. Avnet, Inc specifically 
-//    disclaims any implied warranties of fitness for a particular purpose. 
-//                     Copyright(c) 2017 Avnet, Inc. 
-//                             All rights reserved. 
-// 
+//
+// This design is the property of Avnet.  Publication of this
+// design is not authorized without written consent from Avnet.
+//
+// Please direct any questions to the PicoZed community support forum:
+//    http://www.zedboard.org/forum
+//
+// Disclaimer:
+//    Avnet, Inc. makes no warranty for the use of this code or design.
+//    This code is provided  "As Is". Avnet, Inc assumes no responsibility for
+//    any errors, which may appear in this code, nor does it make a commitment
+//    to update the information contained herein. Avnet, Inc specifically
+//    disclaims any implied warranties of fitness for a particular purpose.
+//                     Copyright(c) 2017 Avnet, Inc.
+//                             All rights reserved.
+//
 // ----------------------------------------------------------------------------
 //--
 //-- Title:
@@ -37,15 +37,15 @@
 //-- Date:
 //--
 //-- Purpose:
-//--    This file specifies the interface for printing and scanning 
+//--    This file specifies the interface for printing and scanning
 //--    special numerical types.
 //--
 //-- Disclaimer:
 //--    Avnet, Inc. makes no warranty for the use of this code or design.
-//--    This code is provided  "As Is". Avnet, Inc assumes no responsibility 
-//--    for any errors, which may appear in this code, nor does it make a 
-//--    commitment to update the information contained herein. Avnet, Inc 
-//--    specifically disclaims any implied warranties of fitness for a 
+//--    This code is provided  "As Is". Avnet, Inc assumes no responsibility
+//--    for any errors, which may appear in this code, nor does it make a
+//--    commitment to update the information contained herein. Avnet, Inc
+//--    specifically disclaims any implied warranties of fitness for a
 //--    particular purpose.
 //--                     Copyright (c) 2008 Avnet, Inc.
 //--                         All rights reserved.
@@ -63,12 +63,12 @@
 // Prints a decimal string representation of an integer type.
 void putdec(unsigned n);
 
-// Prints a decimal string representation of an integer type with a 
+// Prints a decimal string representation of an integer type with a
 // specified minimum field width, right-aligned.
 void putdecw(unsigned n, unsigned width);
 
-// Prints a decimal string representation  of an integer type with a 
-// specified minimum field width, right-aligned, with specified character 
+// Prints a decimal string representation  of an integer type with a
+// specified minimum field width, right-aligned, with specified character
 // pading (e.g. ' ' or '0').
 void putdecwf(unsigned n, unsigned width, char fill);
 
@@ -83,7 +83,5 @@ int scanhex(char * hex_string, unsigned * pval);
 
 // Scans decimal string to float type.
 int scanfloat(char * dec_string, float * pval);
-
-
 
 #endif // SCANPUT_H

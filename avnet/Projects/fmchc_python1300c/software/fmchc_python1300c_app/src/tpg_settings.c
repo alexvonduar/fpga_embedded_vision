@@ -24,7 +24,7 @@
 ******************************************************************************/
 void tpg_set(XV_tpg *InstancePtr, u32 height, u32 width, u32 colorFormat, u32 bckgndId)
 {
-	// Set Resolution
+    // Set Resolution
     XV_tpg_Set_height(InstancePtr, height);
     XV_tpg_Set_width(InstancePtr, width);
 
@@ -57,4 +57,3 @@ void tpg_set_box(XV_tpg *InstancePtr, u32 boxSize, u32 motionSpeed)
     XV_tpg_Set_ovrlayId(InstancePtr, 1);
 
 }
-
