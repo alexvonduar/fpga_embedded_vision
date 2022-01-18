@@ -54,7 +54,6 @@
 #include "cat9554.h"
 
 #include "wrapper.h"
-#include "tx_lib.h"
 
 
 int demo_init( demo_t *pdemo )
@@ -214,59 +213,19 @@ int demo_init( demo_t *pdemo )
         return 0;
     }
 
-    fmc_hdmi_cam_iic_mux(pdemo->pfmc_hdmi_cam, FMC_HDMI_CAM_I2C_SELECT_HDMI_OUT);
-    HAL_SetI2CHandler(pdemo->pfmc_hdmi_cam_iic);
-    UINT16 TxRev;
-    ADIAPI_TxGetChipRevision(&TxRev);
-    xil_printf("Get ADV7511 revision: %0xd\n\r", TxRev);
+    //fmc_hdmi_cam_iic_mux(pdemo->pfmc_hdmi_cam, FMC_HDMI_CAM_I2C_SELECT_HDMI_OUT);
+    //HAL_SetI2CHandler(pdemo->pfmc_hdmi_cam_iic);
+    //adv7511_hal_init(pdemo);
+    //adv7511_hal_chip_rev();
+    adv7511_hal_init(pdemo);
 
     // Default HDMI input resolution
     pdemo->hdmii_width = pdemo->hdmio_width;
     pdemo->hdmii_height = pdemo->hdmio_height;
 
-    demo_hdmi_out_status(pdemo);
+    //demo_hdmi_out_status(pdemo);
 
     return 1;
-}
-
-void demo_hdmi_out_status( demo_t * pdemo ) {
-    int stat;
-    fmc_hdmi_cam_iic_mux(pdemo->pfmc_hdmi_cam, FMC_HDMI_CAM_I2C_SELECT_HDMI_OUT);
-    //HAL_SetI2CHandler(pdemo->pfmc_hdmi_cam_iic);
-    TX_STATUS status;
-    ATV_ERR ret =  ADIAPI_TxGetStatus (&status);
-    if (ret == ATVERR_OK) {
-
-        if (status.ChipPd) {
-            xil_printf("chip power down: %d\n\r", status.ChipPd);
-            xil_printf("TMDS power down: %d\n\r", status.TmdsPd);
-            xil_printf("HPD: %d\n\r", status.Hpd);
-            xil_printf("Monitor Sense: %d\n\r", status.MonSen);
-            xil_printf("HDMI mode: %d\n\r", status.OutputHdmi);
-            xil_printf("PLL locked: %d\n\r", status.PllLocked);
-            xil_printf("Video Muted: %d\n\r", status.VideoMuted);
-            xil_printf("Clear AV Mute: %d\n\r", status.ClearAVMute);
-            xil_printf("Set AV Mute: %d\n\r", status.SetAVMute);
-            xil_printf("Audio Repeat: %d\n\r", status.AudioRep);
-            xil_printf("Spdif Enable: %d\n\r", status.SpdifEnable);
-            xil_printf("I2S Enable: 0x%0xd\n\r", status.I2SEnable);
-            xil_printf("Detected VIC: %d\n\r", status.DetectedVic);
-            xil_printf("Last HDCP Errors: %d\n\r", status.LastHdcpErr);
-            xil_printf( "HDMI Output Initialization ...\n\r" );
-            stat = fmc_hdmi_cam_hdmio_init( pdemo->pfmc_hdmi_cam,
-                                           1,                      // hdmioEnable = 1
-                                           &(pdemo->hdmio_timing), // pTiming
-                                           0                       // waitHPD = 0
-                                        );
-            if ( !stat )
-            {
-                xil_printf( "ERROR : Failed to init HDMI Output Interface\n\r" );
-                //return 0;
-            }
-        }
-    } else {
-        xil_printf("Get ADV7511 status error: %d\n\r", ret);
-    }
 }
 
 int demo_start_hdmi_in( demo_t *pdemo )

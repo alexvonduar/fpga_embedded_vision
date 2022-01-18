@@ -62,7 +62,7 @@
 //#include "xvtc.h"
 #include "xvprocss.h"
 
-typedef struct {
+typedef struct _demo_t {
     XAxiVdma axivdma0;
     XAxiVdma axivdma1;
     XV_Mix_l2 mixer;
@@ -126,7 +126,6 @@ typedef struct {
 extern u8 fmc_hdmi_cam_hdmii_edid_content[256];
 
 int demo_init( demo_t *pdemo );
-void demo_hdmi_out_status( demo_t * pdemo );
 int demo_start_hdmi_in( demo_t *pdemo );
 int demo_start_cam_in( demo_t *pdemo );
 int demo_init_frame_buffer( demo_t *pdemo );

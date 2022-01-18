@@ -72,6 +72,8 @@
 #include "avnet_console_scanput.h"
 #include "avnet_console_tokenize.h"
 
+#include "adv7511_control.h"
+
 extern demo_t *pdemo;
 
 #define RANGE_VALIDATE(value, min, max)	(value > max) ? max : (value < min) ? min : value
@@ -1110,7 +1112,20 @@ void avnet_console_adv7511_command( avnet_console_t *pConsole, int cargc, char *
                 break;
             }
         }
-        if ( !strcmp(cargv[1],"clk") )
+        else if ( !strcmp(cargv[1],"rev") )
+        {
+            adv7511_hal_print_chip_rev(pdemo);
+        }
+        else if ( !strcmp(cargv[1],"stat") )
+        {
+            adv7511_hal_get_status(pdemo);
+            adv7511_hal_print_status();
+        }
+        else if ( !strcmp(cargv[1],"start") )
+        {
+            adv7511_start(pdemo);
+        }
+        else if ( !strcmp(cargv[1],"clk") )
         {
             scanhex( cargv[2], &clk_delay );
             if ( clk_delay > 7 ) clk_delay = 0;
@@ -1142,6 +1157,9 @@ void avnet_console_adv7511_command( avnet_console_t *pConsole, int cargc, char *
         pConsole->io_hprintf( pConsole->io_handle, "\t\t\t5 = +0.8ns\r\n" );
         pConsole->io_hprintf( pConsole->io_handle, "\t\t\t6 = +1.2ns\r\n" );
         pConsole->io_hprintf( pConsole->io_handle, "\t\t\t7 = +1.6ns\r\n" );
+        pConsole->io_hprintf( pConsole->io_handle, "\t\t\adv7511 stat  => Print the FMC's ADV7511 chip status\r\n" );
+        pConsole->io_hprintf( pConsole->io_handle, "\t\t\adv7511 rev   => Print the FMC's ADV7511 chip revision\r\n" );
+        pConsole->io_hprintf( pConsole->io_handle, "\t\t\adv7511 start => Start the FMC's ADV7511 chip if powered down\r\n" );
     }
 
     return;

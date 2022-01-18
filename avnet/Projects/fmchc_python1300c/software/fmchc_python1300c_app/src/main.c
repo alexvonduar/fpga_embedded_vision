@@ -66,7 +66,7 @@ int main()
     }
     demo_start_frame_buffer(pdemo);
 
-    demo_hdmi_out_status(pdemo);
+    //demo_hdmi_out_status(pdemo);
 
     // Start serial console
     print_avnet_console_serial_app_header();
@@ -76,8 +76,8 @@ int main()
         if (transfer_avnet_console_serial_data()) {
             break;
         }
-        demo_hdmi_out_status(pdemo);
-        usleep(100000);
+        //demo_hdmi_out_status(pdemo);
+        //usleep(100000);
     }
 
     return 0;
