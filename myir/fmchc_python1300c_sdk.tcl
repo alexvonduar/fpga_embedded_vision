@@ -124,11 +124,12 @@ app create -name ${app_name} -sysproj ${system_project} -platform ${platform_nam
 set app_src_dir ${repo_folder}/avnet/Projects/${project}/software/${app_name}/src
 importsources -name ${app_name} -path ${app_src_dir} -soft-link
 app config -add -name ${app_name} include-path ${app_src_dir}
-app config -add -name ${app_name} include-path ${app_src_dir}/TX
-app config -add -name ${app_name} include-path ${app_src_dir}/TX/HAL/COMMON
-app config -add -name ${app_name} include-path ${app_src_dir}/TX/HAL/WIRED/ADV7511
-app config -add -name ${app_name} include-path ${app_src_dir}/TX/HAL/WIRED/ADV7511/MACROS
-app config -add -name ${app_name} include-path ${app_src_dir}/TX/LIB
+app config -add -name ${app_name} include-path ${app_src_dir}/adi_adv7511_hal
+app config -add -name ${app_name} include-path ${app_src_dir}/adi_adv7511_hal/TX
+app config -add -name ${app_name} include-path ${app_src_dir}/adi_adv7511_hal/TX/HAL/COMMON
+app config -add -name ${app_name} include-path ${app_src_dir}/adi_adv7511_hal/TX/HAL/WIRED/ADV7511
+app config -add -name ${app_name} include-path ${app_src_dir}/adi_adv7511_hal/TX/HAL/WIRED/ADV7511/MACROS
+app config -add -name ${app_name} include-path ${app_src_dir}/adi_adv7511_hal/TX/LIB
 app config -add -name ${app_name} compiler-misc {-Wno-comment}
 app config -set -name ${app_name} linker-script ${app_src_dir}/lscript.ld
 
