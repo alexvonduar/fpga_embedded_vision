@@ -55,6 +55,7 @@
 
 #include "wrapper.h"
 
+#include "adv7511_control.h"
 
 int demo_init( demo_t *pdemo )
 {
