@@ -27,12 +27,18 @@ vivado -mode tcl -source zcu104_fmchc_python1300c.tcl -notrace
 ```
 2. LI-IMX274-FMC + ZCU104
 
-   This project is porting from ZCU106 VCU TRD reference design.
+    This project is porting from ZCU106 VCU TRD reference design.
 ```shell
 cd scripts
 vivado -mode tcl -source zcu104_vcu_trd_proj.tcl -notrace
 ```
 3. Onsemi PYTHON1300 FMC card + myir7020
+
+   This project is now updated to **2021.2**.
+   - combined color space convert and chroma subsampling into single Video Processing Subsystem IP;
+   - replace OSD with Video Mixer IP;
+   - add one more test pattern generated base layer.
+
 ```shell
 cd myir
 vivado -mode tcl -source myir7020_fmchc_python1300c.tcl -notrace
