@@ -62,8 +62,8 @@ vivado -mode tcl -source zcu104_vcu_trd_proj.tcl -notrace
    - add one more test pattern generated base layer.
 
 ```shell
-cd myir
-vivado -mode tcl -source myir7020_fmchc_python1300c.tcl -notrace
+source $(VITIS_PATH)/settings64.sh
+make
 ```
 
 <p align="center">
