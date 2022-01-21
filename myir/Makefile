@@ -22,11 +22,10 @@ VIVADO_HW := $(TARGET_DIR)/$(PROJECT).xsa
 AVNET_IP_SOURCES := $(shell find $(TOP)/avnet/IP -type f)
 
 $(VIVADO_PRJ): ${CURDIR}/bd.tcl ${CURDIR}/*.xdc ${CURDIR}/utils.tcl $(AVNET_IP_SOURCES)
-	vivado -mode batch -notrace -source ${CURDIR}/bd.tcl -tclargs project=$(PROJECT) board=$(BOARD) top=${TOP} vivado_ver=${VIVADO_VER}
+	vivado -mode batch -notrace -source $< -tclargs project=$(PROJECT) board=$(BOARD) top=${TOP} vivado_ver=${VIVADO_VER}
 
-$(VIVADO_HW) : $(VIVADO_PRJ) ${CURDIR}/run.tcl
-	@echo "make $(VIVADO_HW)"
-	faketime -f "-1y" vivado -mode batch -notrace -source ${CURDIR}/run.tcl -tclargs project=$(PROJECT) board=$(BOARD) top=${TOP} vivado_ver=${VIVADO_VER} output=${VIVADO_HW}
+$(VIVADO_HW) : ${CURDIR}/run.tcl $(VIVADO_PRJ)
+	faketime -f "-1y" vivado -mode batch -notrace -source $< -tclargs project=$(PROJECT) board=$(BOARD) top=${TOP} vivado_ver=${VIVADO_VER} output=${VIVADO_HW}
 
 AVNET_SW_BSP_SOURCES := $(shell find $(TOP)/avnet/Projects/$(PROJECT)/software/sw_repository -type f)
 AVNET_SW_APP_SOURCES := $(shell find $(TOP)/avnet/Projects/$(PROJECT)/software/$(PROJECT)_app -type f)

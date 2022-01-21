@@ -191,21 +191,26 @@ puts "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\n\n"
 puts "***** open project ${project}"
 open_project ${projects_folder}/${project}.xpr
 set runlist [get_runs -filter {PROGRESS < 100}]
-puts "**** unfinished runs [${runlist}] ****"
+puts "**** unfinished runs ${runlist} ****"
 
+set impl_out_of_date 0
 if {[regexp -- synth_1 $runlist]} {
     puts "**** launch synthesize ****"
-    lappend runlist "impl_1"
-    puts "add impl_1 run"
+    set impl_out_of_date 1
+    puts "set impl_1 out of date"
     reset_runs synth_1
     launch_runs -jobs $numberOfJobs synth_1
     wait_on_run synth_1
 }
 
 if {[regexp -- impl_1 $runlist]} {
+    set impl_out_of_date 1
+}
+
+if {$impl_out_of_date} {
     puts "**** launch implementation ****"
     reset_runs impl_1
-    launch_runs -jobs $numberOfJobs impl_1 -step_to write_bitstream
+    launch_runs -jobs $numberOfJobs impl_1 -to_step write_bitstream
     wait_on_runs impl_1
 }
 
