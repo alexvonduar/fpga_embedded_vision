@@ -10,5 +10,4 @@ endif
 .PHONY: myir
 
 myir:
-	#@echo "TOP ${TOP}"
 	make -C ${TOP}/$@/ TOP=${TOP} all
