@@ -33,7 +33,7 @@
 
 ## Software Environment
 * Vivado/SDx 2019.1/2018.3
-* Vitis 2021.2
+* Vitis 2022.1
 
 ## Reference Designs
 1. [Avnet Reference Design](https://github.com/Avnet/hdl) [Picozed Zynq  7030 SOM + Onsemi PYTHON1300 FMC + Picozed FMC carrier board v2]
@@ -56,7 +56,7 @@ vivado -mode tcl -source zcu104_vcu_trd_proj.tcl -notrace
 ```
 3. Onsemi PYTHON1300 FMC + MYD-C7Z020
 
-   This project is now updated to **2021.2**.
+   This project is now updated to **2022.1**.
    - combined color space convert and chroma subsampling into single Video Processing Subsystem IP;
    - replace OSD with Video Mixer IP;
    - add one more test pattern generated base layer.
