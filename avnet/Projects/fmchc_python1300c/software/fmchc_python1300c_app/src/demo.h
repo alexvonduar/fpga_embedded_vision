@@ -121,9 +121,11 @@ typedef struct _demo_t {
 
     // start commands
     int cam_enable;
-    int  hdmi_enable;
     u16 cam_alpha;
-    u16 hdmi_alpha;
+#if defined(XPAR_AXI_VDMA_HDMII_DEVICE_ID)
+    int hdmii_enable;
+    u16 hdmii_alpha;
+#endif
 
 } demo_t;
 

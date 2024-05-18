@@ -1693,17 +1693,17 @@ connect_bd_intf_net -intf_net axi_mem_intercon_M00_AXI [get_bd_intf_pins axi_mem
 connect_bd_intf_net -intf_net axi_vdma_hdmii_M_AXIS_MM2S \
     [get_bd_intf_pins axi_vdma_hdmii/M_AXIS_MM2S] \
     [get_bd_intf_pins axis_conv_vdma_hdmii_2_3/S_AXIS]
-connect_bd_intf_net -intf_net v_mix_0_s_axis_video1 \
+connect_bd_intf_net -intf_net v_mix_0_s_axis_video2 \
     [get_bd_intf_pins axis_conv_vdma_hdmii_2_3/M_AXIS] \
-    [get_bd_intf_pins v_mix_0/s_axis_video1]
+    [get_bd_intf_pins v_mix_0/s_axis_video2]
 connect_bd_intf_net -intf_net axi_vdma_hdmii_M_AXI_MM2S [get_bd_intf_pins axi_mem_intercon/S00_AXI] [get_bd_intf_pins axi_vdma_hdmii/M_AXI_MM2S]
 connect_bd_intf_net -intf_net axi_vdma_hdmii_M_AXI_S2MM [get_bd_intf_pins axi_mem_intercon/S01_AXI] [get_bd_intf_pins axi_vdma_hdmii/M_AXI_S2MM]
 connect_bd_intf_net -intf_net axi_vdma_cam_M_AXIS_MM2S \
     [get_bd_intf_pins axi_vdma_cam/M_AXIS_MM2S] \
     [get_bd_intf_pins axis_conv_vdma_cam_2_3/S_AXIS]
-connect_bd_intf_net -intf_net v_mix_0_s_axis_video2 \
+connect_bd_intf_net -intf_net v_mix_0_s_axis_video1 \
     [get_bd_intf_pins axis_conv_vdma_cam_2_3/M_AXIS] \
-    [get_bd_intf_pins v_mix_0/s_axis_video2]
+    [get_bd_intf_pins v_mix_0/s_axis_video1]
 connect_bd_intf_net -intf_net v_mix_0_s_axis_video \
     [get_bd_intf_pins v_tpg_0/m_axis_video] \
     [get_bd_intf_pins v_mix_0/s_axis_video]
