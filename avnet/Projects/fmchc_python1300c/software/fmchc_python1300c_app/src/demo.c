@@ -62,8 +62,10 @@ int demo_init( demo_t *pdemo )
     int status;
     u32 ret;
 
-    pdemo->paxivdma0 = &(pdemo->axivdma0);
-    pdemo->paxivdma1 = &(pdemo->axivdma1);
+    pdemo->paxi_vdma_cam = &(pdemo->axi_vdma_cam);
+#if defined(XPAR_AXI_VDMA_HDMII_DEVICE_ID)
+    pdemo->paxi_vdma_hdmii = &(pdemo->axi_vdma_hdmii);
+#endif
     pdemo->ptpg = &(pdemo->tpg);
     pdemo->pmixer = &(pdemo->mixer);
     pdemo->pcfa = &(pdemo->cfa);
@@ -141,12 +143,14 @@ int demo_init( demo_t *pdemo )
     pdemo->pvtiming = XVidC_GetTimingInfo(XVIDC_VM_1080_60_P);
 
     paxivdma_config = XAxiVdma_LookupConfig(XPAR_AXIVDMA_0_DEVICE_ID);
-    XAxiVdma_CfgInitialize(pdemo->paxivdma0, paxivdma_config,
+    XAxiVdma_CfgInitialize(pdemo->paxi_vdma_cam, paxivdma_config,
             paxivdma_config->BaseAddress);
 
+#if defined(XPAR_AXI_VDMA_HDMII_DEVICE_ID)
     paxivdma_config = XAxiVdma_LookupConfig(XPAR_AXIVDMA_1_DEVICE_ID);
-    XAxiVdma_CfgInitialize(pdemo->paxivdma1, paxivdma_config,
+    XAxiVdma_CfgInitialize(pdemo->paxi_vdma_hdmii, paxivdma_config,
             paxivdma_config->BaseAddress);
+#endif
 
     pcfa_config = XV_demosaic_LookupConfig(XPAR_V_CFA_0_DEVICE_ID);
     XV_demosaic_CfgInitialize(pdemo->pcfa, pcfa_config, pcfa_config->BaseAddress);
@@ -402,8 +406,10 @@ int demo_init_frame_buffer( demo_t *pdemo )
 
 int demo_stop_frame_buffer( demo_t *pdemo )
 {
-    StopTransfer(pdemo->paxivdma0);
-    StopTransfer(pdemo->paxivdma1);
+    StopTransfer(pdemo->paxi_vdma_cam);
+#if defined(XPAR_AXI_VDMA_HDMII_DEVICE_ID)
+    StopTransfer(pdemo->paxi_vdma_hdmii);
+#endif
 
     return 1;
 }
@@ -426,19 +432,21 @@ int demo_start_frame_buffer( demo_t *pdemo )
     //xil_printf("VTC started\r\n");
 
 
-    xil_printf("VDMA 0 Initialization\r\n");
-    XAxiVdma_Reset(pdemo->paxivdma0, XAXIVDMA_WRITE);
-    XAxiVdma_Reset(pdemo->paxivdma0, XAXIVDMA_READ);
-    WriteSetup(pdemo->paxivdma0, 0x10000000, 0, 1, 1, 0, 0, pdemo->hdmii_width, pdemo->hdmii_height, 2048, 2048);
-    ReadSetup(pdemo->paxivdma0, 0x10000000, 0, 1, 1, 0, 0, pdemo->hdmio_width, pdemo->hdmio_height, 2048, 2048);
-    StartTransfer(pdemo->paxivdma0);
+#if defined(XPAR_AXI_VDMA_HDMII_DEVICE_ID)
+    xil_printf("HDMI in VDMA Initialization\r\n");
+    XAxiVdma_Reset(pdemo->paxi_vdma_hdmii, XAXIVDMA_WRITE);
+    XAxiVdma_Reset(pdemo->paxi_vdma_hdmii, XAXIVDMA_READ);
+    WriteSetup(pdemo->paxi_vdma_hdmii, 0x18000000, 0, 1, 1, 0, 0, pdemo->hdmii_width, pdemo->hdmii_height, 2048, 2048);
+    ReadSetup(pdemo->paxi_vdma_hdmii, 0x18000000, 0, 1, 1, 0, 0, pdemo->hdmio_width, pdemo->hdmio_height, 2048, 2048);
+    StartTransfer(pdemo->paxi_vdma_hdmii);
+#endif
 
-    xil_printf("VDMA 1 Initialization\r\n");
-    XAxiVdma_Reset(pdemo->paxivdma1, XAXIVDMA_WRITE);
-    XAxiVdma_Reset(pdemo->paxivdma1, XAXIVDMA_READ);
-    WriteSetup(pdemo->paxivdma1, 0x18000000, 0, 1, 1, 0, 0, 1280, 1024, 2048, 2048);
-    ReadSetup(pdemo->paxivdma1, 0x18000000, 0, 1, 1, 0, 0, 1280, 1024, 2048, 2048);
-    StartTransfer(pdemo->paxivdma1);
+    xil_printf("CAM in VDMA Initialization\r\n");
+    XAxiVdma_Reset(pdemo->paxi_vdma_cam, XAXIVDMA_WRITE);
+    XAxiVdma_Reset(pdemo->paxi_vdma_cam, XAXIVDMA_READ);
+    WriteSetup(pdemo->paxi_vdma_cam, 0x10000000, 0, 1, 1, 0, 0, 1280, 1024, 2048, 2048);
+    ReadSetup(pdemo->paxi_vdma_cam, 0x10000000, 0, 1, 1, 0, 0, 1280, 1024, 2048, 2048);
+    StartTransfer(pdemo->paxi_vdma_cam);
 
     demo_set_video_mixer(pdemo);
 
