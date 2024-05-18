@@ -50,6 +50,7 @@ set board "init"
 #"MYIR7020_FMC"
 set project "init"
 #"fmchc_python1300c"
+set xdc "init"
 set version_override "yes"
 set vivado_ver "${required_version}"
 
@@ -66,6 +67,7 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
         puts "top=<top_dir>\n top directory for the repository"
         puts "board=<board_name>\n boards are listed in the /Boards folder"
         puts "project=<project_name>\n project names are listed in the /Scripts/ProjectScripts folder"
+        puts "xdc=<xdc_file>\n xdc file to use for constraints"
         puts "vivado_ver=${vivado_ver}\n vivado version to use"
         puts "version_override=yes\n ***************************** \n CAUTION: \n Override the Version Check\n and attempt to make project\n *****************************"
         return -code ok
@@ -116,6 +118,15 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
         }
         append build_params "| Vivado Version   |     $printmessage |\n"
     }
+    # check xdc file parameter
+    if {[string match -nocase "xdc=*" [lindex $argv $i]]} {
+        set xdc [string range [lindex $argv $i] 4 end]
+        set printmessage $xdc
+        for {set j 0} {$j < [expr $chart_wdith - [string length $xdc]]} {incr j} {
+            append printmessage " "
+        }
+        append build_params "| XDC File         |     $printmessage |\n"
+    }
     append build_params "+------------------+------------------------------------+\n"
 }
 append build_params "\n\n"
@@ -147,6 +158,10 @@ if {[string match -nocase "init" $project]} {
     puts "Project was not defined, please define and try again!"
     return -code ok
 }
+if {[string match -nocase "init" $xdc]} {
+    puts "XDC file was not defined, please define and try again!"
+    return -code ok
+}
 
 set scriptdir "${top}/myir"
 set avnet_dir "${top}/avnet"
@@ -166,9 +181,16 @@ puts "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\n\n"
 # Create Vivado project
 puts "***** Creating Vivado Project..."
 
-create_project $project $projects_folder -part xc7z020clg400-1 -force
+if {[string match -nocase "ZYNQ_DEV" $board]} {
+    puts "Creating project for ZYNQ_DEV board"
+    create_project $project $projects_folder -part xc7z020clg484-2 -force
+} else {
+    puts "Creating project for MYIR7020 board"
+    create_project $project $projects_folder -part xc7z020clg400-1 -force
+}
 remove_files -fileset constrs_1 *.xdc
-add_files -fileset constrs_1 -norecurse ${scriptdir}/myir7020_fmchc_python1300c.xdc
+#add_files -fileset constrs_1 -norecurse ${scriptdir}/myir7020_fmchc_python1300c.xdc
+add_files -fileset constrs_1 -norecurse ${xdc}
 
 # Add Avnet IP Repository
 puts "***** Updating Vivado to include IP Folder"
