@@ -20,7 +20,7 @@ set script_folder [_tcl::get_script_folder]
 ################################################################
 # Check if script is running in correct Vivado version.
 ################################################################
-set scripts_vivado_version 2019.1
+set scripts_vivado_version 2024.2
 set current_vivado_version [version -short]
 
 if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
@@ -134,32 +134,32 @@ xilinx.com:ip:xlconstant:1.1\
 xilinx.com:ip:xlconcat:2.1\
 xilinx.com:ip:proc_sys_reset:5.0\
 xilinx.com:user:hdmi_hb:1.0\
-xilinx.com:ip:axi_iic:2.0\
-xilinx.com:ip:v_scenechange:1.0\
+xilinx.com:ip:axi_iic:2.1\
+xilinx.com:ip:v_scenechange:1.1\
 xilinx.com:ip:vcu:1.2\
 xilinx.com:ip:xlslice:1.0\
 xilinx.com:ip:vid_phy_controller:2.2\
-xilinx.com:ip:util_ds_buf:2.1\
+xilinx.com:ip:util_ds_buf:2.2\
 xilinx.com:ip:axi_data_fifo:2.1\
 xilinx.com:ip:axis_broadcaster:1.1\
 xilinx.com:ip:axis_data_fifo:2.0\
 xilinx.com:ip:axis_register_slice:1.1\
 xilinx.com:ip:axis_subset_converter:1.1\
 xilinx.com:ip:util_vector_logic:2.0\
-xilinx.com:ip:v_frmbuf_wr:2.1\
-xilinx.com:ip:v_hdmi_rx_ss:3.1\
-xilinx.com:ip:v_proc_ss:2.1\
-xilinx.com:ip:v_frmbuf_rd:2.1\
-xilinx.com:ip:v_hdmi_tx_ss:3.1\
-xilinx.com:ip:v_mix:4.0\
-xilinx.com:ip:mipi_csi2_rx_subsystem:4.0\
-xilinx.com:ip:v_demosaic:1.0\
-xilinx.com:ip:v_gamma_lut:1.0\
-xilinx.com:ip:zynq_ultra_ps_e:3.3\
+xilinx.com:ip:v_frmbuf_wr:3.0\
+xilinx.com:ip:v_hdmi_rx_ss:3.2\
+xilinx.com:ip:v_proc_ss:2.3\
+xilinx.com:ip:v_frmbuf_rd:3.0\
+xilinx.com:ip:v_hdmi_tx_ss:3.2\
+xilinx.com:ip:v_mix:5.2\
+xilinx.com:ip:mipi_csi2_rx_subsystem:6.0\
+xilinx.com:ip:v_demosaic:1.1\
+xilinx.com:ip:v_gamma_lut:1.1\
+xilinx.com:ip:zynq_ultra_ps_e:3.5\
 xilinx.com:user:clock_mux:2.0\
-xilinx.com:ip:v_tc:6.1\
-xilinx.com:ip:v_tpg:8.0\
-xilinx.com:ip:v_vid_in_axi4s:4.0\
+xilinx.com:ip:v_tc:6.2\
+xilinx.com:ip:v_tpg:8.2\
+xilinx.com:ip:v_vid_in_axi4s:5.0\
 "
 
    set list_ips_missing ""
@@ -272,7 +272,7 @@ proc create_hier_cell_tpg_input { parentCell nameHier } {
  ] $tpg_0_VTP_reset
 
   # Create instance: v_frmbuf_wr_0, and set properties
-  set v_frmbuf_wr_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:2.1 v_frmbuf_wr_0 ]
+  set v_frmbuf_wr_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:3.0 v_frmbuf_wr_0 ]
   set_property -dict [ list \
    CONFIG.AXIMM_DATA_WIDTH {128} \
    CONFIG.C_M_AXI_MM_VIDEO_DATA_WIDTH {128} \
@@ -283,7 +283,7 @@ proc create_hier_cell_tpg_input { parentCell nameHier } {
  ] $v_frmbuf_wr_0
 
   # Create instance: v_tc_1, and set properties
-  set v_tc_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_tc:6.1 v_tc_1 ]
+  set v_tc_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_tc:6.2 v_tc_1 ]
   set_property -dict [ list \
    CONFIG.GEN_F0_VBLANK_HEND {1920} \
    CONFIG.GEN_F0_VBLANK_HSTART {1920} \
@@ -314,7 +314,7 @@ proc create_hier_cell_tpg_input { parentCell nameHier } {
  ] $v_tc_1
 
   # Create instance: v_tpg_1, and set properties
-  set v_tpg_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_tpg:8.0 v_tpg_1 ]
+  set v_tpg_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_tpg:8.2 v_tpg_1 ]
   set_property -dict [ list \
    CONFIG.HAS_AXI4S_SLAVE {1} \
    CONFIG.MAX_COLS {3840} \
@@ -323,7 +323,7 @@ proc create_hier_cell_tpg_input { parentCell nameHier } {
  ] $v_tpg_1
 
   # Create instance: v_vid_in_axi4s_0, and set properties
-  set v_vid_in_axi4s_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_vid_in_axi4s:4.0 v_vid_in_axi4s_0 ]
+  set v_vid_in_axi4s_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_vid_in_axi4s:5.0 v_vid_in_axi4s_0 ]
   set_property -dict [ list \
    CONFIG.C_ADDR_WIDTH {5} \
    CONFIG.C_HAS_ASYNC_CLK {1} \
@@ -503,7 +503,7 @@ proc create_hier_cell_mpsoc_ss { parentCell nameHier } {
  ] $axi_interconnect
 
   # Create instance: hdmi_ctrl_iic, and set properties
-  set hdmi_ctrl_iic [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic:2.0 hdmi_ctrl_iic ]
+  set hdmi_ctrl_iic [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic:2.1 hdmi_ctrl_iic ]
   set_property -dict [ list \
    CONFIG.IIC_BOARD_INTERFACE {Custom} \
    CONFIG.USE_BOARD_FLOW {true} \
@@ -684,7 +684,7 @@ proc create_hier_cell_mipi_csi2_rx { parentCell nameHier } {
  ] $gamma_rst_gpio
 
   # Create instance: mipi_csi2_rx_subsystem_0, and set properties
-  set mipi_csi2_rx_subsystem_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:mipi_csi2_rx_subsystem:4.0 mipi_csi2_rx_subsystem_0 ]
+  set mipi_csi2_rx_subsystem_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:mipi_csi2_rx_subsystem:6.0 mipi_csi2_rx_subsystem_0 ]
   set_property -dict [ list \
    CONFIG.AXIS_TDEST_WIDTH {4} \
    CONFIG.CLK_LANE_IO_LOC {F17} \
@@ -730,14 +730,14 @@ proc create_hier_cell_mipi_csi2_rx { parentCell nameHier } {
  ] $sensor_rst_gpio
 
   # Create instance: v_demosaic_0, and set properties
-  set v_demosaic_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_demosaic:1.0 v_demosaic_0 ]
+  set v_demosaic_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_demosaic:1.1 v_demosaic_0 ]
   set_property -dict [ list \
    CONFIG.ENABLE_ZIPPER_REMOVAL {false} \
    CONFIG.SAMPLES_PER_CLOCK {2} \
  ] $v_demosaic_0
 
   # Create instance: v_frmbuf_wr_0, and set properties
-  set v_frmbuf_wr_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:2.1 v_frmbuf_wr_0 ]
+  set v_frmbuf_wr_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:3.0 v_frmbuf_wr_0 ]
   set_property -dict [ list \
    CONFIG.AXIMM_DATA_WIDTH {128} \
    CONFIG.C_M_AXI_MM_VIDEO_DATA_WIDTH {128} \
@@ -756,13 +756,13 @@ proc create_hier_cell_mipi_csi2_rx { parentCell nameHier } {
  ] $v_frmbuf_wr_0
 
   # Create instance: v_gamma_lut_0, and set properties
-  set v_gamma_lut_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_gamma_lut:1.0 v_gamma_lut_0 ]
+  set v_gamma_lut_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_gamma_lut:1.1 v_gamma_lut_0 ]
   set_property -dict [ list \
    CONFIG.SAMPLES_PER_CLOCK {2} \
  ] $v_gamma_lut_0
 
   # Create instance: v_proc_ss_csc, and set properties
-  set v_proc_ss_csc [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_proc_ss:2.1 v_proc_ss_csc ]
+  set v_proc_ss_csc [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_proc_ss:2.3 v_proc_ss_csc ]
   set_property -dict [ list \
    CONFIG.C_COLORSPACE_SUPPORT {0} \
    CONFIG.C_CSC_ENABLE_WINDOW {false} \
@@ -773,7 +773,7 @@ proc create_hier_cell_mipi_csi2_rx { parentCell nameHier } {
  ] $v_proc_ss_csc
 
   # Create instance: v_proc_ss_scaler, and set properties
-  set v_proc_ss_scaler [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_proc_ss:2.1 v_proc_ss_scaler ]
+  set v_proc_ss_scaler [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_proc_ss:2.3 v_proc_ss_scaler ]
   set_property -dict [ list \
    CONFIG.C_COLORSPACE_SUPPORT {0} \
    CONFIG.C_ENABLE_CSC {true} \
@@ -940,7 +940,7 @@ proc create_hier_cell_hdmi_output { parentCell nameHier } {
  ] $mixer_rst
 
   # Create instance: v_frmbuf_rd_0, and set properties
-  set v_frmbuf_rd_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_rd:2.1 v_frmbuf_rd_0 ]
+  set v_frmbuf_rd_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_rd:3.0 v_frmbuf_rd_0 ]
   set_property -dict [ list \
    CONFIG.AXIMM_ADDR_WIDTH {64} \
    CONFIG.HAS_BGRX8 {1} \
@@ -957,7 +957,7 @@ proc create_hier_cell_hdmi_output { parentCell nameHier } {
  ] $v_frmbuf_rd_0
 
   # Create instance: v_hdmi_tx_ss_0, and set properties
-  set v_hdmi_tx_ss_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_hdmi_tx_ss:3.1 v_hdmi_tx_ss_0 ]
+  set v_hdmi_tx_ss_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_hdmi_tx_ss:3.2 v_hdmi_tx_ss_0 ]
   set_property -dict [ list \
    CONFIG.C_HDMI_FAST_SWITCH {true} \
    CONFIG.C_INCLUDE_YUV420_SUP {true} \
@@ -967,7 +967,7 @@ proc create_hier_cell_hdmi_output { parentCell nameHier } {
  ] $v_hdmi_tx_ss_0
 
   # Create instance: v_mix_0, and set properties
-  set v_mix_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_mix:4.0 v_mix_0 ]
+  set v_mix_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_mix:5.2 v_mix_0 ]
   set_property -dict [ list \
    CONFIG.AXIMM_ADDR_WIDTH {64} \
    CONFIG.AXIMM_DATA_WIDTH {128} \
@@ -1316,7 +1316,7 @@ proc create_hier_cell_hdmi_input { parentCell nameHier } {
  ] $util_vector_logic_5
 
   # Create instance: v_frmbuf_wr_0, and set properties
-  set v_frmbuf_wr_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:2.1 v_frmbuf_wr_0 ]
+  set v_frmbuf_wr_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:3.0 v_frmbuf_wr_0 ]
   set_property -dict [ list \
    CONFIG.AXIMM_ADDR_WIDTH {64} \
    CONFIG.AXIMM_DATA_WIDTH {128} \
@@ -1336,7 +1336,7 @@ proc create_hier_cell_hdmi_input { parentCell nameHier } {
  ] $v_frmbuf_wr_0
 
   # Create instance: v_frmbuf_wr_1, and set properties
-  set v_frmbuf_wr_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:2.1 v_frmbuf_wr_1 ]
+  set v_frmbuf_wr_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:3.0 v_frmbuf_wr_1 ]
   set_property -dict [ list \
    CONFIG.AXIMM_ADDR_WIDTH {64} \
    CONFIG.AXIMM_DATA_WIDTH {128} \
@@ -1356,7 +1356,7 @@ proc create_hier_cell_hdmi_input { parentCell nameHier } {
  ] $v_frmbuf_wr_1
 
   # Create instance: v_frmbuf_wr_2, and set properties
-  set v_frmbuf_wr_2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:2.1 v_frmbuf_wr_2 ]
+  set v_frmbuf_wr_2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:3.0 v_frmbuf_wr_2 ]
   set_property -dict [ list \
    CONFIG.AXIMM_ADDR_WIDTH {64} \
    CONFIG.AXIMM_DATA_WIDTH {128} \
@@ -1376,7 +1376,7 @@ proc create_hier_cell_hdmi_input { parentCell nameHier } {
  ] $v_frmbuf_wr_2
 
   # Create instance: v_frmbuf_wr_3, and set properties
-  set v_frmbuf_wr_3 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:2.1 v_frmbuf_wr_3 ]
+  set v_frmbuf_wr_3 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:3.0 v_frmbuf_wr_3 ]
   set_property -dict [ list \
    CONFIG.AXIMM_ADDR_WIDTH {64} \
    CONFIG.AXIMM_DATA_WIDTH {128} \
@@ -1396,7 +1396,7 @@ proc create_hier_cell_hdmi_input { parentCell nameHier } {
  ] $v_frmbuf_wr_3
 
   # Create instance: v_frmbuf_wr_4, and set properties
-  set v_frmbuf_wr_4 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:2.1 v_frmbuf_wr_4 ]
+  set v_frmbuf_wr_4 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:3.0 v_frmbuf_wr_4 ]
   set_property -dict [ list \
    CONFIG.AXIMM_ADDR_WIDTH {64} \
    CONFIG.AXIMM_DATA_WIDTH {128} \
@@ -1416,7 +1416,7 @@ proc create_hier_cell_hdmi_input { parentCell nameHier } {
  ] $v_frmbuf_wr_4
 
   # Create instance: v_frmbuf_wr_5, and set properties
-  set v_frmbuf_wr_5 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:2.1 v_frmbuf_wr_5 ]
+  set v_frmbuf_wr_5 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:3.0 v_frmbuf_wr_5 ]
   set_property -dict [ list \
    CONFIG.AXIMM_ADDR_WIDTH {64} \
    CONFIG.AXIMM_DATA_WIDTH {128} \
@@ -1436,7 +1436,7 @@ proc create_hier_cell_hdmi_input { parentCell nameHier } {
  ] $v_frmbuf_wr_5
 
   # Create instance: v_frmbuf_wr_6, and set properties
-  set v_frmbuf_wr_6 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:2.1 v_frmbuf_wr_6 ]
+  set v_frmbuf_wr_6 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_frmbuf_wr:3.0 v_frmbuf_wr_6 ]
   set_property -dict [ list \
    CONFIG.AXIMM_ADDR_WIDTH {64} \
    CONFIG.AXIMM_DATA_WIDTH {128} \
@@ -1456,7 +1456,7 @@ proc create_hier_cell_hdmi_input { parentCell nameHier } {
  ] $v_frmbuf_wr_6
 
   # Create instance: v_hdmi_rx_ss_0, and set properties
-  set v_hdmi_rx_ss_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_hdmi_rx_ss:3.1 v_hdmi_rx_ss_0 ]
+  set v_hdmi_rx_ss_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_hdmi_rx_ss:3.2 v_hdmi_rx_ss_0 ]
   set_property -dict [ list \
    CONFIG.C_CD_INVERT {true} \
    CONFIG.C_HDMI_FAST_SWITCH {true} \
@@ -1466,7 +1466,7 @@ proc create_hier_cell_hdmi_input { parentCell nameHier } {
  ] $v_hdmi_rx_ss_0
 
   # Create instance: v_proc_ss_0, and set properties
-  set v_proc_ss_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_proc_ss:2.1 v_proc_ss_0 ]
+  set v_proc_ss_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_proc_ss:2.3 v_proc_ss_0 ]
   set_property -dict [ list \
    CONFIG.C_ENABLE_CSC {true} \
    CONFIG.C_H_SCALER_TAPS {8} \
@@ -1689,13 +1689,13 @@ proc create_hier_cell_gt_refclk_buf { parentCell nameHier } {
   set const_vcc [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 const_vcc ]
 
   # Create instance: ibufds_gt, and set properties
-  set ibufds_gt [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.1 ibufds_gt ]
+  set ibufds_gt [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.2 ibufds_gt ]
   set_property -dict [ list \
    CONFIG.C_BUF_TYPE {IBUFDSGTE} \
  ] $ibufds_gt
 
   # Create instance: ibufds_gt_odiv2, and set properties
-  set ibufds_gt_odiv2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.1 ibufds_gt_odiv2 ]
+  set ibufds_gt_odiv2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_ds_buf:2.2 ibufds_gt_odiv2 ]
   set_property -dict [ list \
    CONFIG.C_BUFGCE_DIV {2} \
    CONFIG.C_BUF_TYPE {BUFG_GT} \
@@ -2017,7 +2017,7 @@ proc create_root_design { parentCell } {
   set rx_hdmi_hb_0 [ create_bd_cell -type ip -vlnv xilinx.com:user:hdmi_hb:1.0 rx_hdmi_hb_0 ]
 
   # Create instance: sensor_iic_0, and set properties
-  set sensor_iic_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic:2.0 sensor_iic_0 ]
+  set sensor_iic_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic:2.1 sensor_iic_0 ]
   set_property -dict [ list \
    CONFIG.IIC_FREQ_KHZ {400} \
  ] $sensor_iic_0
@@ -2029,7 +2029,7 @@ proc create_root_design { parentCell } {
   set tx_hdmi_hb_0 [ create_bd_cell -type ip -vlnv xilinx.com:user:hdmi_hb:1.0 tx_hdmi_hb_0 ]
 
   # Create instance: v_scenechange_0, and set properties
-  set v_scenechange_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_scenechange:1.0 v_scenechange_0 ]
+  set v_scenechange_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_scenechange:1.1 v_scenechange_0 ]
   set_property -dict [ list \
    CONFIG.AXIMM_ADDR_WIDTH {64} \
    CONFIG.AXIMM_BURST_LENGTH {16} \
