@@ -3,37 +3,37 @@
 * [Picozed Zynq 7030 som + FMC carrier v2](http://zedboard.org/product/picozed-fmc-carrier-card-v2)
 
 <p align="center">
-<img src="pictures/AES-PZ-EMBV-KIT-G-front_small.png" title="Ebedded Vision Kit" />
+<img src="pictures/AES-PZ-EMBV-KIT-G-front_small.png" title="Ebedded Vision Kit" alt="Resizable Image" class="resizable-image" width="640"/>
 </p>
 
 * [MYD-C7Z020](http://www.myir-tech.com/product/myd_C7Z010_20.htm)
 
 <p align="center">
-<img title="MYD-C7Z020" src="pictures/MYD-C7Z010_20_2.png" />
+<img title="MYD-C7Z020" src="pictures/MYD-C7Z010_20_2.png" alt="Resizable Image" class="resizable-image" width="640"/>
 </p>
 
 * [Xilinx ZCU104 board](https://www.xilinx.com/products/boards-and-kits/zcu104.html)
 
 <p align="center">
-<img title="ZCU104" src="pictures/zcu104.png" />
+<img title="ZCU104" src="pictures/zcu104.png" alt="Resizable Image" class="resizable-image" width="640"/>
 </p>
 
 * ZYNQ_DEV board
 <p align="center">
-<img title="ZCU104" src="pictures/zynq_dev.png" />
+<img title="ZCU104" src="pictures/zynq_dev.png" alt="Resizable Image" class="resizable-image" width="640"/>
 </p>
 
 ## Camera Modules
 * [AES-CAM-ON-P1300C-G](https://www.avnet.com/shop/us/products/avnet-engineering-services/aes-cam-on-p1300c-g-3074457345635221618/) + [AES-FMC-HDMI-CAM-G](https://www.avnet.com/shop/us/products/avnet-engineering-services/aes-fmc-hdmi-cam-g-3074457345635221625/)
 
 <p align="center">
-<img src="pictures/AES-FMC-HDMI-CAM-G-front-angle-onsmi-highres_web.png" title="PYTHON1300"/>
+<img src="pictures/AES-FMC-HDMI-CAM-G-front-angle-onsmi-highres_web.png" title="PYTHON1300" alt="Resizable Image" class="resizable-image" width="320"/>
 </p>
 
 * [LI-IMX274-FMC](https://leopardimaging.com/product/csi-2-mipi-modules-i-pex/li-imx274mipi-fmc/)
 
 <p align="center">
-<img src="pictures/li-imx274-fmc.png" title="LI-IMX274-FMC" />
+<img src="pictures/li-imx274-fmc.png" title="LI-IMX274-FMC" alt="Resizable Image" class="resizable-image" width="320"/>
 </p>
 
 ## Software Environment
@@ -73,7 +73,7 @@ make myir
 ```
 
 <p align="center">
-<img title="Onsemi PYTHON1300 FMC + MYD-C7Z020" src="pictures/myir7020_fmchc_python1300c.jpeg" />
+<img title="Onsemi PYTHON1300 FMC + MYD-C7Z020" src="pictures/myir7020_fmchc_python1300c.jpeg" alt="Resizable Image" class="resizable-image" width="640"/>
 </p>
 
 4. Onsemi PYTHON1300 FMC + ZYNQ_DEV
@@ -89,5 +89,5 @@ make zynqdev
 ```
 
 <p align="center">
-<img title="Onsemi PYTHON1300 FMC + ZYNQ_DEV" src="pictures/zynq_dev_fmchc_python1300c.jpg" />
+<img title="Onsemi PYTHON1300 FMC + ZYNQ_DEV" src="pictures/zynq_dev_fmchc_python1300c.jpg" alt="Resizable Image" class="resizable-image" width="640"/>
 </p>
