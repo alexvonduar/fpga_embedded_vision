@@ -1802,24 +1802,29 @@ void avnet_console_start_command( avnet_console_t *pConsole, int cargc, char ** 
     }
     else if ( cargc > 1 )
     {
+#if defined(XPAR_AXI_VDMA_HDMII_DEVICE_ID)
         if ( !strcmp(cargv[1],"hdmi") )
         {
             demo_stop_frame_buffer(pdemo);
             demo_init_frame_buffer(pdemo);
 
             pdemo->cam_alpha = 0x00;
-            pdemo->hdmi_alpha = 0xFF;
+            pdemo->hdmii_alpha = 0xFF;
             demo_start_hdmi_in(pdemo);
 
             demo_start_frame_buffer(pdemo);
         }
-        else if ( !strcmp(cargv[1],"cam") )
+        else
+#endif
+        if ( !strcmp(cargv[1],"cam") )
         {
             demo_stop_frame_buffer(pdemo);
             demo_init_frame_buffer(pdemo);
 
             pdemo->cam_alpha = 0xFF;
-            pdemo->hdmi_alpha = 0x00;
+#if defined(XPAR_AXI_VDMA_HDMII_DEVICE_ID)
+            pdemo->hdmii_alpha = 0x00;
+#endif
             demo_start_cam_in(pdemo);
 
             demo_start_frame_buffer(pdemo);

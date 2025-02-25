@@ -55,15 +55,20 @@ int main()
     // Try CAM first
     pdemo->cam_enable = 1;
     pdemo->cam_alpha = 0xFF;
-    pdemo->hdmi_enable = 0;
-    pdemo->hdmi_alpha = 0x00;
+#if defined(XPAR_AXI_VDMA_HDMII_DEVICE_ID)
+    pdemo->hdmii_enable = 0;
+    pdemo->hdmii_alpha = 0x00;
+#endif
     if ( !demo_start_cam_in(pdemo) )
     {
+#if defined(XPAR_AXI_VDMA_HDMII_DEVICE_ID)
         // Then try HDMI
         pdemo->cam_alpha = 0x00;
-        pdemo->hdmi_alpha = 0xFF;
+        pdemo->hdmii_alpha = 0xFF;
         demo_start_hdmi_in(pdemo);
+#endif
     }
+
     demo_start_frame_buffer(pdemo);
 
     //demo_hdmi_out_status(pdemo);

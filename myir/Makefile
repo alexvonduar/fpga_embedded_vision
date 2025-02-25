@@ -6,8 +6,8 @@ $(error TOP directory not set)
 endif
 
 PROJECT ?= fmchc_python1300c
-BOARD ?= MYIR7020
-VIVADO_VER ?= 2021.2
+#BOARD ?= MYIR7020
+VIVADO_VER ?= 2024.2
 
 ifeq ("$(wildcard $(TOP))", "")
 $(error TOP ${TOP} does not exist)
@@ -21,11 +21,22 @@ VIVADO_HW := $(TARGET_DIR)/$(PROJECT).xsa
 
 AVNET_IP_SOURCES := $(shell find $(TOP)/avnet/IP -type f)
 
-$(VIVADO_PRJ): ${CURDIR}/bd.tcl ${CURDIR}/*.xdc ${CURDIR}/utils.tcl $(AVNET_IP_SOURCES)
-	vivado -mode batch -notrace -source $< -tclargs project=$(PROJECT) board=$(BOARD) top=${TOP} vivado_ver=${VIVADO_VER}
+$(info $(BOARD))
+ifeq ($(BOARD), MYIR7020)
+	#$(info $(BOARD) is MYIR7020)
+	XDC_FILE=${CURDIR}/myir7020_fmchc_python1300c.xdc
+else ifeq ($(BOARD), ZYNQ_DEV)
+	#$(info $(BOARD) is ZYNQ_DEV)
+	XDC_FILE=${CURDIR}/zynqdev_fmchc_python1300c.xdc
+endif
+
+
+$(VIVADO_PRJ): ${CURDIR}/bd.tcl ${CURDIR}/utils.tcl ${XDC_FILE} $(AVNET_IP_SOURCES)
+	vivado -mode batch -notrace -source $< -tclargs project=$(PROJECT) board=$(BOARD) top=${TOP} xdc=${XDC_FILE} vivado_ver=${VIVADO_VER}
 
 $(VIVADO_HW) : ${CURDIR}/run.tcl $(VIVADO_PRJ)
-	faketime -f "-1y" vivado -mode batch -notrace -source $< -tclargs project=$(PROJECT) board=$(BOARD) top=${TOP} vivado_ver=${VIVADO_VER} output=${VIVADO_HW}
+	#faketime -f "-1y" vivado -mode batch -notrace -source $< -tclargs project=$(PROJECT) board=$(BOARD) top=${TOP} vivado_ver=${VIVADO_VER} output=${VIVADO_HW}
+	vivado -mode batch -notrace -source $< -tclargs project=$(PROJECT) board=$(BOARD) top=${TOP} vivado_ver=${VIVADO_VER} output=${VIVADO_HW}
 
 AVNET_SW_BSP_SOURCES := $(shell find $(TOP)/avnet/Projects/$(PROJECT)/software/sw_repository -type f)
 AVNET_SW_APP_SOURCES := $(shell find $(TOP)/avnet/Projects/$(PROJECT)/software/$(PROJECT)_app -type f)

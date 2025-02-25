@@ -63,8 +63,10 @@
 #include "xvprocss.h"
 
 typedef struct _demo_t {
-    XAxiVdma axivdma0;
-    XAxiVdma axivdma1;
+    XAxiVdma axi_vdma_cam;
+#if defined(XPAR_AXI_VDMA_HDMII_DEVICE_ID)
+    XAxiVdma axi_vdma_hdmii;
+#endif
     XV_Mix_l2 mixer;
     XV_demosaic cfa;
     XV_tpg tpg;
@@ -79,8 +81,10 @@ typedef struct _demo_t {
     onsemi_python_status_t python_status_t2;
     XVidC_VideoStream csc_stream_in, mixer_stream_in, mixer_stream2_in;
 
-    XAxiVdma *paxivdma0;
-    XAxiVdma *paxivdma1;
+    XAxiVdma *paxi_vdma_cam;
+#if defined(XPAR_AXI_VDMA_HDMII_DEVICE_ID)
+    XAxiVdma *paxi_vdma_hdmii;
+#endif
     XV_Mix_l2 *pmixer;
     XV_demosaic *pcfa;
     XV_tpg *ptpg;
@@ -117,9 +121,11 @@ typedef struct _demo_t {
 
     // start commands
     int cam_enable;
-    int  hdmi_enable;
     u16 cam_alpha;
-    u16 hdmi_alpha;
+#if defined(XPAR_AXI_VDMA_HDMII_DEVICE_ID)
+    int hdmii_enable;
+    u16 hdmii_alpha;
+#endif
 
 } demo_t;
 
