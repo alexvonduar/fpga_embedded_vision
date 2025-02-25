@@ -18,11 +18,16 @@
 <img title="ZCU104" src="pictures/zcu104.png" />
 </p>
 
+* ZYNQ_DEV board
+<p align="center">
+<img title="ZCU104" src="pictures/zynq_dev.png" />
+</p>
+
 ## Camera Modules
 * [AES-CAM-ON-P1300C-G](https://www.avnet.com/shop/us/products/avnet-engineering-services/aes-cam-on-p1300c-g-3074457345635221618/) + [AES-FMC-HDMI-CAM-G](https://www.avnet.com/shop/us/products/avnet-engineering-services/aes-fmc-hdmi-cam-g-3074457345635221625/)
 
 <p align="center">
-<img src="pictures/AES-FMC-HDMI-CAM-G-front-angle-onsmi-highres_web.jpg" title="PYTHON1300"/>
+<img src="pictures/AES-FMC-HDMI-CAM-G-front-angle-onsmi-highres_web.png" title="PYTHON1300"/>
 </p>
 
 * [LI-IMX274-FMC](https://leopardimaging.com/product/csi-2-mipi-modules-i-pex/li-imx274mipi-fmc/)
@@ -32,15 +37,15 @@
 </p>
 
 ## Software Environment
-* Vivado/SDx 2019.1/2018.3
-* Vitis 2022.1
+* Vivado 2024.2
+* Vitis 2024.2
 
 ## Reference Designs
 1. [Avnet Reference Design](https://github.com/Avnet/hdl) [Picozed Zynq  7030 SOM + Onsemi PYTHON1300 FMC + Picozed FMC carrier board v2]
 2. [ZCU106 VCU TRD 2019.1](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/112230447/Zynq+UltraScale+MPSoC+VCU+TRD+2019.1)
 3. [Xilinx reVision](https://github.com/Xilinx/reVISION-Getting-Started-Guide)
 ## Create HW & SW Projects
-1. Onsemi PYTHON1300 FMC + ZCU104
+1. Onsemi PYTHON1300 FMC + ZCU104(under developing)
 
    This project is porting from Avnet Hdl project, from Picozed Zynq7030 to ZCU104.
 ```shell
@@ -63,7 +68,7 @@ vivado -mode tcl -source zcu104_vcu_trd_proj.tcl -notrace
 
 ```shell
 source $(VITIS_PATH)/settings64.sh
-make
+make myir
 ```
 
 <p align="center">
