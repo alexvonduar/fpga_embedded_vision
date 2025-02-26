@@ -7,10 +7,13 @@ endif
 
 #PROJECT ?= fmchc_python1300
 #BOARD ?= myir
-.PHONY: myir zynqdev
+.PHONY: myir zynqdev_fmchc_python1300c kv260_mipi
 
 myir:
 	make -C ${TOP}/myir/ TOP=${TOP} BOARD=MYIR7020 all
 
-zynqdev:
+zynqdev_fmchc_python1300c:
 	make -C ${TOP}/myir/ TOP=${TOP} BOARD=ZYNQ_DEV all
+
+kv260_mipi:
+	make -C ${TOP}/kv260  all
