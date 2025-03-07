@@ -30,6 +30,16 @@
 <img title="ZCU104" src="pictures/zynq_dev.png" alt="Resizable Image" class="resizable-image" width="640"/>
 </p>
 
+* Enclustra [Mercury+ ST1](https://www.enclustra.com/en/products/base-boards/mercury-st1/) + [Mercury+ XU6](https://www.enclustra.com/en/products/system-on-chip-modules/mercury-xu6/)
+
+<p align="center">
+<img title="ZCU104" src="pictures/mercury_st1_front_600.png" alt="Resizable Image" class="resizable-image" width="640"/>
+</p>
+
+<p align="center">
+<img title="ZCU104" src="pictures/mercury_xu6_front_600.jpg" alt="Resizable Image" class="resizable-image" width="640"/>
+</p>
+
 ## Camera Modules
 * [AES-CAM-ON-P1300C-G](https://www.avnet.com/shop/us/products/avnet-engineering-services/aes-cam-on-p1300c-g-3074457345635221618/) + [AES-FMC-HDMI-CAM-G](https://www.avnet.com/shop/us/products/avnet-engineering-services/aes-fmc-hdmi-cam-g-3074457345635221625/)
 
@@ -44,6 +54,10 @@
 </p>
 
 * IMX219 Module Raspberry Pi 15 pin compatible
+
+<p align="center">
+<img src="pictures/imx219.png" title="IMX219 module" alt="Resizable Image" class="resizable-image" width="320"/>
+</p>
 
 ## Software Environment
 * Host PC: Ubuntu 25.04 dev branch
@@ -120,4 +134,13 @@ after that use Vitis to open the sw workspace and run the demo.
 
 <p align="center">
 <img title="IMX219 RPi + ZYNQ_DEV" src="pictures/kv260_rpi_mipi.jpg" alt="Resizable Image" class="resizable-image" width="640"/>
+</p>
+
+6. IMX219 RaspberryPi 15pin MIPI camera module + Mercury+ ST1 + XU6
+```shell
+source $(VITIS_PATH)/settings64.sh
+make me_xu6_st1_mipi
+```
+<p align="center">
+<img title="IMX219 RPi + ZYNQ_DEV" src="pictures/me_xu6_st1_imx219.jpg" alt="Resizable Image" class="resizable-image" width="640"/>
 </p>
