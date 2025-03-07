@@ -17,3 +17,6 @@ zynqdev_fmchc_python1300c:
 
 kv260_mipi:
 	make -C ${TOP}/kv260  all
+
+me_xu6_st1_mipi:
+	make -C ${TOP}/enclustra all
