@@ -81,6 +81,7 @@ if {[string match -nocase "release" $build_type]} {
 #set app_src_dir ${top}/avnet/Projects/${project}/software/${project}_app/src
 importsources -name ${app_name} -path ${SW_SRC_DIR} -soft-link
 app config -add -name ${app_name} include-path ${SW_SRC_DIR}
+app config -add -name ${app_name} compiler-misc {-Wno-comment -DBOARD=1}
 app report ${app_name}
 
 # build APP

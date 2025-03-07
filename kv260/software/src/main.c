@@ -35,7 +35,9 @@ SOFTWARE.
 #include "displayport.h"
 #include "vtc.h"
 #include "imx219.h"
+#if defined(BOARD) && (BOARD == KV260)
 #include "ap1302.h"
+#endif
 #include "mipi.h"
 #include "demosaic.h"
 #include "tpg.h"
@@ -56,7 +58,9 @@ int main() {
 	gamma_lut_init();
 	demosaic_init();
 	mipi_init();
+#if defined(BOARD) && (BOARD == KV260)
 	ap1302_init();
+#endif
 	imx219_init();
 
 	xil_printf("Entire video pipeline activated\r\n");

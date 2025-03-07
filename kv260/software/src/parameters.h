@@ -35,8 +35,12 @@ SOFTWARE.
 
 #define ULTRA96 0
 #define KV260   1
+#define ME_XU6_ST1 2
 
-#define BOARD			KV260 // set to ULTRA96 or KV260
+#if !defined(BOARD)
+#error "BOARD not defined"
+//#define BOARD			KV260 // set to ULTRA96 or KV260 or ME_XU6_ST1
+#endif
 
 #define VIDEO_COLUMNS	1920
 #define VIDEO_ROWS		1080

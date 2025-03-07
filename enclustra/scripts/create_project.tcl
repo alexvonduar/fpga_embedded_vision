@@ -56,4 +56,4 @@ set_property used_in_synthesis false [get_files -filter {NAME =~ *_timing.tcl}]
 
 puts "INFO: END of [info script]"
 
-exit
+#exit

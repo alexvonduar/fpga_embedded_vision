@@ -41,14 +41,17 @@ static XGpioPs gpio;
 static XIicPs iic;
 
 int imx219_init() {
-	XGpioPs_Config *gpio_config;
 	XIicPs_Config *iic_config;
+#if defined(BOARD) && ((BOARD == ULTRA96) || (BOARD == KV260))
+	XGpioPs_Config *gpio_config;
 	u8 bit_mask;
 	u8 i2c_expander_slave_addr;
 	u8 i2c_expander_control_bitmask;
+#endif
 	u8 addr[2];
 	u8 camera_model_id[2];
 
+#if defined(BOARD) && ((BOARD == ULTRA96) || (BOARD == KV260))
 	if (BOARD == ULTRA96) {	
 		if ( (gpio_config = XGpioPs_LookupConfig(XPAR_PSU_GPIO_0_DEVICE_ID)) == NULL) {
 			xil_printf("XGpioPs_LookupConfig() failed\r\n");
@@ -75,6 +78,8 @@ int imx219_init() {
 		XGpioPs_WritePin(&gpio, ULTRA_96_I2C_EXPANDER_RESET_N_GPIO_PIN, 0);
 		XGpioPs_WritePin(&gpio, ULTRA_96_I2C_EXPANDER_RESET_N_GPIO_PIN, 1);
 	}
+#endif
+
 	/*
 	 * For KV260, IMX219 power supply is enabled by FPGA pin tied high,
 	 * i2c expander reset_b is tied high on board
@@ -99,6 +104,7 @@ int imx219_init() {
 		return XST_FAILURE;
 	}
 
+#if defined(BOARD) && ((BOARD == ULTRA96) || (BOARD == KV260))
 	if (BOARD == ULTRA96) {
 		i2c_expander_slave_addr = ULTRA_96_I2C_EXPANDER_SLAVE_ADDR;
 		i2c_expander_control_bitmask = ULTRA_96_I2C_EXPANDER_HSEXP_I2C2_BIT_MASK;
@@ -107,6 +113,7 @@ int imx219_init() {
 		i2c_expander_slave_addr = KV260_I2C_EXPANDER_SLAVE_ADDR;
 		i2c_expander_control_bitmask = KV260_I2C_EXPANDER_RPI_BIT_MASK;
 	}
+
 	// Read i2c expander chip control reg
 	if (XIicPs_MasterRecvPolled(&iic, &bit_mask, 1, i2c_expander_slave_addr) != XST_SUCCESS) {
 		xil_printf("i2c expander receive failed\r\n");
@@ -118,6 +125,7 @@ int imx219_init() {
 		xil_printf("i2c expander send failed\r\n");
 		return XST_FAILURE;
 	}
+#endif
 
 	memset(addr, 0, sizeof(addr));
 	if (XIicPs_MasterSendPolled(&iic, addr, 2, IMX219_I2C_SLAVE_ADDR) != XST_SUCCESS) {

@@ -16,7 +16,7 @@ zynqdev_fmchc_python1300c:
 	make -C ${TOP}/myir/ TOP=${TOP} BOARD=ZYNQ_DEV all
 
 kv260_mipi:
-	make -C ${TOP}/kv260  all
+	make -C ${TOP}/kv260 TOP=${TOP} all
 
 me_xu6_st1_mipi:
-	make -C ${TOP}/enclustra all
+	make -C ${TOP}/enclustra TOP=${TOP} all
