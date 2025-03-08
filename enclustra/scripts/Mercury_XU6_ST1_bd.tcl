@@ -300,13 +300,13 @@ set_property -dict [ list \
   CONFIG.NR_LAYERS {2} \
  ] [get_bd_cells v_mix_0]
 
-set CONST1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 CONST1 ]
+set CONST1 [ create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconstant:1.0 CONST1 ]
 set_property -dict [list \
   CONFIG.CONST_VAL {1} \
   CONFIG.CONST_WIDTH {1} \
 ] [get_bd_cells CONST1]
 
-set CONST0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 CONST0 ]
+set CONST0 [ create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconstant:1.0 CONST0 ]
 set_property -dict [list \
   CONFIG.CONST_VAL {0} \
   CONFIG.CONST_WIDTH {1} \
@@ -378,7 +378,7 @@ connect_bd_intf_net [get_bd_intf_pins v_axi4s_vid_out_0/vtiming_in] [get_bd_intf
 connect_bd_intf_net [get_bd_intf_pins v_axi4s_vid_out_0/video_in] [get_bd_intf_pins v_mix_0/m_axis_video]
 connect_bd_net [get_bd_pins v_axi4s_vid_out_0/vtg_ce] [get_bd_pins v_tc_0/gen_clken]
 
-set TMDS [ create_bd_intf_port -mode Master -vlnv digilentinc.com:interface:tmds_rtl:1.0 TMDS ]
+#set TMDS [ create_bd_intf_port -mode Master -vlnv digilentinc.com:interface:tmds_rtl:1.0 TMDS ]
 connect_bd_net [get_bd_pins CLK_148M5/clk_out1] [get_bd_pins mipi_csi2_rx_subsyst_0/lite_aclk]
 connect_bd_net [get_bd_pins CLK_148M5/clk_out1] [get_bd_pins mipi_csi2_rx_subsyst_0/video_aclk]
 connect_bd_net [get_bd_pins CLK_148M5/clk_out1] [get_bd_pins v_demosaic_0/ap_clk]
