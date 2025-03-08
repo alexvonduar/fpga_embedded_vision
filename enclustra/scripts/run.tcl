@@ -111,6 +111,15 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
         }
         append build_params "| Project          |     $printmessage |\n"
     }
+    # check for VIVADO_DIR parameter
+    if {[string match -nocase "vivado_dir=*" [lindex $argv $i]]} {
+        set vivado_dir [string range [lindex $argv $i] 11 end]
+        set printmessage $vivado_dir
+        for {set j 0} {$j < [expr $chart_wdith - [string length $vivado_dir]]} {incr j} {
+            append printmessage " "
+        }
+        append build_params "| vivado_dir       |     $printmessage |\n"
+    }
     # check for Version Override parameter
     if {[string match -nocase "version_override=*" [lindex $argv $i]]} {
         set version_override [string range [lindex $argv $i] 17 end]
@@ -180,7 +189,7 @@ if {$numberOfCores > 2} {
 
 # create variables with absolute folders for all necessary folders
 #set projects_folder [file normalize ${top}/${project}_${board}_${vivado_ver}]
-set projects_folder [file normalize ${top}/enclustra/Vivado/ME-XU6-2CG-1E-D10H]
+#set projects_folder [file normalize ${top}/enclustra/Vivado/ME-XU6-2CG-1E-D10H]
 
 
 puts "\n\n*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
@@ -189,8 +198,8 @@ puts "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\n\n"
 
 
 puts "***** open project ${project}"
-open_project ${projects_folder}/${project}.xpr
-#open_project ${projects_folder}/Mercury_XU6_ST1.xpr
+open_project ${vivado_dir}/${project}.xpr
+#open_project ${vivado_dir}/Mercury_XU6_ST1.xpr
 set runlist [get_runs -filter {PROGRESS < 100}]
 puts "**** unfinished runs ${runlist} ****"
 
@@ -215,7 +224,7 @@ if {$impl_out_of_date} {
     wait_on_runs impl_1
 }
 
-set bit_stream_file ${projects_folder}/${project}.runs/impl_1/${project}_wrapper.bit
+set bit_stream_file ${vivado_dir}/${project}.runs/impl_1/${project}_wrapper.bit
 if {![file exists ${bit_stream_file} ]} {
     puts "***** Generating bit stream..."
     open_run impl_1
@@ -234,7 +243,7 @@ set time_string "Your Build Took\nseconds [$number_seconds]\n\nor a total of:\n\
 
 append build_params "\n"
 append build_params $time_string
-set out [open $projects_folder/buildInfo.log w]
+set out [open ${vivado_dir}/buildInfo.log w]
 puts -nonewline $out $build_params
 close $out
 

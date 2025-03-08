@@ -5,6 +5,18 @@
 # part, PS_DDR, project_name, vivado_dir
 # ########################################################################################
 
+for {set i 0} {$i < [llength $argv]} {incr i} {
+    # check for PROJECT_NAME parameter
+    if {[string match -nocase "project_name=*" [lindex $argv $i]]} {
+        set project_name [string range [lindex $argv $i] 13 end]
+    }
+
+    # check for VIVADO_DIR parameter
+    if {[string match -nocase "vivado_dir=*" [lindex $argv $i]]} {
+        set vivado_dir [string range [lindex $argv $i] 11 end]
+    }
+}
+
 if {[file exists [file join scripts settings.tcl]] } { source [file join scripts settings.tcl] }
 
 # Create project
@@ -34,7 +46,7 @@ add_files -norecurse -fileset constrs_1 [glob -type f -directory src *.{tcl,xdc}
 # re-create block design
 # contains PS settings, IP instances, DDR settings
 # ################################################
-source scripts/${project_name}_bd.tcl
+source scripts/Mercury_XU6_ST1_bd.tcl
 # ################################################
 
 # handle list of generics at level top
