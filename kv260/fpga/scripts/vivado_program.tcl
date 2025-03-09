@@ -1,4 +1,4 @@
-set outputDir build
+set outputDir [lindex $argv 0]
 
 open_hw
 #connect_hw_server -url localhost:3121

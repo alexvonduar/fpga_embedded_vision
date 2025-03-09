@@ -1,8 +1,9 @@
 set XSA_FILE [lindex $argv 0]
 set SW_SRC_DIR [lindex $argv 1]
 set VITIS_WS [lindex $argv 2]
+set PROJECT_NAME [lindex $argv 3]
 
-set platform_name "hw_platform"
+set platform_name ${PROJECT_NAME}_platform
 
 puts "\n#\n#"
 puts "# XSA: ${XSA_FILE}"
@@ -27,8 +28,8 @@ if {$platform_exist} {
 platform create -name ${platform_name} -hw ${XSA_FILE} -proc {psu_cortexa53_0} -os standalone
 platform write
 
-set app_name "app"
-set sysproj_name "app_sys"
+set app_name ${PROJECT_NAME}_app
+set sysproj_name ${PROJECT_NAME}_system
 set build_type "release"
 
 

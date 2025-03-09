@@ -37,6 +37,8 @@ uname_O := $(shell sh -c 'uname -o 2>/dev/null || echo not')
 
 # set to ultra96v2 or kv260
 BOARD = kv260
+HDL_DIR = ${SOURCE_DIR}/fpga
+VIVADO_DIR = ${PROJECT_DIR}/vivado
 
 RTL_SRC = \
 
@@ -46,17 +48,17 @@ IP_SRC = \
 
 ifeq (${BOARD}, ultra96v2)
 	BD_SRC = \
-		bd/imx219_to_ultra96v2_displayport_vivado2021.1.tcl
+		${HDL_DIR}/bd/imx219_to_ultra96v2_displayport_vivado2021.1.tcl
 
 	XDC_SRC = \
-		constraints/Ultra96_V2_constraints_190430.xdc
+		${HDL_DIR}/constraints/Ultra96_V2_constraints_190430.xdc
 endif
 ifeq (${BOARD}, kv260)
 	BD_SRC = \
-		bd/imx219_to_kria_displayport_vivado2024.2.tcl
+		${HDL_DIR}/bd/imx219_to_kria_displayport_vivado2024.2.tcl
 
 	XDC_SRC = \
-		constraints/Kria_KV_CarrierCard_Rev1.xdc
+		${HDL_DIR}/constraints/Kria_KV_CarrierCard_Rev1.xdc
 endif
 
 INC_DIR0 = \
@@ -72,28 +74,31 @@ compile_sim_lib:
 	test -e sim_lib || (vlib sim_lib && vlog -work sim_lib -incr $(SIM_LIB))
 
 sim: compile-eval
-	vsim -L sim_lib -c imx219_to_mpsoc_displayport_tb glbl -do "run -a"
+	vsim -L sim_lib -c ${PROJECT_NAME}_tb glbl -do "run -a"
 
 # Launch the Modelsim GUI for debugging design
 sim-debug: compile
 ifneq (, $(findstring Cygwin, $(uname_O)))
-	cygstart vsim -L sim_lib imx219_to_mpsoc_displayport_tb glbl -voptargs=+acc
+	cygstart vsim -L sim_lib ${PROJECT_NAME}_tb glbl -voptargs=+acc
 else
-	vsim -L sim_lib imx219_to_mpsoc_displayport_tb glbl -voptargs=+acc
+	vsim -L sim_lib ${PROJECT_NAME}_tb glbl -voptargs=+acc
 endif
 
-bd: build/design_1/design_1.bd
+bd: ${VIVADO_DIR}/design_1/design_1.bd
 
-syn: build/post_syn.dcp
+syn: ${VIVADO_DIR}/post_syn.dcp
 
-place: build/post_place.dcp
+place: ${VIVADO_DIR}/post_place.dcp
 
-route: build/post_route.dcp
+route: ${VIVADO_DIR}/post_route.dcp
 
-bitstream: build/imx219_to_mpsoc_displayport.xsa
+bitstream: ${VIVADO_DIR}/${PROJECT_NAME}.xsa
 
-program: build/imx219_to_mpsoc_displayport.xsa
-	vivado -mode batch -source scripts/vivado_program.tcl -log build/program_log.txt -nojournal
+program: ${VIVADO_DIR}/${PROJECT_NAME}.xsa
+	test -e ${VIVADO_DIR} || mkdir -p ${VIVADO_DIR}
+	cd ${VIVADO_DIR}
+	vivado -mode batch -source ${SOURCE_DIR}/scripts/vivado_program.tcl -log ${VIVADO_DIR}/program_log.txt -nojournal
+	cd -
 
 clean:
 	rm -rf  *.tmp  *.log *.jou  log transcript work *.wlf vsim.fcdb clockInfo.txt
@@ -103,22 +108,40 @@ clean:
 
 # really stupid that Vivado creates a ../../.gen folder^, can't figure out why it's not within the build tree
 
-build/design_1/design_1.bd: $(BD_SRC)
-	test -e build || mkdir build
-	vivado -mode batch -source scripts/vivado_bd.tcl -nojournal \
-	-log build/bd_log.txt -tclargs "$(BD_SRC)" "${BOARD}"
+${VIVADO_DIR}:
+	test -e ${VIVADO_DIR} || mkdir -p ${VIVADO_DIR}
 
-build/post_syn.dcp: $(RTL_SRC) $(IP_SRC) $(XDC_SRC) build/design_1/design_1.bd
-	test -e build || mkdir build
-	vivado -mode batch -source scripts/vivado_syn.tcl -nojournal \
-	-log build/syn_log.txt -tclargs "$(RTL_SRC)" "$(INC_DIR0)" "$(IP_SRC)" "$(XDC_SRC)" "${BOARD}"
+${VIVADO_DIR}/design_1/design_1.bd: $(BD_SRC)
+	test -e ${VIVADO_DIR} || mkdir -p ${VIVADO_DIR}
+	cd ${VIVADO_DIR}
+	vivado -mode batch -notrace -source ${HDL_DIR}/scripts/vivado_bd.tcl -nojournal \
+	-log ${VIVADO_DIR}/bd_log.txt -tclargs "$(BD_SRC)" "${BOARD}" "${VIVADO_DIR}" "${PROJECT_NAME}"
+	cd -
 
-build/post_place.dcp: build/post_syn.dcp
-	vivado -mode batch -source scripts/vivado_place.tcl -log build/place_log.txt -nojournal
+${VIVADO_DIR}/post_syn.dcp: $(RTL_SRC) $(IP_SRC) $(XDC_SRC) ${VIVADO_DIR}/design_1/design_1.bd
+	test -e ${VIVADO_DIR} || mkdir -p ${VIVADO_DIR}
+	cd ${VIVADO_DIR}
+	vivado -mode batch -notrace -source ${HDL_DIR}/scripts/vivado_syn.tcl -nojournal \
+	-log ${VIVADO_DIR}/syn_log.txt -tclargs "$(RTL_SRC)" "$(INC_DIR0)" "$(IP_SRC)" "$(XDC_SRC)" "${BOARD}" "${PROJECT_NAME}" "${VIVADO_DIR}"
+	cd -
 
-build/post_route.dcp: build/post_place.dcp
-	vivado -mode batch -source scripts/vivado_route.tcl -log build/route_log.txt -nojournal
+${VIVADO_DIR}/post_place.dcp: ${VIVADO_DIR}/post_syn.dcp
+	test -e ${VIVADO_DIR} || mkdir -p ${VIVADO_DIR}
+	cd ${VIVADO_DIR}
+	vivado -mode batch -notrace -source ${HDL_DIR}/scripts/vivado_place.tcl -log ${VIVADO_DIR}/place_log.txt -nojournal \
+	-tclargs "${VIVADO_DIR}"
+	cd -
 
-build/imx219_to_mpsoc_displayport.xsa: build/post_route.dcp
-	vivado -mode batch -source scripts/vivado_bitstream.tcl -log build/bitstream_log.txt -nojournal	\
-	-tclargs "${BOARD}"
+${VIVADO_DIR}/post_route.dcp: ${VIVADO_DIR}/post_place.dcp
+	test -e ${VIVADO_DIR} || mkdir -p ${VIVADO_DIR}
+	cd ${VIVADO_DIR}
+	vivado -mode batch -notrace -source ${HDL_DIR}/scripts/vivado_route.tcl -log ${VIVADO_DIR}/route_log.txt -nojournal \
+	-tclargs "${VIVADO_DIR}"
+	cd -
+
+${VIVADO_DIR}/${PROJECT_NAME}.xsa: ${VIVADO_DIR}/post_route.dcp
+	test -e ${VIVADO_DIR} || mkdir -p ${VIVADO_DIR}
+	cd ${VIVADO_DIR}
+	vivado -mode batch -notrace -source ${HDL_DIR}/scripts/vivado_bitstream.tcl -log ${VIVADO_DIR}/bitstream_log.txt -nojournal	\
+	-tclargs "${BOARD}" "${VIVADO_DIR}" "${PROJECT_NAME}"
+	cd -

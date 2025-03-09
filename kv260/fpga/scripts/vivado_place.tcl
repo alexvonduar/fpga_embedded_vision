@@ -1,4 +1,4 @@
-set outputDir build
+set outputDir [lindex $argv 0]
 
 open_checkpoint $outputDir/post_syn.dcp
 place_design

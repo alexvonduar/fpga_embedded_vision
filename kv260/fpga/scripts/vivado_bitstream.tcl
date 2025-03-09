@@ -1,11 +1,11 @@
 set BOARD [lindex $argv 0]
-
-set outputDir build
+set outputDir [lindex $argv 1]
+set PROJECT_NAME [lindex $argv 2]
 
 open_checkpoint $outputDir/post_route.dcp
 
-write_bitstream -force $outputDir/imx219_to_mpsoc_displayport.bit
-write_debug_probes -force $outputDir/imx219_to_mpsoc_displayport.ltx
+write_bitstream -force $outputDir/${PROJECT_NAME}.bit
+write_debug_probes -force $outputDir/${PROJECT_NAME}.ltx
 
 #Use this for Vivado 2019.1 (xsdk)
 #write_sysdef -force -hwdef $outputDir/post_place.hwdef -bitfile $outputDir/imx219_to_mpsoc_displayport.bit -file $outputDir/imx219_to_mpsoc_displayport.hdf
@@ -17,4 +17,4 @@ if {[string equal ${BOARD} "ultra96v2"]} {
     set_property board_part xilinx.com:kv260_som:part0:1.4 [current_project]
     set_property board_connections {som240_1_connector xilinx.com:kv260_carrier:som240_1_connector:1.3} [current_project]
 }
-write_hw_platform -fixed -force -include_bit $outputDir/imx219_to_mpsoc_displayport.xsa
+write_hw_platform -fixed -force -include_bit $outputDir/${PROJECT_NAME}.xsa

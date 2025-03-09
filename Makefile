@@ -15,7 +15,7 @@ myir:
 zynqdev_fmchc_python1300c:
 	make -C ${TOP}/myir/ TOP=${TOP} BOARD=ZYNQ_DEV all
 
-kv260_mipi:
+kv260_rpi_mipi:
 	make -C ${TOP}/kv260 TOP=${TOP} all
 
 me_xu6_st1_mipi:
