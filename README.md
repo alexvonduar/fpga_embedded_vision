@@ -15,88 +15,17 @@
 
 ## Create HW & SW Projects
 
-1. Onsemi PYTHON1300 FMC + ZCU104(under developing)
+1. [PYTHON1300 FMC + ZCU104(under developing)](doc/PYTHON1300_FMC_ZCU104.md)
 
-   This project is porting from Avnet Hdl project, from Picozed Zynq7030 to ZCU104.
+2. [LI-IMX274-FMC + ZCU104](doc/LI-IMX274-FMC%20_ZCU104.md)
 
-```shell
-cd scripts
-vivado -mode tcl -source zcu104_fmchc_python1300c.tcl -notrace
-```
+3. [PYTHON1300 FMC + MYD-C7Z020](doc/PYTHON1300_FMC_MYD-C7Z020.md)
 
-2. LI-IMX274-FMC + ZCU104
+4. [PYTHON1300 FMC + ZYNQ_DEV](doc/PYTHON1300_FMC_ZYNQ_DEV.md)
 
-    This project is porting from ZCU106 VCU TRD reference design.
-    updated to 2024.2
+5. [IMX219 RPI MIPI + KV260 DisplayPort](doc/IMX219_RPI_KV260_DP.md)
 
-```shell
-cd scripts
-vivado -mode tcl -source zcu104_vcu_trd_proj.tcl -notrace
-```
-
-3. Onsemi PYTHON1300 FMC + MYD-C7Z020
-
-   This project is now updated to **2024.2**.
-   * combined color space convert and chroma subsampling into single Video Processing Subsystem IP;
-   * replace OSD with Video Mixer IP;
-   * add one more test pattern generated base layer.
-
-```shell
-source $(VITIS_PATH)/settings64.sh
-make myir
-```
-
-<p align="center">
-<img title="Onsemi PYTHON1300 FMC + MYD-C7Z020" src="pictures/myir7020_fmchc_python1300c.jpeg" alt="Resizable Image" class="resizable-image" width="640"/>
-</p>
-
-4. Onsemi PYTHON1300 FMC + ZYNQ_DEV
-
-   This project is now updated to **2024.2**.
-   * combined color space convert and chroma subsampling into single Video Processing Subsystem IP;
-   * replace OSD with Video Mixer IP;
-   * add one more test pattern generated base layer.
-
-```shell
-source $(VITIS_PATH)/settings64.sh
-make zynqdev_fmchc_python1300c
-```
-
-<p align="center">
-<img title="Onsemi PYTHON1300 FMC + ZYNQ_DEV" src="pictures/zynq_dev_fmchc_python1300c.jpg" alt="Resizable Image" class="resizable-image" width="640"/>
-</p>
-
-5. IMX219 RaspberryPi 15pin MIPI camera module + KV260
-   Copied for Greg Taylor's project, and update to **2024.2**.
-
-```shell
-source $(VITIS_PATH)/settings64.sh
-make kv260_rpi_mipi
-```
-
-Since KV260 fw bootloader is not compatible with standalone BOOT.BIN. So we need a Jtag to run the demo. Need to set KV260 to jtag boot mode:
-
-```shell
-source $(VITIS_PATH)/settings64.sh
-xsct scripts/som_bootmode.tcl
-```
-
-after that use Vitis to open the sw workspace and run the demo.
-
-<p align="center">
-<img title="IMX219 RPi + ZYNQ_DEV" src="pictures/kv260_rpi_mipi.jpg" alt="Resizable Image" class="resizable-image" width="640"/>
-</p>
-
-6. IMX219 RaspberryPi 15pin MIPI camera module + Mercury+ ST1 + XU6
-
-```shell
-source $(VITIS_PATH)/settings64.sh
-make me_xu6_st1_mipi
-```
-
-<p align="center">
-<img title="IMX219 RPi + ZYNQ_DEV" src="pictures/me_xu6_st1_imx219.jpg" alt="Resizable Image" class="resizable-image" width="640"/>
-</p>
+6. [IMX219 RaspberryPi 15pin MIPI camera module + Mercury+ ST1 + XU6](doc/IMX219_RPI_MIPI0_ME_ST1_XU6_2CG_DP.md)
 
 ## Boards
 
@@ -108,7 +37,7 @@ make me_xu6_st1_mipi
     <tr>
         <td>
             <p align="center">
-                <img src="pictures/AES-PZ-EMBV-KIT-G-front_small.png" title="Embedded Vision Kit" alt="Resizable Image" class="resizable-image" width="640"/>
+                <img src="doc/pictures/AES-PZ-EMBV-KIT-G-front_small.png" title="Embedded Vision Kit" alt="Resizable Image" class="resizable-image" width="640"/>
                 <a herf="https://www.avnet.com/wps/portal/apac/products/products/xilinx-embedded-vision-development-kit-picozed-7030-som-based/">Picozed Zynq 7030 som + FMC carrier v2</a>
             </p>
         </td>
@@ -119,7 +48,7 @@ make me_xu6_st1_mipi
     <tr>
         <td>
             <p align="center">
-                <img title="MYD-C7Z020" src="pictures/MYD-C7Z010_20_2.png" alt="Resizable Image" class="resizable-image" width="640"/>
+                <img title="MYD-C7Z020" src="doc/pictures/MYD-C7Z010_20_2.png" alt="Resizable Image" class="resizable-image" width="640"/>
                 <a herf="http://www.myir-tech.com/product/myd_C7Z010_20.htm">MYD-C7Z020</a>
             </p>
         </td>
@@ -130,7 +59,7 @@ make me_xu6_st1_mipi
     <tr>
         <td>
             <p align="center">
-                <img title="Zynq_DEV" src="pictures/zynq_dev.png" alt="Resizable Image" class="resizable-image" width="640"/>
+                <img title="Zynq_DEV" src="doc/pictures/zynq_dev.png" alt="Resizable Image" class="resizable-image" width="640"/>
                 <a herf="">ZYNQ_DEV</a>
             </p>
         </td>
@@ -141,7 +70,7 @@ make me_xu6_st1_mipi
     <tr>
         <td>
             <p align="center">
-                <img title="ZCU104" src="pictures/zcu104.png" alt="Resizable Image" class="resizable-image" width="640"/>
+                <img title="ZCU104" src="doc/pictures/zcu104.png" alt="Resizable Image" class="resizable-image" width="640"/>
                 <a herf="https://www.amd.com/en/products/adaptive-socs-and-fpgas/evaluation-boards/zcu104.html">AMD Zynq™ UltraScale+™ MPSoC ZCU104 Evaluation Kit</a>
             </p>
         </td>
@@ -152,7 +81,7 @@ make me_xu6_st1_mipi
     <tr>
         <td>
             <p align="center">
-                <img title="KV260" src="pictures/kv260.png" alt="Resizable Image" class="resizable-image" width="640"/>
+                <img title="KV260" src="doc/pictures/kv260.png" alt="Resizable Image" class="resizable-image" width="640"/>
                 <a herf="https://www.amd.com/en/products/system-on-modules/kria/k26/kv260-vision-starter-kit.html">Kria KV260 Vision AI Starter Kit</a>
             </p>
         </td>
@@ -163,9 +92,9 @@ make me_xu6_st1_mipi
     <tr>
         <td>
             <p align="center">
-                <img title="Enclustra Mercury+ ST1" src="pictures/mercury_st1_front_600.png" alt="Resizable Image" class="resizable-image" width="640"/>
+                <img title="Enclustra Mercury+ ST1" src="doc/pictures/mercury_st1_front_600.png" alt="Resizable Image" class="resizable-image" width="640"/>
                 <a herf="https://www.enclustra.com/en/products/base-boards/mercury-st1/">Enclustra Mercury+ ST1</a>
-                <img title="Enclustra Mercury+ XU6" src="pictures/mercury_xu6_front_600.jpg" alt="Resizable Image" class="resizable-image" width="640"/>
+                <img title="Enclustra Mercury+ XU6" src="doc/pictures/mercury_xu6_front_600.jpg" alt="Resizable Image" class="resizable-image" width="640"/>
                 <a herf="https://www.enclustra.com/en/products/system-on-chip-modules/mercury-xu6/">Enclustra Mercury+ XU6</a>
             </p>
         </td>
@@ -187,7 +116,7 @@ make me_xu6_st1_mipi
 <tr>
     <td>
         <p align="center">
-            <img src="pictures/AES-FMC-HDMI-CAM-G-front-angle-onsmi-highres_web.png" title="PYTHON1300" alt="Resizable Image" class="resizable-image" width="320"/>
+            <img src="doc/pictures/AES-FMC-HDMI-CAM-G-front-angle-onsmi-highres_web.png" title="PYTHON1300" alt="Resizable Image" class="resizable-image" width="320"/>
         </p>
         <p align="center">
             <a herf="https://www.avnet.com/shop/us/products/avnet-engineering-services/aes-cam-on-p1300c-g-3074457345635221618/">AES-CAM-ON-P1300C-G</a> + <a herf="https://www.avnet.com/shop/us/products/avnet-engineering-services/aes-fmc-hdmi-cam-g-3074457345635221625/">AES-FMC-HDMI-CAM-G</a>
@@ -207,7 +136,7 @@ make me_xu6_st1_mipi
 <tr>
     <td>
         <p align="center">
-            <img src="pictures/li-imx274-fmc.png" title="LI-IMX274-FMC" alt="Resizable Image" class="resizable-image" width="320"/>
+            <img src="doc/pictures/li-imx274-fmc.png" title="LI-IMX274-FMC" alt="Resizable Image" class="resizable-image" width="320"/>
         <p align="center">
             <a herf="https://leopardimaging.com/product/csi-2-mipi-modules-i-pex/li-imx274mipi-fmc/">LI-IMX274-FMC</a>
         </p>
@@ -227,7 +156,7 @@ make me_xu6_st1_mipi
 <tr>
     <td>
         <p align="center">
-            <img src="pictures/imx219.png" title="IMX219 module" alt="Resizable Image" class="resizable-image" width="320"/>
+            <img src="doc/pictures/imx219.png" title="IMX219 module" alt="Resizable Image" class="resizable-image" width="320"/>
         </p>
         <p align="center">
             IMX219 Module Raspberry Pi 15 pin compatible
