@@ -12,6 +12,7 @@
 2. [ZCU106 VCU TRD 2019.1](https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/112230447/Zynq+UltraScale+MPSoC+VCU+TRD+2019.1)
 3. [Xilinx reVision](https://github.com/Xilinx/reVISION-Getting-Started-Guide)
 4. [https://github.com/gtaylormb/ultra96v2_imx219_to_displayport](https://github.com/gtaylormb/ultra96v2_imx219_to_displayport)
+5. more camera support from [https://github.com/zakinder/KV260_IMX477_CAMERA](https://github.com/zakinder/KV260_IMX477_CAMERA)
 
 ## Create HW & SW Projects
 
