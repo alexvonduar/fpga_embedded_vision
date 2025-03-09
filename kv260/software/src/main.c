@@ -44,6 +44,7 @@ SOFTWARE.
 #include "mix.h"
 #include "vdma.h"
 #include "gamma_lut.h"
+#include "SENSORS_CONFIG/init_camera.h"
 
 int main() {
     init_platform();
@@ -61,7 +62,8 @@ int main() {
 #if defined(BOARD) && (BOARD == KV260)
 	ap1302_init();
 #endif
-	imx219_init();
+	//imx219_init();
+	init_camera();
 
 	xil_printf("Entire video pipeline activated\r\n");
 

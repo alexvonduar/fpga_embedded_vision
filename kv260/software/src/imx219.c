@@ -40,6 +40,9 @@ SOFTWARE.
 static XGpioPs gpio;
 static XIicPs iic;
 
+static int imx219_write(u16 addr, u8 data);
+static imx219_read(u16 addr, u8 *data);
+
 int imx219_init() {
 	XIicPs_Config *iic_config;
 #if defined(BOARD) && ((BOARD == ULTRA96) || (BOARD == KV260))

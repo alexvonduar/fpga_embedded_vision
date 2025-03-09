@@ -64,7 +64,7 @@ SOFTWARE.
 #define IMX219_FRM_LENGTH_LO                            0x0161
 
 int imx219_init();
-int imx219_write(u16 addr, u8 data);
-int imx219_read(u16 addr, u8 *data);
+//int imx219_write(u16 addr, u8 data);
+//int imx219_read(u16 addr, u8 *data);
 
 #endif /* SRC_IMX219_H_ */
