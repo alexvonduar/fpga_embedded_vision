@@ -89,7 +89,7 @@ if { ${design_name} eq "" } {
    set errMsg "Design <$design_name> already exists in your project, please set the variable <design_name> to another value."
    set nRet 1
 } elseif { [get_files -quiet ${design_name}.bd] ne "" } {
-   # USE CASES: 
+   # USE CASES:
    #    6) Current opened design, has components, but diff names, design_name exists in project.
    #    7) No opened design, design_name exists in project.
 
@@ -123,7 +123,7 @@ set bCheckIPsPassed 1
 ##################################################################
 set bCheckIPs 1
 if { $bCheckIPs == 1 } {
-   set list_check_ips "\ 
+   set list_check_ips "\
 xilinx.com:ip:smartconnect:1.0\
 xilinx.com:ip:axi_vdma:6.3\
 xilinx.com:ip:clk_wiz:6.0\
@@ -136,7 +136,7 @@ xilinx.com:ip:v_gamma_lut:1.1\
 xilinx.com:ip:v_tc:6.2\
 xilinx.com:ip:v_tpg:8.2\
 xilinx.com:ip:v_mix:5.2\
-xilinx.com:ip:xlconstant:1.1\
+xilinx.com:inline_hdl:ilconstant:1.0\
 xilinx.com:ip:zynq_ultra_ps_e:3.5\
 "
 
@@ -211,14 +211,14 @@ proc create_root_design { parentCell } {
   set ap1302_standby [ create_bd_port -dir O -from 0 -to 0 -type ce ap1302_standby ]
   set ap1302_rst_b [ create_bd_port -dir O -from 0 -to 0 -type ce ap1302_rst_b ]
 
-  # Create instance: xlslice_0, and set properties 
-  set xlslice_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlslice xlslice_0 ]
+  # Create instance: ilslice_0, and set properties
+  set ilslice_0 [ create_bd_cell -type ip -vlnv xilinx.com:inline_hdl:ilslice ilslice_0 ]
   set_property -dict [list \
    CONFIG.DIN_FROM {0} \
    CONFIG.DIN_TO {0} \
    CONFIG.DIN_WIDTH {2} \
    CONFIG.DOUT_WIDTH {1} \
- ] $xlslice_0
+ ] $ilslice_0
 
 
   # Create instance: axi_smc, and set properties
@@ -438,17 +438,26 @@ proc create_root_design { parentCell } {
    CONFIG.NR_LAYERS {2} \
  ] $v_mix_0
 
-  # Create instance: xlconstant_0, and set properties
-  set xlconstant_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_0 ]
-
-  # Create instance: xlconstant_1, and set properties
-  set xlconstant_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_1 ]
-
-  # Create instance: xlconstant_2, and set properties
-  set xlconstant_2 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_2 ]
+  # Create instance: ilconstant_0, and set properties
+  set ilconstant_0 [ create_bd_cell -type ip -vlnv xilinx.com:inline_hdl:ilconstant:1.0 ilconstant_0 ]
   set_property -dict [ list \
+    CONFIG.CONST_WIDTH {1} \
+    CONFIG.CONST_VAL {1} \
+  ] $ilconstant_0
+
+  # Create instance: ilconstant_1, and set properties
+  set ilconstant_1 [ create_bd_cell -type ip -vlnv xilinx.com:inline_hdl:ilconstant:1.0 ilconstant_1 ]
+  set_property -dict [ list \
+    CONFIG.CONST_WIDTH {1} \
+    CONFIG.CONST_VAL {1} \
+  ] $ilconstant_1
+
+  # Create instance: ilconstant_2, and set properties
+  set ilconstant_2 [ create_bd_cell -type ip -vlnv xilinx.com:inline_hdl:ilconstant:1.0 ilconstant_2 ]
+  set_property -dict [ list \
+   CONFIG.CONST_WIDTH {1} \
    CONFIG.CONST_VAL {0} \
- ] $xlconstant_2
+ ] $ilconstant_2
 
   # Create instance: zynq_ultra_ps_e_0, and set properties
   set zynq_ultra_ps_e_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:zynq_ultra_ps_e:3.5 zynq_ultra_ps_e_0 ]
@@ -1881,7 +1890,7 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets v_tpg_0_m_axis_video] [get_bd_in
   connect_bd_net -net clk_wiz_1_clk_out1 [get_bd_pins clk_wiz_1/clk_out1] [get_bd_pins mipi_csi2_rx_subsyst_0/dphy_clk_200M]
   connect_bd_net -net proc_sys_reset_0_peripheral_aresetn [get_bd_pins proc_sys_reset_0/peripheral_aresetn] [get_bd_pins v_tc_0/resetn]
   connect_bd_net -net proc_sys_reset_0_peripheral_reset [get_bd_pins proc_sys_reset_0/peripheral_reset] [get_bd_pins v_axi4s_vid_out_0/vid_io_out_reset]
-  connect_bd_net -net rst_ps8_0_100M_peripheral_aresetn [get_bd_pins axi_smc/aresetn] [get_bd_pins axi_vdma_0/axi_resetn] [get_bd_pins mipi_csi2_rx_subsyst_0/lite_aresetn] [get_bd_pins mipi_csi2_rx_subsyst_0/video_aresetn] [get_bd_pins ps8_0_axi_periph/ARESETN] [get_bd_pins ps8_0_axi_periph/M00_ARESETN] [get_bd_pins ps8_0_axi_periph/M01_ARESETN] [get_bd_pins ps8_0_axi_periph/M02_ARESETN] [get_bd_pins ps8_0_axi_periph/M03_ARESETN] [get_bd_pins ps8_0_axi_periph/M04_ARESETN] [get_bd_pins ps8_0_axi_periph/M05_ARESETN] [get_bd_pins ps8_0_axi_periph/M06_ARESETN] [get_bd_pins ps8_0_axi_periph/S00_ARESETN] [get_bd_pins ps8_0_axi_periph/S01_ARESETN] [get_bd_pins rst_ps8_0_100M/peripheral_aresetn] [get_bd_pins v_axi4s_vid_out_0/aresetn] [get_bd_pins v_demosaic_0/ap_rst_n] [get_bd_pins v_gamma_lut_0/ap_rst_n] [get_bd_pins v_tc_0/s_axi_aresetn] [get_bd_pins v_tpg_0/ap_rst_n] [get_bd_pins v_mix_0/ap_rst_n] [get_bd_pins ila_0/resetn] [get_bd_pins ila_2/resetn] [get_bd_pins ila_3/resetn] [get_bd_pins ila_4/resetn] 
+  connect_bd_net -net rst_ps8_0_100M_peripheral_aresetn [get_bd_pins axi_smc/aresetn] [get_bd_pins axi_vdma_0/axi_resetn] [get_bd_pins mipi_csi2_rx_subsyst_0/lite_aresetn] [get_bd_pins mipi_csi2_rx_subsyst_0/video_aresetn] [get_bd_pins ps8_0_axi_periph/ARESETN] [get_bd_pins ps8_0_axi_periph/M00_ARESETN] [get_bd_pins ps8_0_axi_periph/M01_ARESETN] [get_bd_pins ps8_0_axi_periph/M02_ARESETN] [get_bd_pins ps8_0_axi_periph/M03_ARESETN] [get_bd_pins ps8_0_axi_periph/M04_ARESETN] [get_bd_pins ps8_0_axi_periph/M05_ARESETN] [get_bd_pins ps8_0_axi_periph/M06_ARESETN] [get_bd_pins ps8_0_axi_periph/S00_ARESETN] [get_bd_pins ps8_0_axi_periph/S01_ARESETN] [get_bd_pins rst_ps8_0_100M/peripheral_aresetn] [get_bd_pins v_axi4s_vid_out_0/aresetn] [get_bd_pins v_demosaic_0/ap_rst_n] [get_bd_pins v_gamma_lut_0/ap_rst_n] [get_bd_pins v_tc_0/s_axi_aresetn] [get_bd_pins v_tpg_0/ap_rst_n] [get_bd_pins v_mix_0/ap_rst_n] [get_bd_pins ila_0/resetn] [get_bd_pins ila_2/resetn] [get_bd_pins ila_3/resetn] [get_bd_pins ila_4/resetn]
   connect_bd_net -net v_axi4s_vid_out_0_locked [get_bd_pins ila_1/probe1] [get_bd_pins v_axi4s_vid_out_0/locked]
   connect_bd_net -net v_axi4s_vid_out_0_status [get_bd_pins ila_1/probe6] [get_bd_pins v_axi4s_vid_out_0/status]
   connect_bd_net -net v_axi4s_vid_out_0_underflow [get_bd_pins ila_1/probe0] [get_bd_pins v_axi4s_vid_out_0/underflow]
@@ -1891,11 +1900,11 @@ connect_bd_intf_net -intf_net [get_bd_intf_nets v_tpg_0_m_axis_video] [get_bd_in
   connect_bd_net -net v_axi4s_vid_out_0_vid_vsync [get_bd_pins ila_1/probe4] [get_bd_pins v_axi4s_vid_out_0/vid_vsync] [get_bd_pins zynq_ultra_ps_e_0/dp_live_video_in_vsync]
   connect_bd_net -net v_axi4s_vid_out_0_vtg_ce [get_bd_pins v_axi4s_vid_out_0/vtg_ce] [get_bd_pins v_tc_0/gen_clken]
   connect_bd_net -net v_tc_0_fsync_out [get_bd_pins ila_1/probe2] [get_bd_pins v_tc_0/fsync_out]
-  connect_bd_net -net xlconstant_0_dout [get_bd_pins v_axi4s_vid_out_0/aclken] [get_bd_pins v_axi4s_vid_out_0/vid_io_out_ce] [get_bd_pins v_tc_0/clken] [get_bd_pins v_tc_0/s_axi_aclken] [get_bd_pins xlconstant_0/dout]
-  connect_bd_net -net xlconstant_1_dout [get_bd_ports rpi_enable] [get_bd_pins xlconstant_1/dout]
-  connect_bd_net -net xlconstant_2_dout [get_bd_ports ap1302_standby] [get_bd_pins xlconstant_2/dout]
-  connect_bd_net -net zynq_ultra_ps_e_0_emio_gpio_o [get_bd_pins zynq_ultra_ps_e_0/emio_gpio_o] [get_bd_pins xlslice_0/Din]
-  connect_bd_net -net xlslice_0_Dout [get_bd_ports ap1302_rst_b] [get_bd_pins xlslice_0/Dout]
+  connect_bd_net -net ilconstant_0_dout [get_bd_pins v_axi4s_vid_out_0/aclken] [get_bd_pins v_axi4s_vid_out_0/vid_io_out_ce] [get_bd_pins v_tc_0/clken] [get_bd_pins v_tc_0/s_axi_aclken] [get_bd_pins ilconstant_0/dout]
+  connect_bd_net -net ilconstant_1_dout [get_bd_ports rpi_enable] [get_bd_pins ilconstant_1/dout]
+  connect_bd_net -net ilconstant_2_dout [get_bd_ports ap1302_standby] [get_bd_pins ilconstant_2/dout]
+  connect_bd_net -net zynq_ultra_ps_e_0_emio_gpio_o [get_bd_pins zynq_ultra_ps_e_0/emio_gpio_o] [get_bd_pins ilslice_0/Din]
+  connect_bd_net -net ilslice_0_Dout [get_bd_ports ap1302_rst_b] [get_bd_pins ilslice_0/Dout]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_clk0 [get_bd_pins axi_smc/aclk] [get_bd_pins axi_vdma_0/m_axi_mm2s_aclk] [get_bd_pins axi_vdma_0/m_axi_s2mm_aclk] [get_bd_pins axi_vdma_0/m_axis_mm2s_aclk] [get_bd_pins axi_vdma_0/s_axi_lite_aclk] [get_bd_pins axi_vdma_0/s_axis_s2mm_aclk] [get_bd_pins clk_wiz_0/clk_in1] [get_bd_pins clk_wiz_1/clk_in1] [get_bd_pins ila_0/clk] [get_bd_pins ila_2/clk] [get_bd_pins ila_3/clk] [get_bd_pins ila_4/clk] [get_bd_pins mipi_csi2_rx_subsyst_0/lite_aclk] [get_bd_pins mipi_csi2_rx_subsyst_0/video_aclk] [get_bd_pins ps8_0_axi_periph/ACLK] [get_bd_pins ps8_0_axi_periph/M00_ACLK] [get_bd_pins ps8_0_axi_periph/M01_ACLK] [get_bd_pins ps8_0_axi_periph/M02_ACLK] [get_bd_pins ps8_0_axi_periph/M03_ACLK] [get_bd_pins ps8_0_axi_periph/M04_ACLK] [get_bd_pins ps8_0_axi_periph/M05_ACLK] [get_bd_pins ps8_0_axi_periph/M06_ACLK] [get_bd_pins ps8_0_axi_periph/S00_ACLK] [get_bd_pins ps8_0_axi_periph/S01_ACLK] [get_bd_pins rst_ps8_0_100M/slowest_sync_clk] [get_bd_pins v_axi4s_vid_out_0/aclk] [get_bd_pins v_demosaic_0/ap_clk] [get_bd_pins v_gamma_lut_0/ap_clk] [get_bd_pins v_tc_0/s_axi_aclk] [get_bd_pins v_tpg_0/ap_clk] [get_bd_pins v_mix_0/ap_clk] [get_bd_pins zynq_ultra_ps_e_0/maxihpm0_fpd_aclk] [get_bd_pins zynq_ultra_ps_e_0/maxihpm1_fpd_aclk] [get_bd_pins zynq_ultra_ps_e_0/pl_clk0] [get_bd_pins zynq_ultra_ps_e_0/saxihpc0_fpd_aclk]
   connect_bd_net -net zynq_ultra_ps_e_0_pl_resetn0 [get_bd_pins proc_sys_reset_0/ext_reset_in] [get_bd_pins rst_ps8_0_100M/ext_reset_in] [get_bd_pins zynq_ultra_ps_e_0/pl_resetn0]
 
