@@ -23,7 +23,7 @@
 
 4. [PYTHON1300 FMC + ZYNQ_DEV](doc/PYTHON1300_FMC_ZYNQ_DEV.md)
 
-5. [IMX219 RPI MIPI + KV260 DisplayPort](doc/IMX219_RPI_KV260_DP.md)
+5. [RPI MIPI + KV260 DisplayPort](doc/RPI_MIPI_KV260_DP.md)
 
 6. [IMX219 RaspberryPi 15pin MIPI camera module + Mercury+ ST1 + XU6](doc/IMX219_RPI_MIPI0_ME_ST1_XU6_2CG_DP.md)
 
@@ -169,6 +169,26 @@
         <p align="left">Total: 3296(H)×2512(V) 8.28M<br></p>
         <p align="left">Effective: 3296(H)x2480(V) 8.17M<br></p>
         <p align="left">Active: 3280(H)x2464(V) 8.08M<br></p>
+        <p align="left">Module:<br></p>
+        <p align="left">RaspberryPi 15pin interface<br></p>
+    </td>
+</tr>
+<tr>
+    <td>
+        <p align="center">
+            <img src="doc/pictures/rpi_hq_cam.png" title="IMX447 module" alt="Resizable Image" class="resizable-image" width="320"/>
+        </p>
+        <p align="center">
+            Raspberry Pi HQ Camera Module
+        </p>
+    </td>
+    <td>
+        <p align="left">Sensor: SONY IMX477<br></p>
+        <p align="left">Features:<br></p>
+        <p align="left">1/2.3 CMOS, Bayer RAW12/10/8, 2/4 lane MIPI-CSI, 1.55um<br></p>
+        <p align="left">Total: 4072(H)×3176(V) 12.93<br></p>
+        <p align="left">Effective: 4072(H)x3064(V) 12.47M<br></p>
+        <p align="left">Active: 4056(H)x3040(V) 12.33M<br></p>
         <p align="left">Module:<br></p>
         <p align="left">RaspberryPi 15pin interface<br></p>
     </td>

@@ -1,5 +1,6 @@
-#IMX219 RaspberryPi 15pin MIPI camera module + KV260
+#RaspberryPi 15pin MIPI camera module + KV260
 Copied for Greg Taylor's project, and update to **2024.2**.
+Tested Raspberry Pi Camera module V2(IMX219) & Raspberry Pi Camera HQ (IMX477)
 
 ```shell
 source $(VITIS_PATH)/settings64.sh
