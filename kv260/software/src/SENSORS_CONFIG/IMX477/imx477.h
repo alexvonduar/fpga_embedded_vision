@@ -1,6 +1,6 @@
 #ifndef __IMX477_H__
 #define __IMX477_H__
-#include <xbasic_types.h>
+#include <xil_types.h>
 #include <xiicps.h>
 int imx477_write(XIicPs *IicInstance,u16 addr,u8 data);
 int imx477_sensor_init(XIicPs *IicInstance,u16 config_number);

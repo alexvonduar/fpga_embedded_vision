@@ -1011,7 +1011,7 @@ int ar1335_camera_sensor_init(XIicPs *IicInstance)
 	{
 		printf("Got AR1335 Sensor ID: %x %x\r\n", sensor_id[0], sensor_id[1]);
         usleep(10000);
-        #if defined(VIDEO_MODE) && VIDEO_MODE == VM_1080P
+        #if defined(APP_VIDEO_MODE) && APP_VIDEO_MODE == VM_1080P
         ar1335_sensor_write_array(IicInstance,cfg_ar1335_1920_1080p_30fps);
 
 //        ar1335_read(IicInstance, 0x034A, &sensor_id[0]);

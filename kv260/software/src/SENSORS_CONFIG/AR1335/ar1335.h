@@ -1,5 +1,5 @@
 
-#include <xbasic_types.h>
+#include <xil_types.h>
 #include <xiicps.h>
 int ar1335_write(XIicPs *IicInstance,u16 addr,u16 data);
 int ar1335_sensor_init(XIicPs *IicInstance);

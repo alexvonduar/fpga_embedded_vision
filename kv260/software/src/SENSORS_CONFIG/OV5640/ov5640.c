@@ -311,7 +311,7 @@ int ov5640_camera_sensor_init(XIicPs *IicInstance)
 	usleep(1000000);
 	//[7]=0 Software reset; [6]=1 Software power down; Default=0x02
 	ov5640_write(IicInstance,0x3008, 0x42);
-    #if defined(VIDEO_MODE) && VIDEO_MODE == VM_1080P
+    #if defined(APP_VIDEO_MODE) && APP_VIDEO_MODE == VM_1080P
 	//1080p 30fps
 	ov5640_sensor_write_array(IicInstance,cfg_ov5640_1920_1080p_30fps);
     #else

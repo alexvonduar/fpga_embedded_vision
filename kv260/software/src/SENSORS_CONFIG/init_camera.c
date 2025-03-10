@@ -25,8 +25,14 @@
 #include "init_camera.h"
 #include "parameters.h"
 XIicPs iic_cam;
+#if defined(BOARD) && (BOARD == KV260)
 #define IIC_DEVICEID        XPAR_XIICPS_0_DEVICE_ID
-#define IIC_SCLK_RATE		100000
+#elif defined(BOARD) && (BOARD == ME_XU6_ST1)
+#define IIC_DEVICEID        XPAR_XIICPS_1_DEVICE_ID
+#else
+#error "Please define BOARD in parameters.h"
+#endif
+#define IIC_SCLK_RATE		400000
 #define SW_IIC_ADDR         0x74
 u8 SendBuffer [10];
 
@@ -37,8 +43,13 @@ int init_camera()
 	int Status;
 	iic_conf = XIicPs_LookupConfig(IIC_DEVICEID);
 	XIicPs_CfgInitialize(&iic_cam,iic_conf,iic_conf->BaseAddress);
+	if (XIicPs_SelfTest(&iic_cam) != XST_SUCCESS) {
+		xil_printf("XIicPs_SelfTest() failed\r\n");
+		return XST_FAILURE;
+	}
 	XIicPs_SetSClk(&iic_cam, IIC_SCLK_RATE);
     i2c_init(&iic_cam, IIC_DEVICEID,IIC_SCLK_RATE);
+#if defined(BOARD) && (BOARD == KV260)
     SendBuffer[0]= 0x02;
     Status = XIicPs_MasterSendPolled(&iic_cam, SendBuffer, 1, SW_IIC_ADDR);
   	if (Status != XST_SUCCESS) {
@@ -47,7 +58,7 @@ int init_camera()
   	}
     Status = ar1335_camera_sensor_init(&iic_cam);
     if (Status == 153) {
-  		//print("AR1335 Sensor Is Connected\n\r");
+  		print("AR1335 Sensor Is Connected\n\r");
   		//return 153;
   	}
     SendBuffer[0]= 0x04;
@@ -56,30 +67,39 @@ int init_camera()
   		print("I2C Write Error\n\r");
   		return XST_FAILURE;
   	}
+#endif
+    xil_printf("Test imx519\r\n");
     Status = imx519_sensor_init(&iic_cam,0);
   	if (Status == 519) {
   		return 519;
   	}
+	  xil_printf("Test imx682\r\n");
     Status = imx682_sensor_init(&iic_cam,1);
   	if (Status == 682) {
   		return 682;
   	}
+    xil_printf("Test imx219\r\n");
     Status = imx219_camera_sensor_init(&iic_cam);
   	if (Status == 219) {
   		return 219;
   	}
+	xil_printf("Test ov5640\r\n");
     Status = ov5640_camera_sensor_init(&iic_cam);
   	if (Status != XST_SUCCESS) {
   		print("OV5640 Camera Sensor Not connected\n\r");
   	}
-#if defined(VIDEO_MODE) && (VIDEO_MODE == VM_4K)
+
+#if (APP_VIDEO_MODE == VM_4K)
+    xil_printf("Test imx477 4k\r\n");
   	Status = imx477_sensor_init(&iic_cam,14);
 #else
+    xil_printf("Test imx477 1080p\r\n");
 	Status = imx477_sensor_init(&iic_cam,3);
 #endif
   	if (Status == 477) {
   		return 477;
   	}
+	xil_printf("Test ov5467\r\n");
     Status = ov5647_camera_sensor_init(&iic_cam);
   	if (Status != XST_SUCCESS) {
   		print("OV5647 Camera Sensor Not connected\n\r");

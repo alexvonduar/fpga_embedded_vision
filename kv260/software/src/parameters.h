@@ -42,16 +42,14 @@ SOFTWARE.
 //#define BOARD			KV260 // set to ULTRA96 or KV260 or ME_XU6_ST1
 #endif
 
-typedef enum {
-	VM_4K,
-	VM_1080,
-	VM_720P,
-	VM_480P,
-	VM_END
-} VM;
 
-#if !defined(VIDEO_MODE)
-#define VIDEO_MODE		VM_1080
+#define VM_1080 0
+#define VM_720P 1
+#define VM_480P 2
+#define VM_4K 3
+
+#if !defined(APP_VIDEO_MODE)
+#define APP_VIDEO_MODE		VM_1080
 #endif
 
 #define VIDEO_COLUMNS	1920

@@ -360,20 +360,63 @@ struct reginfo cfg1_imx219_1920_1080p_60fps[] =
 		{REG_MODE_SEL, 0x01},
         {SEQUENCE_END, 0x00}
 };
+#if 1
 int imx219_read(XIicPs *IicInstance,u16 addr,u8 *read_buf)
 {
 	*read_buf=i2c_reg16_read(IicInstance,IIC_IMX219_ADDR,addr);
-	return XST_SUCCESS;
-}
-int scan_read(XIicPs *IicInstance,u16 addr,u8 *read_buf,u16 scan_addr)
-{
-	*read_buf=i2c_reg16_read(IicInstance,scan_addr,addr);
 	return XST_SUCCESS;
 }
 int imx219_write(XIicPs *IicInstance,u16 addr,u8 data)
 {
 	return i2c_reg16_write(IicInstance,IIC_IMX219_ADDR,addr,data);
 }
+#else
+
+int imx219_write(XIicPs * iic, u16 addr, u8 data) {
+	u8 buf[3];
+
+	buf[0] = addr >> 8;
+	buf[1] = addr & 0xff;
+	buf[2] = data;
+
+	while (TransmitFifoFill(iic) || XIicPs_BusIsBusy(&iic)) { //while (XIicPs_BusIsBusy(&iic)) {
+		usleep(1);
+		xil_printf("waiting for transmit...\r\n");
+	}
+
+	if (XIicPs_MasterSendPolled(iic, buf, 3, IIC_IMX219_ADDR) != XST_SUCCESS) {
+		xil_printf("imx219 write failed, addr: %x\r\n", addr);
+		return XST_FAILURE;
+	}
+	usleep(1000);
+
+	return XST_SUCCESS;
+}
+
+int imx219_read(XIicPs * iic, u16 addr, u8 *data) {
+	u8 buf[2];
+
+	buf[0] = addr >> 8;
+	buf[1] = addr & 0xff;
+
+	if (XIicPs_MasterSendPolled(&iic, buf, 2, IIC_IMX219_ADDR) != XST_SUCCESS) {
+		xil_printf("imx219 write failed\r\n");
+		return XST_FAILURE;
+	}
+	if (XIicPs_MasterRecvPolled(&iic, data, 1, IIC_IMX219_ADDR) != XST_SUCCESS) {
+		xil_printf("imx219 receive failed\r\n");
+		return XST_FAILURE;
+	}
+	return XST_SUCCESS;
+}
+
+#endif
+int scan_read(XIicPs *IicInstance,u16 addr,u8 *read_buf,u16 scan_addr)
+{
+	*read_buf=i2c_reg16_read(IicInstance,scan_addr,addr);
+	return XST_SUCCESS;
+}
+
 void imx219_sensor_write_array(XIicPs *IicInstance, struct reginfo *regarray)
 {
 	int i = 0;
@@ -386,6 +429,7 @@ int write_imx219_camera_reg(XIicPs *IicInstance,u16 addr,u8 data)
 {
     imx219_write(IicInstance,addr,data);
     printf("IMX219 Reg Address = %x, Wrote Value = %x \n",addr,data);
+    return XST_SUCCESS;
 }
 int read_imx219_camera_reg(XIicPs *IicInstance,u16 addr)
 {
@@ -393,11 +437,13 @@ int read_imx219_camera_reg(XIicPs *IicInstance,u16 addr)
 	u8 sensor_id[2];
 	Status = imx219_read(IicInstance,addr,&sensor_id[0]);
     printf("IMX219 Reg Address = %x, Read Value = %x \n",addr,sensor_id[0]);
+    return XST_SUCCESS;
 }
 int write_read_imx219_camera_reg(XIicPs *IicInstance,u16 addr,u8 data)
 {
     write_imx219_camera_reg(IicInstance,addr,data);
     read_imx219_camera_reg(IicInstance,addr);
+    return XST_SUCCESS;
 }
 int imx219_camera_sensor_init(XIicPs *IicInstance)
 {
@@ -408,7 +454,7 @@ int imx219_camera_sensor_init(XIicPs *IicInstance)
 	{
 		printf("Got IMX219 camera sensor id: %x %x\r\n", sensor_id[0], sensor_id[1]);
         usleep(10000);
-        #if defined(VIDEO_MODE) && VIDEO_MODE == VM_1080P
+        #if defined(APP_VIDEO_MODE) && APP_VIDEO_MODE == VM_1080P
         imx219_sensor_write_array(IicInstance,cfg1_imx219_1920_1080p_60fps);
         #else
         imx219_sensor_write_array(IicInstance,cfg_imx219_1280_702p_60fps);
@@ -489,7 +535,10 @@ int imx219_camera_sensor_init(XIicPs *IicInstance)
 //    	imx219_read(IicInstance, 0x01A3, &sensor_id[0]);
 //    	printf("Read imx219 id 0x01A3 LSC_TUNING_B_A[7:0]   = %x\n",sensor_id[0]);
 	return 219;
-	}
+	} else {
+        printf("sensor id 0x%02x 0x%02x\r\n", sensor_id[0], sensor_id[1]);
+        return 0;
+    }
 }
 int imx219_read_register(XIicPs *IicInstance,u16 addr)
 {

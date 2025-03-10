@@ -3432,7 +3432,7 @@ int imx477_sensor_init(XIicPs *IicInstance,u16 config_number)
             }
             return 477;
     }
-	
+	return 0;
 }
 int imx477_read_register(XIicPs *IicInstance,u16 addr)
 {

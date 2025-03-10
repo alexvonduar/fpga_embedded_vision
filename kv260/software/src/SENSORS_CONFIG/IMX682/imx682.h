@@ -1,5 +1,5 @@
 
-#include <xbasic_types.h>
+#include <xil_types.h>
 #include <xiicps.h>
 int imx682_write(XIicPs *IicInstance,u16 addr,u8 data);
 int imx682_sensor_init(XIicPs *IicInstance,u16 config_number);
