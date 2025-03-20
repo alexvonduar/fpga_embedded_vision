@@ -255,6 +255,134 @@ architecture rtl of onsemi_vita_cam_core is
     -- APP_CFG_REG.Sysmode(6) ? = ??
     -- APP_CFG_REG.Sysmode(7) ? = INITVALUE = '0'
 
+    component iserdes_interface_zynq is
+        generic
+        (
+            SIMULATION : integer := 0;
+            NROF_CONN : integer := 4; --16 bits
+            NROF_CONTR_CONN : integer := 4;
+            NROF_CLOCKCOMP : integer := 1;
+            DATAWIDTH : integer := 10; -- can be 4, 6, 8 or 10 for DDR, can be 2, 3, 4, 5, 6, 7, or 8 for SDR.
+            RETRY_MAX : integer := 32767; --16 bits, global
+            STABLE_COUNT : integer := 16;
+            TAP_COUNT_MAX : integer := 64;
+            DATA_RATE : string := "DDR"; -- DDR/SDR
+            DIFF_TERM : boolean := TRUE;
+            USE_FIFO : boolean := FALSE;
+            USE_BLOCKRAMFIFO : boolean := TRUE;
+            INVERT_OUTPUT : boolean := FALSE;
+            INVERSE_BITORDER : boolean := FALSE;
+            CLKSPEED : integer := 50; -- APPCLK speed in MHz. Everything is generated from Appclk to be as sync as possible
+            --DATAWIDTH, DATARATE, and clockspeed are used to calculate high speed clk speed.
+            --SIM_DEVICE      : string  := "VIRTEX5"; --VIRTEX4/VIRTEX5, for BUFR
+            C_FAMILY : string := "virtex6";
+            NROF_DELAYCTRLS : integer := 1;
+            IDELAYCLK_MULT : integer := 4;
+            IDELAYCLK_DIV : integer := 1;
+            GENIDELAYCLK : boolean := FALSE; -- generate own idelayrefclk based on mult and div parameters or use external clk
+            -- ext clk can come from common part and thus always be in spec regardless of clkspeed
+            USE_OUTPLL : boolean := TRUE; --use output/multiplieng PLL instead of DCM
+            USE_INPLL : boolean := TRUE; --use input/dividing PLL instead of DCM
+            USE_HS_EXT_CLK_IN : boolean := FALSE; -- use external clock high speed clock in
+            -- YES -> use as CLK source, either via BUFG or BUFIO/BUFR,
+            --        -> when USE_HS_REGIONAL_CLK = YES
+            --                use BUFIO (only IOblock can be clocked)
+            --         -> when USE_HS_REGIONAL_CLK = NO
+            --                use BUFG
+            --
+            -- NO -> when use USE_LS_EXT_CLK_IN = YES
+            --           not supported
+            --       when use USE_LS_EXT_CLK_IN = NO
+            --           appclk combined with DCM as CLK source
+            --             use BUFG as CLK source
+            USE_LS_EXT_CLK_IN : boolean := FALSE; -- use external clock low speed clock in
+            -- YES -> use as CLKDIV source, either via BUFG or BUFIO/BUFR,
+            --        -> when USE_LS_REGIONAL_CLK = YES
+            --               use BUFR
+            --        -> when USE_LS_REGIONAL_CLK = NO
+            --               use BUFG
+            --
+            --
+            -- NO ->  when USE_HS_EXT_CLK_IN = YES
+            --        -> when USE_HS_REGIONAL_CLK =YES and BUFR can divide
+            --               use BUFIO/BUFR to divide HS
+            --        -> when USE_HS_REGIONAL_CLK =YES and BUFR can not divide
+            --               use BUFIO/BUFR + DCM to divide HS
+            --        -> when USE_HS_EXT_CLK_IN = NO
+            --               use DCM (same as HS_EXT_CLK_IN) as clk source, sync with appclk
+            --
+            --
+            USE_DIFF_HS_CLK_IN : boolean := FALSE; -- differential mode, automatically instantiates the correct buffer
+            USE_DIFF_LS_CLK_IN : boolean := FALSE; -- differential mode, automatically instantiates the correct buffer
+            USE_HS_REGIONAL_CLK : boolean := FALSE; -- only used when USE_HS_EXT_CLK_IN = yes
+            USE_LS_REGIONAL_CLK : boolean := FALSE; -- only used when USE_LS_EXT_CLK_IN = yes
+            USE_HS_EXT_CLK_OUT : boolean := FALSE; -- use external clock high speed clock out
+            USE_LS_EXT_CLK_OUT : boolean := FALSE; -- use external clock low speed clock out
+            USE_DIFF_HS_CLK_OUT : boolean := FALSE; -- differential mode, automatically instantiates the correct buffer
+            USE_DIFF_LS_CLK_OUT : boolean := FALSE; -- differential mode, automatically instantiates the correct buffer
+            USE_DATAPATH : boolean := TRUE
+        );
+        port
+        (
+            CLOCK : in std_logic;
+            RESET : in std_logic;
+
+            CLK_RDY : out std_logic;
+            CLK_STATUS : out std_logic_vector((16 * NROF_CLOCKCOMP) - 1 downto 0);
+            CLK200 : in std_logic; -- optional 200MHz refclk
+
+            -- to sensor (external)
+            LS_OUT_CLK : out std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
+            LS_OUT_CLKb : out std_logic_vector(NROF_CLOCKCOMP - 1 downto 0); -- only used in differential mode
+
+            HS_OUT_CLK : out std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
+            HS_OUT_CLKb : out std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
+
+            -- from sensor (only used when USED_EXT_CLK = YES)
+            LS_IN_CLK : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
+            LS_IN_CLKb : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
+
+            HS_IN_CLK : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
+            HS_IN_CLKb : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
+
+            --serdes data, directly connected to bondpads
+            SDATAP : in std_logic_vector(NROF_CONN - 1 downto 0);
+            SDATAN : in std_logic_vector(NROF_CONN - 1 downto 0);
+
+            -- status info
+            EDGE_DETECT : out std_logic_vector(NROF_CONN - 1 downto 0);
+            TRAINING_DETECT : out std_logic_vector(NROF_CONN - 1 downto 0);
+            STABLE_DETECT : out std_logic_vector(NROF_CONN - 1 downto 0);
+            FIRST_EDGE_FOUND : out std_logic_vector(NROF_CONN - 1 downto 0);
+            SECOND_EDGE_FOUND : out std_logic_vector(NROF_CONN - 1 downto 0);
+            NROF_RETRIES : out std_logic_vector((16 * NROF_CONN) - 1 downto 0);
+            TAP_SETTING : out std_logic_vector((10 * NROF_CONN) - 1 downto 0);
+            WINDOW_WIDTH : out std_logic_vector((10 * NROF_CONN) - 1 downto 0);
+            WORD_ALIGN : out std_logic_vector(NROF_CONN - 1 downto 0);
+            TIMEOUTONACK : out std_logic_vector(NROF_CONTR_CONN - 1 downto 0);
+
+            -- control
+            ALIGN_START : in std_logic;
+            ALIGN_BUSY : out std_logic;
+            ALIGNED : out std_logic;
+
+            FIFO_EN : in std_logic;
+
+            AUTOALIGN : in std_logic;
+
+            TRAINING : in std_logic_vector(DATAWIDTH - 1 downto 0);
+            MANUAL_TAP : in std_logic_vector(9 downto 0);
+
+            EN_LS_CLK_OUT : in std_logic;
+            EN_HS_CLK_OUT : in std_logic;
+
+            -- parallel data out
+            FIFO_RDEN : in std_logic;
+            FIFO_EMPTY : out std_logic;
+            FIFO_DATAOUT : out std_logic_vector((NROF_CONN * DATAWIDTH) - 1 downto 0)
+        );
+    end component iserdes_interface_zynq;
+
     component iserdes_interface is
         generic
         (
@@ -956,7 +1084,116 @@ begin
 
     end generate vita_iserdes_s6;
 
-    vita_iserdes_v5 : if not (C_FAMILY = "spartan6") generate
+    vita_iserdes_zynq : if (C_FAMILY = "zynq") generate
+        vita_iserdes : iserdes_interface_zynq
+        generic map
+        (
+            SIMULATION => gSIMULATION,
+            NROF_CONN => NROF_CONN,
+            NROF_CONTR_CONN => NROF_CONN,
+            NROF_CLOCKCOMP => 1,
+            DATAWIDTH => DATAWIDTH,
+            RETRY_MAX => 32767,
+            STABLE_COUNT => 16,
+            --TAP_COUNT_MAX       => 64           , -- for Virtex-5 IODELAY
+            TAP_COUNT_MAX => 32, -- for Virtex-6 IODELAYE1
+            DATA_RATE => "DDR",
+            DIFF_TERM => TRUE,
+            USE_FIFO => TRUE,
+            USE_BLOCKRAMFIFO => TRUE,
+            INVERT_OUTPUT => INVBOOL, --change back for final system !!!!!
+            INVERSE_BITORDER => FALSE,
+            CLKSPEED => CLKSPEED,
+            --SIM_DEVICE          => "VIRTEX5"    ,
+            C_FAMILY => C_FAMILY,
+            NROF_DELAYCTRLS => NROF_DELAYCTRLS, --should be 2 for 'correct' char board, change when required
+            IDELAYCLK_MULT => 3,
+            IDELAYCLK_DIV => 1,
+            GENIDELAYCLK => FALSE,
+            USE_OUTPLL => FALSE, --use output/multiplieng PLL instead of DCM
+            USE_INPLL => FALSE,
+            USE_HS_EXT_CLK_IN => TRUE, --useLVDSclocks(gEngineering, gLVDS_OUT)   ,
+            USE_LS_EXT_CLK_IN => FALSE,
+            USE_DIFF_HS_CLK_IN => TRUE, --useLVDSclocks(gEngineering, gLVDS_OUT)   , -- differential mode, automatically instantiates the correct buffer
+            USE_DIFF_LS_CLK_IN => FALSE, -- differential mode, automatically instantiates the correct buffer
+            USE_HS_REGIONAL_CLK => TRUE, --useLVDSclocks(gEngineering, gLVDS_OUT)   , -- only used when USE_HS_EXT_CLK_IN = yes
+            USE_LS_REGIONAL_CLK => FALSE, --
+            USE_HS_EXT_CLK_OUT => FALSE, -- use external clock high speed clock out
+            USE_LS_EXT_CLK_OUT => FALSE, -- use external clock low speed clock out
+            USE_DIFF_HS_CLK_OUT => TRUE, -- differential mode, automatically instantiates the correct buffer
+            USE_DIFF_LS_CLK_OUT => FALSE, -- differential mode, automatically instantiates the correct buffer
+            USE_DATAPATH => TRUE--usedatapathfunc(gEngineering, gLVDS_OUT)
+        )
+        port map
+        (
+            CLOCK => clk,
+            RESET => host_iserdes_reset,
+
+            CLK200 => clk200,
+
+            CLK_RDY => CLK_RDY,
+            CLK_STATUS => CLK_STATUS,
+
+            -- to sensor (external)
+            --LS_OUT_CLK(0)          => open, --CLK_PLL           ,
+            --LS_OUT_CLKb(0)         => open, --CLK_PLL_n         ,
+            --HS_OUT_CLK(0)       => open, --ClockIn_P    ,
+            --HS_OUT_CLKb(0)      => open, --ClockIn_N    ,
+
+            -- from sensor (only used when USED_EXT_CLK = YES)
+            LS_IN_CLK(0) => '0',
+            LS_IN_CLKb(0) => '0',
+
+            HS_IN_CLK(0) => io_vita_clk_out_p,
+            HS_IN_CLKb(0) => io_vita_clk_out_n,
+
+            --serdes data, directly connected to bondpads
+            SDATAP(4 downto 1) => io_vita_data_p(3 downto 0),
+            SDATAP(0) => io_vita_sync_p,
+            SDATAN(4 downto 1) => io_vita_data_n(3 downto 0),
+            SDATAN(0) => io_vita_sync_n,
+
+            -- status info
+            EDGE_DETECT => EDGE_DETECT,
+            TRAINING_DETECT => TRAINING_DETECT,
+            STABLE_DETECT => STABLE_DETECT,
+            FIRST_EDGE_FOUND => FIRST_EDGE_FOUND,
+            SECOND_EDGE_FOUND => SECOND_EDGE_FOUND,
+            NROF_RETRIES => NROF_RETRIES,
+            TAP_SETTING => TAP_SETTING,
+            WINDOW_WIDTH => WINDOW_WIDTH,
+            WORD_ALIGN => WORD_ALIGN,
+
+            -- control
+            ALIGN_START => host_iserdes_align_start,
+            ALIGN_BUSY => ALIGN_BUSY,
+            ALIGNED => ALIGNED,
+
+            FIFO_EN => host_iserdes_fifo_enable,
+
+            AUTOALIGN => host_iserdes_auto_align,
+
+            TRAINING => host_iserdes_training,
+            MANUAL_TAP => host_iserdes_manual_tap,
+
+            EN_LS_CLK_OUT => '0', --APP_CFG_REG.Sysmode(5),
+            EN_HS_CLK_OUT => '0', --APP_CFG_REG.Sysmode(6),
+            TIMEOUTONACK => open,
+
+            -- parallel data out
+            FIFO_RDEN => FIFO_RDEN,
+            FIFO_EMPTY => FIFO_EMPTY,
+            FIFO_DATAOUT => FIFO_DATAOUT
+        );
+
+        host_iserdes_clk_ready <= CLK_RDY;
+        host_iserdes_clk_status <= CLK_STATUS;
+        host_iserdes_align_busy <= ALIGN_BUSY;
+        host_iserdes_aligned <= ALIGNED;
+
+    end generate vita_iserdes_zynq;
+
+    vita_iserdes_v5 : if not ((C_FAMILY = "spartan6") or (C_FAMILY = "zynq")) generate
         vita_iserdes : iserdes_interface
         generic map
         (
