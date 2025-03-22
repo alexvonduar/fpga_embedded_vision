@@ -260,8 +260,6 @@ architecture rtl of onsemi_vita_cam_core is
         (
             SIMULATION : integer := 0;
             NROF_CONN : integer := 4; --16 bits
-            NROF_CONTR_CONN : integer := 4;
-            NROF_CLOCKCOMP : integer := 1;
             DATAWIDTH : integer := 10; -- can be 4, 6, 8 or 10 for DDR, can be 2, 3, 4, 5, 6, 7, or 8 for SDR.
             RETRY_MAX : integer := 32767; --16 bits, global
             STABLE_COUNT : integer := 16;
@@ -276,10 +274,10 @@ architecture rtl of onsemi_vita_cam_core is
             --DATAWIDTH, DATARATE, and clockspeed are used to calculate high speed clk speed.
             --SIM_DEVICE      : string  := "VIRTEX5"; --VIRTEX4/VIRTEX5, for BUFR
             C_FAMILY : string := "virtex6";
-            NROF_DELAYCTRLS : integer := 1;
-            IDELAYCLK_MULT : integer := 4;
-            IDELAYCLK_DIV : integer := 1;
-            GENIDELAYCLK : boolean := FALSE; -- generate own idelayrefclk based on mult and div parameters or use external clk
+            --NROF_DELAYCTRLS : integer := 1;
+            --IDELAYCLK_MULT : integer := 4;
+            --IDELAYCLK_DIV : integer := 1;
+            --GENIDELAYCLK : boolean := FALSE; -- generate own idelayrefclk based on mult and div parameters or use external clk
             -- ext clk can come from common part and thus always be in spec regardless of clkspeed
             USE_OUTPLL : boolean := TRUE; --use output/multiplieng PLL instead of DCM
             USE_INPLL : boolean := TRUE --use input/dividing PLL instead of DCM
@@ -290,15 +288,15 @@ architecture rtl of onsemi_vita_cam_core is
             RESET : in std_logic;
 
             CLK_RDY : out std_logic;
-            CLK_STATUS : out std_logic_vector((16 * NROF_CLOCKCOMP) - 1 downto 0);
+            CLK_STATUS : out std_logic_vector(15 downto 0);
             CLK200 : in std_logic; -- optional 200MHz refclk
 
             -- to sensor (external)
 
             -- from sensor (only used when USED_EXT_CLK = YES)
 
-            HS_IN_CLK : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
-            HS_IN_CLKb : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
+            HS_IN_CLK : in std_logic;
+            HS_IN_CLKb : in std_logic;
 
             --serdes data, directly connected to bondpads
             SDATAP : in std_logic_vector(NROF_CONN - 1 downto 0);
@@ -1042,8 +1040,6 @@ begin
         (
             SIMULATION => gSIMULATION,
             NROF_CONN => NROF_CONN,
-            NROF_CONTR_CONN => NROF_CONN,
-            NROF_CLOCKCOMP => 1,
             DATAWIDTH => DATAWIDTH,
             RETRY_MAX => 32767,
             STABLE_COUNT => 16,
@@ -1058,10 +1054,6 @@ begin
             CLKSPEED => CLKSPEED,
             --SIM_DEVICE          => "VIRTEX5"    ,
             C_FAMILY => C_FAMILY,
-            NROF_DELAYCTRLS => NROF_DELAYCTRLS, --should be 2 for 'correct' char board, change when required
-            IDELAYCLK_MULT => 3,
-            IDELAYCLK_DIV => 1,
-            GENIDELAYCLK => FALSE,
             USE_OUTPLL => FALSE, --use output/multiplieng PLL instead of DCM
             USE_INPLL => FALSE
         )
@@ -1076,8 +1068,8 @@ begin
             CLK_STATUS => CLK_STATUS,
 
             -- from sensor (only used when USED_EXT_CLK = YES)
-            HS_IN_CLK(0) => io_vita_clk_out_p,
-            HS_IN_CLKb(0) => io_vita_clk_out_n,
+            HS_IN_CLK => io_vita_clk_out_p,
+            HS_IN_CLKb => io_vita_clk_out_n,
 
             --serdes data, directly connected to bondpads
             SDATAP(4 downto 1) => io_vita_data_p(3 downto 0),

@@ -53,8 +53,8 @@ entity iserdes_interface_zynq is
     (
         SIMULATION : integer := 0;
         NROF_CONN : integer := 4; --16 bits
-        NROF_CONTR_CONN : integer := 4;
-        NROF_CLOCKCOMP : integer := 1;
+        -- asuming control and data connections are the same
+        --NROF_CLOCKCOMP : integer := 1;
         DATAWIDTH : integer := 10; -- can be 4, 6, 8 or 10 for DDR, can be 2, 3, 4, 5, 6, 7, or 8 for SDR.
         RETRY_MAX : integer := 32767; --16 bits, global
         STABLE_COUNT : integer := 16;
@@ -69,10 +69,10 @@ entity iserdes_interface_zynq is
         --DATAWIDTH, DATARATE, and clockspeed are used to calculate high speed clk speed.
         --SIM_DEVICE      : string  := "VIRTEX5"; --VIRTEX4/VIRTEX5, for BUFR
         C_FAMILY : string := "virtex6";
-        NROF_DELAYCTRLS : integer := 1;
-        IDELAYCLK_MULT : integer := 4;
-        IDELAYCLK_DIV : integer := 1;
-        GENIDELAYCLK : boolean := FALSE; -- generate own idelayrefclk based on mult and div parameters or use external clk
+        --NROF_DELAYCTRLS : integer := 1;
+        --IDELAYCLK_MULT : integer := 4;
+        --IDELAYCLK_DIV : integer := 1;
+        --GENIDELAYCLK : boolean := FALSE; -- generate own idelayrefclk based on mult and div parameters or use external clk
         -- ext clk can come from common part and thus always be in spec regardless of clkspeed
         USE_OUTPLL : boolean := TRUE; --use output/multiplieng PLL instead of DCM
         USE_INPLL : boolean := TRUE --use input/dividing PLL instead of DCM
@@ -83,7 +83,7 @@ entity iserdes_interface_zynq is
         RESET : in std_logic;
 
         CLK_RDY : out std_logic;
-        CLK_STATUS : out std_logic_vector((16 * NROF_CLOCKCOMP) - 1 downto 0);
+        CLK_STATUS : out std_logic_vector(15 downto 0);
 
         CLK200 : in std_logic; -- optional 200MHz refclk
 
@@ -91,8 +91,8 @@ entity iserdes_interface_zynq is
 
         -- from sensor (only used when USED_EXT_CLK = YES)
 
-        HS_IN_CLK : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
-        HS_IN_CLKb : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
+        HS_IN_CLK : in std_logic;
+        HS_IN_CLKb : in std_logic;
 
         --serdes data, directly connected to bondpads
         SDATAP : in std_logic_vector(NROF_CONN - 1 downto 0);
@@ -108,7 +108,7 @@ entity iserdes_interface_zynq is
         TAP_SETTING : out std_logic_vector((10 * NROF_CONN) - 1 downto 0);
         WINDOW_WIDTH : out std_logic_vector((10 * NROF_CONN) - 1 downto 0);
         WORD_ALIGN : out std_logic_vector(NROF_CONN - 1 downto 0);
-        TIMEOUTONACK : out std_logic_vector(NROF_CONTR_CONN - 1 downto 0);
+        TIMEOUTONACK : out std_logic_vector(NROF_CONN - 1 downto 0);
 
         -- control
         ALIGN_START : in std_logic;
@@ -189,7 +189,7 @@ architecture structure of iserdes_interface_zynq is
             TAP_SETTING : out std_logic_vector((10 * NROF_CONN) - 1 downto 0);
             WINDOW_WIDTH : out std_logic_vector((10 * NROF_CONN) - 1 downto 0);
             WORD_ALIGN : out std_logic_vector(NROF_CONN - 1 downto 0);
-            TIMEOUTONACK : out std_logic_vector(NROF_CONTR_CONN - 1 downto 0);
+            TIMEOUTONACK : out std_logic_vector(NROF_CONN - 1 downto 0);
 
             CLK_DIV_RESET : in std_logic;
 
@@ -281,35 +281,22 @@ architecture structure of iserdes_interface_zynq is
 
     -- constants
 
-    constant nrof_conn_per_controlblock : integer := (NROF_CONN/NROF_CONTR_CONN);
-    constant nrof_clocks_per_controlblock : integer := (NROF_CLOCKCOMP/NROF_CONTR_CONN);
-    constant nrof_controlblocks_per_clock : integer := (NROF_CONTR_CONN/NROF_CLOCKCOMP);
-    constant nrof_conn_per_clock : integer := (NROF_CONN/NROF_CLOCKCOMP);
-
     ----signals
     -- clock module signals
-    signal CLK_c : std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
-    signal CLKb_c : std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
-    signal CLKDIV_c : std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
+    signal CLK_c : std_logic;
+    signal CLKb_c : std_logic;
+    signal CLKDIV_c : std_logic;
 
-    signal CLK_RDY_i : std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
-
-    signal FIFO_WREN_c : std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
-    signal DELAY_WREN_c : std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
+    signal FIFO_WREN_c : std_logic;
+    signal DELAY_WREN_c : std_logic;
 
     -- data module signals
-    signal CLK_d : std_logic_vector(NROF_CONTR_CONN - 1 downto 0);
-    signal CLKb_d : std_logic_vector(NROF_CONTR_CONN - 1 downto 0);
-    signal CLKDIV_d : std_logic_vector(NROF_CONTR_CONN - 1 downto 0);
-
-    signal FIFO_WREN_d : std_logic_vector(NROF_CONTR_CONN - 1 downto 0);
-    signal DELAY_WREN_d : std_logic_vector(NROF_CONTR_CONN - 1 downto 0);
 
     --
-    signal ALIGN_BUSY_d : std_logic_vector(NROF_CONTR_CONN - 1 downto 0);
-    signal ALIGNED_d : std_logic_vector(NROF_CONTR_CONN - 1 downto 0);
+    signal ALIGN_BUSY_d : std_logic_vector(NROF_CONN - 1 downto 0);
+    signal ALIGNED_d : std_logic_vector(NROF_CONN - 1 downto 0);
 
-    signal FIFO_EMPTY_d : std_logic_vector(NROF_CONTR_CONN - 1 downto 0);
+    signal FIFO_EMPTY_d : std_logic_vector(NROF_CONN - 1 downto 0);
     signal SAMPLEINFIRSTBIT : std_logic_vector(NROF_CONN - 1 downto 0);
     signal SAMPLEINLASTBIT : std_logic_vector(NROF_CONN - 1 downto 0);
     signal SAMPLEINOTHERBIT : std_logic_vector(NROF_CONN - 1 downto 0);
@@ -320,13 +307,6 @@ begin
     -- mapping, depends on used hardware
 
     -- this block might need to be moved elsewhere, or replaced by a component
-    generate_data_clock_assignment : for i in 0 to (NROF_CLOCKCOMP - 1) generate
-        FIFO_WREN_d(i * nrof_controlblocks_per_clock + nrof_controlblocks_per_clock - 1 downto i * nrof_controlblocks_per_clock) <= (others => FIFO_WREN_c(i));
-        DELAY_WREN_d(i * nrof_controlblocks_per_clock + nrof_controlblocks_per_clock - 1 downto i * nrof_controlblocks_per_clock) <= (others => DELAY_WREN_c(i));
-        CLK_d(i * nrof_controlblocks_per_clock + nrof_controlblocks_per_clock - 1 downto i * nrof_controlblocks_per_clock) <= (others => CLK_c(i));
-        CLKb_d(i * nrof_controlblocks_per_clock + nrof_controlblocks_per_clock - 1 downto i * nrof_controlblocks_per_clock) <= (others => CLKb_c(i));
-        CLKDIV_d(i * nrof_controlblocks_per_clock + nrof_controlblocks_per_clock - 1 downto i * nrof_controlblocks_per_clock) <= (others => CLKDIV_c(i));
-    end generate generate_data_clock_assignment;
 
     process (ALIGN_BUSY_d)
         variable TMP : std_logic;
@@ -360,26 +340,14 @@ begin
 
     -- end mapping
 
-    process (CLOCK)
-        variable tmp : std_logic := '0';
-    begin
-        if (CLOCK = '1' and CLOCK'event) then
-            tmp := '1';
-            for i in 0 to NROF_CLOCKCOMP - 1 loop
-                tmp := CLK_RDY_i(i) and tmp;
-            end loop;
-            CLK_RDY <= tmp;
-        end if;
-    end process;
-
         -- delay controllers
         serdesidelayrefclk : iserdes_idelayctrl
         generic map
         (
-            NROF_DELAYCTRLS => NROF_DELAYCTRLS,
-            IDELAYCLK_MULT => IDELAYCLK_MULT,
-            IDELAYCLK_DIV => IDELAYCLK_DIV,
-            GENIDELAYCLK => GENIDELAYCLK
+            NROF_DELAYCTRLS => 1,
+            IDELAYCLK_MULT => 3,
+            IDELAYCLK_DIV => 1,
+            GENIDELAYCLK => FALSE
         )
         port map
         (
@@ -389,7 +357,6 @@ begin
             idelay_ctrl_rdy => open
         );
 
-    serdesclockgen : for i in 0 to (NROF_CLOCKCOMP - 1) generate
         co : iserdes_compare
         generic map
         (
@@ -398,19 +365,19 @@ begin
         port map
         (
             CLOCK => CLOCK,
-            CLKDIV => CLKDIV_c(i),
+            CLKDIV => CLKDIV_c,
 
             RESET => RESET,
             FIFO_EN => FIFO_EN,
 
-            SAMPLEINFIRSTBIT => SAMPLEINFIRSTBIT(i * nrof_conn_per_clock + nrof_conn_per_clock - 1 downto i * nrof_conn_per_clock),
-            SAMPLEINLASTBIT => SAMPLEINLASTBIT(i * nrof_conn_per_clock + nrof_conn_per_clock - 1 downto i * nrof_conn_per_clock),
-            SAMPLEINOTHERBIT => SAMPLEINOTHERBIT(i * nrof_conn_per_clock + nrof_conn_per_clock - 1 downto i * nrof_conn_per_clock),
+            SAMPLEINFIRSTBIT => SAMPLEINFIRSTBIT(NROF_CONN - 1 downto 0),
+            SAMPLEINLASTBIT => SAMPLEINLASTBIT(NROF_CONN - 1 downto 0),
+            SAMPLEINOTHERBIT => SAMPLEINOTHERBIT(NROF_CONN - 1 downto 0),
 
             SKEW_ERROR => open,
 
-            FIFO_WREN => FIFO_WREN_c(i),
-            DELAY_WREN => DELAY_WREN_c(i)
+            FIFO_WREN => FIFO_WREN_c,
+            DELAY_WREN => DELAY_WREN_c
         );
 
         ic : iserdes_clocks_zynq
@@ -431,26 +398,22 @@ begin
             CLOCK => CLOCK,
             RESET => RESET,
 
-            CLK_RDY => CLK_RDY_i(i),
-            CLK_STATUS => CLK_STATUS((i * 16) + 15 downto (i * 16)),
+            CLK_RDY => CLK_RDY,
+            CLK_STATUS => CLK_STATUS(15 downto 0),
 
             -- to iserdes
-            CLK => CLK_c(i),
-            CLKb => CLKb_c(i),
-            CLKDIV => CLKDIV_c(i),
+            CLK => CLK_c,
+            CLKb => CLKb_c,
+            CLKDIV => CLKDIV_c,
 
             --reset for synchronizer between clk_div and App_clk
             CLK_DIV_RESET => CLK_DIV_RESET,
 
             -- from sensor (only used when USED_EXT_CLK = YES)
 
-            HS_IN_CLK => HS_IN_CLK(i),
-            HS_IN_CLKb => HS_IN_CLKb(i)
+            HS_IN_CLK => HS_IN_CLK,
+            HS_IN_CLKb => HS_IN_CLKb
         );
-
-    end generate serdesclockgen;
-
-    --    datagen : for j in 0 to (NROF_CONTR_CONN - 1) generate
 
             db : iserdes_datadeser_zynq
             generic map
@@ -474,10 +437,10 @@ begin
                 RESET => RESET,
 
                 --serdes clocks, from clocking module(s)
-                CLK => CLK_d,
-                CLKb => CLKb_d,
+                CLK => (others => CLK_c),
+                CLKb => (others => CLKb_c),
 
-                CLKDIV => CLKDIV_d,
+                CLKDIV => (others => CLKDIV_c),
 
                 --serdes data, directly connected to bondpads
                 SDATAP => SDATAP,
@@ -512,15 +475,13 @@ begin
                 MANUAL_TAP => MANUAL_TAP,
 
                 --sync to clockdiv
-                FIFO_WREN => FIFO_WREN_d,
-                DELAY_WREN => DELAY_WREN_d,
+                FIFO_WREN => (others => FIFO_WREN_c),
+                DELAY_WREN => (others => DELAY_WREN_c),
 
                 -- parallel data out
                 FIFO_RDEN => FIFO_RDEN,
                 FIFO_EMPTY => FIFO_EMPTY_d,
                 FIFO_DATAOUT => FIFO_DATAOUT
             );
-
-        --end generate datagen;
 
 end structure;
