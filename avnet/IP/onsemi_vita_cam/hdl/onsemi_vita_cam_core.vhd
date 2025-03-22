@@ -282,45 +282,7 @@ architecture rtl of onsemi_vita_cam_core is
             GENIDELAYCLK : boolean := FALSE; -- generate own idelayrefclk based on mult and div parameters or use external clk
             -- ext clk can come from common part and thus always be in spec regardless of clkspeed
             USE_OUTPLL : boolean := TRUE; --use output/multiplieng PLL instead of DCM
-            USE_INPLL : boolean := TRUE; --use input/dividing PLL instead of DCM
-            USE_HS_EXT_CLK_IN : boolean := FALSE; -- use external clock high speed clock in
-            -- YES -> use as CLK source, either via BUFG or BUFIO/BUFR,
-            --        -> when USE_HS_REGIONAL_CLK = YES
-            --                use BUFIO (only IOblock can be clocked)
-            --         -> when USE_HS_REGIONAL_CLK = NO
-            --                use BUFG
-            --
-            -- NO -> when use USE_LS_EXT_CLK_IN = YES
-            --           not supported
-            --       when use USE_LS_EXT_CLK_IN = NO
-            --           appclk combined with DCM as CLK source
-            --             use BUFG as CLK source
-            USE_LS_EXT_CLK_IN : boolean := FALSE; -- use external clock low speed clock in
-            -- YES -> use as CLKDIV source, either via BUFG or BUFIO/BUFR,
-            --        -> when USE_LS_REGIONAL_CLK = YES
-            --               use BUFR
-            --        -> when USE_LS_REGIONAL_CLK = NO
-            --               use BUFG
-            --
-            --
-            -- NO ->  when USE_HS_EXT_CLK_IN = YES
-            --        -> when USE_HS_REGIONAL_CLK =YES and BUFR can divide
-            --               use BUFIO/BUFR to divide HS
-            --        -> when USE_HS_REGIONAL_CLK =YES and BUFR can not divide
-            --               use BUFIO/BUFR + DCM to divide HS
-            --        -> when USE_HS_EXT_CLK_IN = NO
-            --               use DCM (same as HS_EXT_CLK_IN) as clk source, sync with appclk
-            --
-            --
-            USE_DIFF_HS_CLK_IN : boolean := FALSE; -- differential mode, automatically instantiates the correct buffer
-            USE_DIFF_LS_CLK_IN : boolean := FALSE; -- differential mode, automatically instantiates the correct buffer
-            USE_HS_REGIONAL_CLK : boolean := FALSE; -- only used when USE_HS_EXT_CLK_IN = yes
-            USE_LS_REGIONAL_CLK : boolean := FALSE; -- only used when USE_LS_EXT_CLK_IN = yes
-            USE_HS_EXT_CLK_OUT : boolean := FALSE; -- use external clock high speed clock out
-            USE_LS_EXT_CLK_OUT : boolean := FALSE; -- use external clock low speed clock out
-            USE_DIFF_HS_CLK_OUT : boolean := FALSE; -- differential mode, automatically instantiates the correct buffer
-            USE_DIFF_LS_CLK_OUT : boolean := FALSE; -- differential mode, automatically instantiates the correct buffer
-            USE_DATAPATH : boolean := TRUE
+            USE_INPLL : boolean := TRUE --use input/dividing PLL instead of DCM
         );
         port
         (
@@ -332,15 +294,8 @@ architecture rtl of onsemi_vita_cam_core is
             CLK200 : in std_logic; -- optional 200MHz refclk
 
             -- to sensor (external)
-            LS_OUT_CLK : out std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
-            LS_OUT_CLKb : out std_logic_vector(NROF_CLOCKCOMP - 1 downto 0); -- only used in differential mode
-
-            HS_OUT_CLK : out std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
-            HS_OUT_CLKb : out std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
 
             -- from sensor (only used when USED_EXT_CLK = YES)
-            LS_IN_CLK : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
-            LS_IN_CLKb : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
 
             HS_IN_CLK : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
             HS_IN_CLKb : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
@@ -372,9 +327,6 @@ architecture rtl of onsemi_vita_cam_core is
 
             TRAINING : in std_logic_vector(DATAWIDTH - 1 downto 0);
             MANUAL_TAP : in std_logic_vector(9 downto 0);
-
-            EN_LS_CLK_OUT : in std_logic;
-            EN_HS_CLK_OUT : in std_logic;
 
             -- parallel data out
             FIFO_RDEN : in std_logic;
@@ -1111,18 +1063,7 @@ begin
             IDELAYCLK_DIV => 1,
             GENIDELAYCLK => FALSE,
             USE_OUTPLL => FALSE, --use output/multiplieng PLL instead of DCM
-            USE_INPLL => FALSE,
-            USE_HS_EXT_CLK_IN => TRUE, --useLVDSclocks(gEngineering, gLVDS_OUT)   ,
-            USE_LS_EXT_CLK_IN => FALSE,
-            USE_DIFF_HS_CLK_IN => TRUE, --useLVDSclocks(gEngineering, gLVDS_OUT)   , -- differential mode, automatically instantiates the correct buffer
-            USE_DIFF_LS_CLK_IN => FALSE, -- differential mode, automatically instantiates the correct buffer
-            USE_HS_REGIONAL_CLK => TRUE, --useLVDSclocks(gEngineering, gLVDS_OUT)   , -- only used when USE_HS_EXT_CLK_IN = yes
-            USE_LS_REGIONAL_CLK => FALSE, --
-            USE_HS_EXT_CLK_OUT => FALSE, -- use external clock high speed clock out
-            USE_LS_EXT_CLK_OUT => FALSE, -- use external clock low speed clock out
-            USE_DIFF_HS_CLK_OUT => TRUE, -- differential mode, automatically instantiates the correct buffer
-            USE_DIFF_LS_CLK_OUT => FALSE, -- differential mode, automatically instantiates the correct buffer
-            USE_DATAPATH => TRUE--usedatapathfunc(gEngineering, gLVDS_OUT)
+            USE_INPLL => FALSE
         )
         port map
         (
@@ -1134,16 +1075,7 @@ begin
             CLK_RDY => CLK_RDY,
             CLK_STATUS => CLK_STATUS,
 
-            -- to sensor (external)
-            --LS_OUT_CLK(0)          => open, --CLK_PLL           ,
-            --LS_OUT_CLKb(0)         => open, --CLK_PLL_n         ,
-            --HS_OUT_CLK(0)       => open, --ClockIn_P    ,
-            --HS_OUT_CLKb(0)      => open, --ClockIn_N    ,
-
             -- from sensor (only used when USED_EXT_CLK = YES)
-            LS_IN_CLK(0) => '0',
-            LS_IN_CLKb(0) => '0',
-
             HS_IN_CLK(0) => io_vita_clk_out_p,
             HS_IN_CLKb(0) => io_vita_clk_out_n,
 
@@ -1176,8 +1108,6 @@ begin
             TRAINING => host_iserdes_training,
             MANUAL_TAP => host_iserdes_manual_tap,
 
-            EN_LS_CLK_OUT => '0', --APP_CFG_REG.Sysmode(5),
-            EN_HS_CLK_OUT => '0', --APP_CFG_REG.Sysmode(6),
             TIMEOUTONACK => open,
 
             -- parallel data out

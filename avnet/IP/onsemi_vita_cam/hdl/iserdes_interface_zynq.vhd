@@ -75,45 +75,7 @@ entity iserdes_interface_zynq is
         GENIDELAYCLK : boolean := FALSE; -- generate own idelayrefclk based on mult and div parameters or use external clk
         -- ext clk can come from common part and thus always be in spec regardless of clkspeed
         USE_OUTPLL : boolean := TRUE; --use output/multiplieng PLL instead of DCM
-        USE_INPLL : boolean := TRUE; --use input/dividing PLL instead of DCM
-        USE_HS_EXT_CLK_IN : boolean := FALSE; -- use external clock high speed clock in
-        -- YES -> use as CLK source, either via BUFG or BUFIO/BUFR,
-        --        -> when USE_HS_REGIONAL_CLK = YES
-        --                use BUFIO (only IOblock can be clocked)
-        --         -> when USE_HS_REGIONAL_CLK = NO
-        --                use BUFG
-        --
-        -- NO -> when use USE_LS_EXT_CLK_IN = YES
-        --           not supported
-        --       when use USE_LS_EXT_CLK_IN = NO
-        --           appclk combined with DCM as CLK source
-        --             use BUFG as CLK source
-        USE_LS_EXT_CLK_IN : boolean := FALSE; -- use external clock low speed clock in
-        -- YES -> use as CLKDIV source, either via BUFG or BUFIO/BUFR,
-        --        -> when USE_LS_REGIONAL_CLK = YES
-        --               use BUFR
-        --        -> when USE_LS_REGIONAL_CLK = NO
-        --               use BUFG
-        --
-        --
-        -- NO ->  when USE_HS_EXT_CLK_IN = YES
-        --        -> when USE_HS_REGIONAL_CLK =YES and BUFR can divide
-        --               use BUFIO/BUFR to divide HS
-        --        -> when USE_HS_REGIONAL_CLK =YES and BUFR can not divide
-        --               use BUFIO/BUFR + DCM to divide HS
-        --        -> when USE_HS_EXT_CLK_IN = NO
-        --               use DCM (same as HS_EXT_CLK_IN) as clk source, sync with appclk
-        --
-        --
-        USE_DIFF_HS_CLK_IN : boolean := FALSE; -- differential mode, automatically instantiates the correct buffer
-        USE_DIFF_LS_CLK_IN : boolean := FALSE; -- differential mode, automatically instantiates the correct buffer
-        USE_HS_REGIONAL_CLK : boolean := FALSE; -- only used when USE_HS_EXT_CLK_IN = yes
-        USE_LS_REGIONAL_CLK : boolean := FALSE; -- only used when USE_LS_EXT_CLK_IN = yes
-        USE_HS_EXT_CLK_OUT : boolean := FALSE; -- use external clock high speed clock out
-        USE_LS_EXT_CLK_OUT : boolean := FALSE; -- use external clock low speed clock out
-        USE_DIFF_HS_CLK_OUT : boolean := FALSE; -- differential mode, automatically instantiates the correct buffer
-        USE_DIFF_LS_CLK_OUT : boolean := FALSE; -- differential mode, automatically instantiates the correct buffer
-        USE_DATAPATH : boolean := TRUE
+        USE_INPLL : boolean := TRUE --use input/dividing PLL instead of DCM
     );
     port
     (
@@ -126,15 +88,8 @@ entity iserdes_interface_zynq is
         CLK200 : in std_logic; -- optional 200MHz refclk
 
         -- to sensor (external)
-        LS_OUT_CLK : out std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
-        LS_OUT_CLKb : out std_logic_vector(NROF_CLOCKCOMP - 1 downto 0); -- only used in differential mode
-
-        HS_OUT_CLK : out std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
-        HS_OUT_CLKb : out std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
 
         -- from sensor (only used when USED_EXT_CLK = YES)
-        LS_IN_CLK : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
-        LS_IN_CLKb : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
 
         HS_IN_CLK : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
         HS_IN_CLKb : in std_logic_vector(NROF_CLOCKCOMP - 1 downto 0);
@@ -166,9 +121,6 @@ entity iserdes_interface_zynq is
 
         TRAINING : in std_logic_vector(DATAWIDTH - 1 downto 0);
         MANUAL_TAP : in std_logic_vector(9 downto 0);
-
-        EN_LS_CLK_OUT : in std_logic;
-        EN_HS_CLK_OUT : in std_logic;
 
         -- parallel data out
         FIFO_RDEN : in std_logic;
@@ -276,21 +228,10 @@ architecture structure of iserdes_interface_zynq is
             DATA_RATE : string := "DDR";
             CLKSPEED : integer := 50;
             --SIM_DEVICE   : string  := "VIRTEX5";
-            C_FAMILY : string := "virtex6";
+            C_FAMILY : string := "zynq";
             DIFF_TERM : boolean := TRUE;
             USE_OUTPLL : boolean := TRUE; --use output/multiplieng PLL instead of DCM
-            USE_INPLL : boolean := TRUE;
-            USE_HS_EXT_CLK_IN : boolean := FALSE;
-            USE_LS_EXT_CLK_IN : boolean := FALSE;
-            USE_DIFF_HS_CLK_IN : boolean := FALSE;
-            USE_DIFF_LS_CLK_IN : boolean := FALSE;
-            USE_HS_REGIONAL_CLK : boolean := FALSE;
-            USE_LS_REGIONAL_CLK : boolean := FALSE;
-            USE_HS_EXT_CLK_OUT : boolean := FALSE;
-            USE_LS_EXT_CLK_OUT : boolean := FALSE; -- use external clock low speed clock out
-
-            USE_DIFF_HS_CLK_OUT : boolean := FALSE; -- differential mode, automatically instantiates the correct buffer
-            USE_DIFF_LS_CLK_OUT : boolean := FALSE -- differential mode, automatically instantiates the correct buffer
+            USE_INPLL : boolean := TRUE
         );
         port
         (
@@ -305,23 +246,10 @@ architecture structure of iserdes_interface_zynq is
             CLKb : out std_logic;
             CLKDIV : out std_logic;
 
-            EN_LS_CLK_OUT : in std_logic;
-            EN_HS_CLK_OUT : in std_logic;
-
             --reset for synchronizer between clk_div and App_clk
             CLK_DIV_RESET : out std_logic;
 
-            -- to sensor (external)
-            LS_OUT_CLK : out std_logic;
-            LS_OUT_CLKb : out std_logic; -- only used in differential mode
-
-            HS_OUT_CLK : out std_logic;
-            HS_OUT_CLKb : out std_logic;
-
             -- from sensor (only used when USED_EXT_CLK = YES)
-            LS_IN_CLK : in std_logic;
-            LS_IN_CLKb : in std_logic;
-
             HS_IN_CLK : in std_logic;
             HS_IN_CLKb : in std_logic
         );
@@ -444,7 +372,6 @@ begin
         end if;
     end process;
 
-    generate_idelay : if (USE_DATAPATH = TRUE) generate
         -- delay controllers
         serdesidelayrefclk : iserdes_idelayctrl
         generic map
@@ -461,8 +388,6 @@ begin
             CLK200 => CLK200,
             idelay_ctrl_rdy => open
         );
-
-    end generate generate_idelay;
 
     serdesclockgen : for i in 0 to (NROF_CLOCKCOMP - 1) generate
         co : iserdes_compare
@@ -499,18 +424,7 @@ begin
             C_FAMILY => C_FAMILY,
             DIFF_TERM => DIFF_TERM,
             USE_OUTPLL => USE_OUTPLL,
-            USE_INPLL => USE_INPLL,
-            USE_HS_EXT_CLK_IN => USE_HS_EXT_CLK_IN,
-            USE_LS_EXT_CLK_IN => USE_LS_EXT_CLK_IN,
-            USE_DIFF_HS_CLK_IN => USE_DIFF_HS_CLK_IN,
-            USE_DIFF_LS_CLK_IN => USE_DIFF_LS_CLK_IN,
-            USE_HS_REGIONAL_CLK => USE_HS_REGIONAL_CLK,
-            USE_LS_REGIONAL_CLK => USE_LS_REGIONAL_CLK,
-            USE_HS_EXT_CLK_OUT => USE_HS_EXT_CLK_OUT,
-            USE_LS_EXT_CLK_OUT => USE_LS_EXT_CLK_OUT,
-
-            USE_DIFF_HS_CLK_OUT => USE_DIFF_HS_CLK_OUT,
-            USE_DIFF_LS_CLK_OUT => USE_DIFF_LS_CLK_OUT
+            USE_INPLL => USE_INPLL
         )
         port map
         (
@@ -525,29 +439,16 @@ begin
             CLKb => CLKb_c(i),
             CLKDIV => CLKDIV_c(i),
 
-            EN_LS_CLK_OUT => EN_LS_CLK_OUT,
-            EN_HS_CLK_OUT => EN_HS_CLK_OUT,
             --reset for synchronizer between clk_div and App_clk
             CLK_DIV_RESET => CLK_DIV_RESET,
 
-            -- to sensor (external)
-            LS_OUT_CLK => LS_OUT_CLK(i),
-            LS_OUT_CLKb => LS_OUT_CLKb(i),
-
-            HS_OUT_CLK => HS_OUT_CLK(i),
-            HS_OUT_CLKb => HS_OUT_CLKb(i),
-
             -- from sensor (only used when USED_EXT_CLK = YES)
-            LS_IN_CLK => LS_IN_CLK(i),
-            LS_IN_CLKb => LS_IN_CLKb(i),
 
             HS_IN_CLK => HS_IN_CLK(i),
             HS_IN_CLKb => HS_IN_CLKb(i)
         );
 
     end generate serdesclockgen;
-
-    generate_datagen : if (USE_DATAPATH = TRUE) generate
 
     --    datagen : for j in 0 to (NROF_CONTR_CONN - 1) generate
 
@@ -621,28 +522,5 @@ begin
             );
 
         --end generate datagen;
-
-    end generate generate_datagen;
-
-    generate_nodatagen : if (USE_DATAPATH = FALSE) generate
-        --datagen : for j in 0 to (NROF_CONTR_CONN - 1) generate
-
-            EDGE_DETECT <= (others => '0');
-            TRAINING_DETECT <= (others => '0');
-            STABLE_DETECT <= (others => '0');
-            FIRST_EDGE_FOUND <= (others => '0');
-            SECOND_EDGE_FOUND <= (others => '0');
-            NROF_RETRIES <= (others => '0');
-            TAP_SETTING <= (others => '0');
-            WINDOW_WIDTH <= (others => '0');
-            WORD_ALIGN <= (others => '0');
-            ALIGN_BUSY_d <= (others => '0');
-            ALIGNED_d <= (others => '0');
-
-            FIFO_EMPTY_d <= (others => '1');
-            FIFO_DATAOUT <= (others => '0');
-
-        --end generate datagen;
-    end generate generate_nodatagen;
 
 end structure;
