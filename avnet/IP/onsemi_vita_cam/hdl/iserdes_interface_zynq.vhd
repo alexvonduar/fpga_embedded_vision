@@ -282,6 +282,9 @@ architecture structure of iserdes_interface_zynq is
     -- constants
 
     ----signals
+    signal refclkint : std_logic;
+    signal refclkintbufg : std_logic;
+    signal idelay_rdy : std_logic;
     -- clock module signals
     signal CLK_c : std_logic;
     signal CLKb_c : std_logic;
@@ -341,20 +344,27 @@ begin
     -- end mapping
 
         -- delay controllers
-        serdesidelayrefclk : iserdes_idelayctrl
-        generic map
-        (
-            NROF_DELAYCTRLS => 1,
-            IDELAYCLK_MULT => 3,
-            IDELAYCLK_DIV => 1,
-            GENIDELAYCLK => FALSE
-        )
+
+        iob_200m_in : IBUF
         port map
         (
-            CLOCK => CLOCK,
-            RESET => RESET,
-            CLK200 => CLK200,
-            idelay_ctrl_rdy => open
+            I => CLK200,
+            O => refclkint
+        );
+
+        bufg_200_ref : BUFG
+        port map
+        (
+            I => refclkint,
+            O => refclkintbufg
+        );
+
+        serdesidelayrefclk : IDELAYCTRL
+        port map
+        (
+            rdy => idelay_rdy,
+            refclk => refclkintbufg,
+            rst => RESET
         );
 
         co : iserdes_compare
