@@ -247,91 +247,6 @@ begin
         IB => SDATAN -- Diff_n clock buffer input (connect directly to top-level port)
     );
 
-    IODELAY_V5_GEN : if (C_FAMILY = "virtex5") generate
-
-        -- iodelay
-        IODELAY_inst : IODELAY
-        generic map
-        (
-            DELAY_SRC => "I",
-            -- Specify which input port to be used
-            -- "I"=IDATAIN, "O"=ODATAIN, "DATAIN"=DATAIN, "IO"=Bi-directional
-            HIGH_PERFORMANCE_MODE => TRUE,
-            -- TRUE specifies lower jitter
-            -- at expense of more power
-            IDELAY_TYPE => "VARIABLE",
-            -- "DEFAULT", "FIXED" or "VARIABLE"
-            IDELAY_VALUE => 0,
-            -- 0 to 63 tap values
-            ODELAY_VALUE => 0,
-            -- 0 to 63 tap values
-            REFCLK_FREQUENCY => 200.0,
-            -- Frequency used for IDELAYCTRL
-            -- 175.0 to 225.0
-            SIGNAL_PATTERN => "DATA"
-            -- Input signal type, "CLOCK" or "DATA"
-        )
-        port map
-        (
-            DATAOUT => SerialIoDelayOut, -- 1-bit delayed data output
-            C => CLKDIV, -- 1-bit clock input
-            CE => IODELAY_CE, -- 1-bit clock enable input
-            DATAIN => zero, -- 1-bit internal data input
-            IDATAIN => SerialIn, -- 1-bit input data input (connect to port)
-            INC => IODELAY_INC, -- 1-bit increment/decrement input
-            ODATAIN => zero, -- 1-bit output data input
-            RST => IODELAY_ISERDES_RESET, -- 1-bit active high, synch reset input
-            T => one -- 1-bit 3-state control input
-        );
-
-    end generate IODELAY_V5_GEN;
-
-    IODELAY_V6_GEN : if (C_FAMILY = "virtex6") generate
-
-        -- iodelay
-        IODELAYE1_inst : IODELAYE1
-        generic map
-        (
-            DELAY_SRC => "I",
-            -- Specify which input port to be used
-            -- "I"=IDATAIN, "O"=ODATAIN, "DATAIN"=DATAIN, "IO"=Bi-directional
-            HIGH_PERFORMANCE_MODE => TRUE,
-            -- TRUE specifies lower jitter
-            -- at expense of more power
-            IDELAY_TYPE => "VARIABLE",
-            -- "DEFAULT", "FIXED" or "VARIABLE"
-            IDELAY_VALUE => 0,
-            -- 0 to 63 tap values
-            ODELAY_VALUE => 0,
-            -- 0 to 63 tap values
-            REFCLK_FREQUENCY => 200.0,
-            -- Frequency used for IDELAYCTRL
-            -- 175.0 to 225.0
-            SIGNAL_PATTERN => "DATA"
-            -- Input signal type, "CLOCK" or "DATA"
-        )
-        port map
-        (
-            DATAOUT => SerialIoDelayOut, -- 1-bit delayed data output
-            C => CLKDIV, -- 1-bit clock input
-            CE => IODELAY_CE, -- 1-bit clock enable input
-            DATAIN => zero, -- 1-bit internal data input
-            IDATAIN => SerialIn, -- 1-bit input data input (connect to port)
-            INC => IODELAY_INC, -- 1-bit increment/decrement input
-            ODATAIN => zero, -- 1-bit output data input
-            RST => IODELAY_ISERDES_RESET, -- 1-bit active high, synch reset input
-            T => one, -- 1-bit 3-state control input
-            CINVCTRL => '0', -- 1-bit input: Dynamic clock inversion input
-            CLKIN => '0', -- 1-bit input: Clock delay input
-            CNTVALUEIN => (others => '0'), -- 5-bit input: Counter value input
-            --    CNTVALUEOUT                 => open                          -- 5-bit output: Counter value output
-            CNTVALUEOUT => CNTVALUEOUT
-        );
-
-    end generate IODELAY_V6_GEN;
-
-    IDELAY_K7_GEN : if (C_FAMILY = "kintex7" or C_FAMILY = "zynq" or C_FAMILY = "artix7" or C_FAMILY = "virtex7") generate
-
         -- iodelay
         IDELAYE2_inst : IDELAYE2
         generic map
@@ -374,111 +289,11 @@ begin
             REGRST => '0' -- 1-bit active high, Reset for the pipeline register. Only used in VAR_LOAD_PIPE mode.
         );
 
-    end generate IDELAY_K7_GEN;
-
     -- iserdes
 
     -- datawidth
     -- can be 4, 6, 8 or 10 for DDR, can be 2, 3, 4, 5, 6, 7, or 8 for SDR.
 
-    MASTER_ISERDES_V5_GEN : if (C_FAMILY = "virtex5") generate
-        Master_iserdes : ISERDES_NODELAY
-        generic map
-        (
-            BITSLIP_ENABLE => TRUE,
-            DATA_RATE => DATA_RATE,
-            DATA_WIDTH => DATAWIDTH,
-            INIT_Q1 => '0',
-            INIT_Q2 => '0',
-            INIT_Q3 => '0',
-            INIT_Q4 => '0',
-            INTERFACE_TYPE => "NETWORKING",
-            NUM_CE => 2,
-            SERDES_MODE => "MASTER"
-        )
-        port map
-        (
-            BITSLIP => ISERDES_BITSLIP,
-            CE1 => one,
-            CE2 => one,
-            CLK => CLK,
-            CLKB => CLKb_inv,
-            CLKDIV => CLKDIV,
-            D => SerialIoDelayOut,
-            OCLK => zero,
-            RST => IODELAY_ISERDES_RESET,
-            SHIFTIN1 => zero,
-            SHIFTIN2 => zero,
-            Q1 => MASTER_DATA(0),
-            Q2 => MASTER_DATA(1),
-            Q3 => MASTER_DATA(2),
-            Q4 => MASTER_DATA(3),
-            Q5 => MASTER_DATA(4),
-            Q6 => MASTER_DATA(5),
-            SHIFTOUT1 => SHIFT_TO_SLAVE1,
-            SHIFTOUT2 => SHIFT_TO_SLAVE2
-        );
-        MASTER_DATA(6) <= '0';
-        MASTER_DATA(7) <= '0';
-    end generate MASTER_ISERDES_V5_GEN;
-
-    MASTER_ISERDES_V6_GEN : if (C_FAMILY = "virtex6") generate
-        Master_iserdes : ISERDESE1
-        generic map
-        (
-            DATA_RATE => DATA_RATE,
-            DATA_WIDTH => DATAWIDTH,
-            INIT_Q1 => '0',
-            INIT_Q2 => '0',
-            INIT_Q3 => '0',
-            INIT_Q4 => '0',
-            INTERFACE_TYPE => "NETWORKING",
-            NUM_CE => 2,
-            SERDES_MODE => "MASTER",
-            --
-            DYN_CLKDIV_INV_EN => FALSE, -- Enable DYNCLKDIVINVSEL inversion (FALSE, TRUE)
-            DYN_CLK_INV_EN => FALSE, -- Enable DYNCLKINVSEL inversion (FALSE, TRUE)
-            IOBDELAY => "IFD",
-            OFB_USED => FALSE,
-            SRVAL_Q1 => '0',
-            SRVAL_Q2 => '0',
-            SRVAL_Q3 => '0',
-            SRVAL_Q4 => '0'
-        )
-        port map
-        (
-            BITSLIP => ISERDES_BITSLIP,
-            CE1 => one,
-            CE2 => one,
-            CLK => CLK,
-            CLKB => CLKb_inv,
-            CLKDIV => CLKDIV,
-            DDLY => SerialIoDelayOut, -- 1-bit input: Serial data from IDELAYE2
-            OCLK => zero,
-            RST => IODELAY_ISERDES_RESET,
-            SHIFTIN1 => zero,
-            SHIFTIN2 => zero,
-            Q1 => MASTER_DATA(0),
-            Q2 => MASTER_DATA(1),
-            Q3 => MASTER_DATA(2),
-            Q4 => MASTER_DATA(3),
-            Q5 => MASTER_DATA(4),
-            Q6 => MASTER_DATA(5),
-            SHIFTOUT1 => SHIFT_TO_SLAVE1,
-            SHIFTOUT2 => SHIFT_TO_SLAVE2,
-            --
-            D => '0',
-            O => open,
-            OFB => '0', -- 1-bit input: Data feedback from OSERDESE2
-            -- Dynamic Clock Inversions: 1-bit (each) input: Dynamic clock inv pins to switch clk polarity
-            DYNCLKDIVSEL => '0', -- 1-bit input: Dynamic CLKDIV inversion
-            DYNCLKSEL => '0' -- 1-bit input: Dynamic CLK/CLKB inversion
-        );
-        MASTER_DATA(6) <= '0';
-        MASTER_DATA(7) <= '0';
-    end generate MASTER_ISERDES_V6_GEN;
-
-    MASTER_ISERDES_K7_GEN : if (C_FAMILY = "kintex7" or C_FAMILY = "zynq" or C_FAMILY = "artix7" or C_FAMILY = "virtex7") generate
         Master_iserdes : ISERDESE2
         generic map
         (
@@ -534,49 +349,10 @@ begin
             DYNCLKDIVSEL => '0', -- 1-bit input: Dynamic CLKDIV inversion
             DYNCLKSEL => '0' -- 1-bit input: Dynamic CLK/CLKB inversion
         );
-    end generate MASTER_ISERDES_K7_GEN;
 
     -- dual serdes modules needed for widths of 8 and 10 in DDR mode, and 7 and 8 in SDR mode
 
     Slave_iserdes_gen : if (DATAWIDTH > 6) generate
-
-        SLAVE_ISERDES_V5_V6_REORDER : if (C_FAMILY = "virtex5" or C_FAMILY = "virtex6") generate
-
-            Normal_Output : if (INVERT_OUTPUT = FALSE) generate
-                Normal_order : if (INVERSE_BITORDER = FALSE) generate
-                    ISERDES_DATA(5 downto 0) <= MASTER_DATA(5 downto 0);
-                    ISERDES_DATA(DATAWIDTH - 1 downto 6) <= SLAVE_DATA(DATAWIDTH - 5 downto 2);
-                end generate Normal_order;
-
-                Inverse_order : if (INVERSE_BITORDER = TRUE) generate
-                    gen_inverse_master : for i in 0 to 5 generate
-                        ISERDES_DATA((DATAWIDTH - 1) - i) <= MASTER_DATA(i);
-                    end generate gen_inverse_master;
-                    gen_inverse_slave : for i in 6 to DATAWIDTH - 1 generate
-                        ISERDES_DATA((DATAWIDTH - 1) - i) <= SLAVE_DATA(i - 4);
-                    end generate gen_inverse_slave;
-                end generate Inverse_order;
-            end generate Normal_Output;
-
-            Inverse_Output : if (INVERT_OUTPUT = TRUE) generate
-                Normal_order : if (INVERSE_BITORDER = FALSE) generate
-                    ISERDES_DATA(5 downto 0) <= not MASTER_DATA(5 downto 0);
-                    ISERDES_DATA(DATAWIDTH - 1 downto 6) <= not SLAVE_DATA(DATAWIDTH - 5 downto 2);
-                end generate Normal_order;
-
-                Inverse_order : if (INVERSE_BITORDER = TRUE) generate
-                    gen_inverse_master : for i in 0 to 5 generate
-                        ISERDES_DATA((DATAWIDTH - 1) - i) <= not MASTER_DATA(i);
-                    end generate gen_inverse_master;
-                    gen_inverse_slave : for i in 6 to DATAWIDTH - 1 generate
-                        ISERDES_DATA((DATAWIDTH - 1) - i) <= not SLAVE_DATA(i - 4);
-                    end generate gen_inverse_slave;
-                end generate Inverse_order;
-            end generate Inverse_Output;
-
-        end generate SLAVE_ISERDES_V5_V6_REORDER;
-
-        SLAVE_ISERDES_K7_REORDER : if (C_FAMILY = "kintex7" or C_FAMILY = "zynq" or C_FAMILY = "artix7" or C_FAMILY = "virtex7") generate
 
             Normal_Output : if (INVERT_OUTPUT = FALSE) generate
                 Normal_order : if (INVERSE_BITORDER = FALSE) generate
@@ -610,106 +386,6 @@ begin
                 end generate Inverse_order;
             end generate Inverse_Output;
 
-        end generate SLAVE_ISERDES_K7_REORDER;
-
-        SLAVE_ISERDES_V5_GEN : if (C_FAMILY = "virtex5") generate
-            Slave_iserdes : ISERDES_NODELAY
-            generic map
-            (
-                BITSLIP_ENABLE => TRUE,
-                DATA_RATE => DATA_RATE,
-                DATA_WIDTH => DATAWIDTH,
-                INIT_Q1 => '0',
-                INIT_Q2 => '0',
-                INIT_Q3 => '0',
-                INIT_Q4 => '0',
-                INTERFACE_TYPE => "NETWORKING",
-                NUM_CE => 2,
-                SERDES_MODE => "SLAVE"
-            )
-            port map
-            (
-                BITSLIP => ISERDES_BITSLIP,
-                CE1 => one,
-                CE2 => one,
-                CLK => CLK,
-                CLKB => CLKb_inv,
-                CLKDIV => CLKDIV,
-                D => zero,
-                OCLK => zero,
-                RST => IODELAY_ISERDES_RESET,
-                SHIFTIN1 => SHIFT_TO_SLAVE1,
-                SHIFTIN2 => SHIFT_TO_SLAVE2,
-                Q1 => SLAVE_DATA(0),
-                Q2 => SLAVE_DATA(1),
-                Q3 => SLAVE_DATA(2),
-                Q4 => SLAVE_DATA(3),
-                Q5 => SLAVE_DATA(4),
-                Q6 => SLAVE_DATA(5),
-                SHIFTOUT1 => SHIFT_FROM_SLAVE1,
-                SHIFTOUT2 => SHIFT_FROM_SLAVE2
-            );
-            SLAVE_DATA(6) <= '0';
-            SLAVE_DATA(7) <= '0';
-        end generate SLAVE_ISERDES_V5_GEN;
-
-        SLAVE_ISERDES_V6_GEN : if (C_FAMILY = "virtex6") generate
-            Slave_iserdes : ISERDESE1
-            generic map
-            (
-                DATA_RATE => DATA_RATE,
-                DATA_WIDTH => DATAWIDTH,
-                INIT_Q1 => '0',
-                INIT_Q2 => '0',
-                INIT_Q3 => '0',
-                INIT_Q4 => '0',
-                INTERFACE_TYPE => "NETWORKING",
-                NUM_CE => 2,
-                SERDES_MODE => "SLAVE",
-                --
-                DYN_CLKDIV_INV_EN => FALSE, -- Enable DYNCLKDIVINVSEL inversion (FALSE, TRUE)
-                DYN_CLK_INV_EN => FALSE, -- Enable DYNCLKINVSEL inversion (FALSE, TRUE)
-                IOBDELAY => "NONE",
-                OFB_USED => FALSE,
-                SRVAL_Q1 => '0',
-                SRVAL_Q2 => '0',
-                SRVAL_Q3 => '0',
-                SRVAL_Q4 => '0'
-            )
-            port map
-            (
-                BITSLIP => ISERDES_BITSLIP,
-                CE1 => one,
-                CE2 => one,
-                CLK => CLK,
-                CLKB => CLKb_inv,
-                CLKDIV => CLKDIV,
-                DDLY => zero, -- 1-bit input: Serial data from IDELAYE2
-                OCLK => zero,
-                RST => IODELAY_ISERDES_RESET,
-                SHIFTIN1 => SHIFT_TO_SLAVE1,
-                SHIFTIN2 => SHIFT_TO_SLAVE2,
-                Q1 => SLAVE_DATA(0),
-                Q2 => SLAVE_DATA(1),
-                Q3 => SLAVE_DATA(2),
-                Q4 => SLAVE_DATA(3),
-                Q5 => SLAVE_DATA(4),
-                Q6 => SLAVE_DATA(5),
-                SHIFTOUT1 => SHIFT_FROM_SLAVE1,
-                SHIFTOUT2 => SHIFT_FROM_SLAVE2,
-                --
-                D => '0',
-                O => open,
-                OFB => '0', -- 1-bit input: Data feedback from OSERDESE2
-                -- Dynamic Clock Inversions: 1-bit (each) input: Dynamic clock inv pins to switch clk polarity
-                DYNCLKDIVSEL => '0', -- 1-bit input: Dynamic CLKDIV inversion
-                DYNCLKSEL => '0' -- 1-bit input: Dynamic CLK/CLKB inversion
-            );
-            SLAVE_DATA(6) <= '0';
-            SLAVE_DATA(7) <= '0';
-        end generate SLAVE_ISERDES_V6_GEN;
-
-        SLAVE_ISERDES_K7_GEN : if (C_FAMILY = "kintex7" or C_FAMILY = "zynq" or C_FAMILY = "artix7" or C_FAMILY = "virtex7") generate
             Slave_iserdes : ISERDESE2
             generic map
             (
@@ -765,7 +441,6 @@ begin
                 DYNCLKDIVSEL => '0', -- 1-bit input: Dynamic CLKDIV inversion
                 DYNCLKSEL => '0' -- 1-bit input: Dynamic CLK/CLKB inversion
             );
-        end generate SLAVE_ISERDES_K7_GEN;
 
     end generate;
 
