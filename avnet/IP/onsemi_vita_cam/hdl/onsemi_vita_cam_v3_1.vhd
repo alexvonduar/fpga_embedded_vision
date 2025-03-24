@@ -113,7 +113,7 @@ entity onsemi_vita_cam_v3_1 is
         video_active_video : out std_logic;
         video_data : out std_logic_vector((C_VIDEO_DATA_WIDTH - 1) downto 0);
         -- Debug Ports
-        debug_iserdes_o : out std_logic_vector(229 downto 0);
+        debug_iserdes_o : out std_logic_vector(309 downto 0);
         debug_decoder_o : out std_logic_vector(186 downto 0);
         debug_crc_o : out std_logic_vector(87 downto 0);
         debug_triggen_o : out std_logic_vector(9 downto 0);
@@ -215,7 +215,7 @@ architecture arch_imp of onsemi_vita_cam_v3_1 is
             video_active_video : out std_logic;
             video_data : out std_logic_vector((C_VIDEO_DATA_WIDTH - 1) downto 0);
             -- Debug Ports
-            debug_iserdes_o : out std_logic_vector(229 downto 0);
+            debug_iserdes_o : out std_logic_vector(309 downto 0);
             debug_decoder_o : out std_logic_vector(186 downto 0);
             debug_crc_o : out std_logic_vector(87 downto 0);
             debug_triggen_o : out std_logic_vector(9 downto 0);
