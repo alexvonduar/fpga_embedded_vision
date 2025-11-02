@@ -51,15 +51,26 @@ VITIS_SYS_PROJ := $(VITIS_WS)/$(VITIS_SYS_NAME)/$(VITIS_SYS_NAME).spr
 BUILD ?= Release
 
 
-BOOT_FILE := ${VITIS_WS}/${PROJECT}_system/${BUILD}/sd_card/BOOT.BIN
+BOOT_FILE := $(TARGET_DIR)/BOOT.BIN
+APP_FILE := ${VITIS_WS}/${PROJECT}_app/build/${PROJECT}_app.elf
+BIF_FILE := ${TARGET_DIR}/boot.bif
+#./workspace-fmchc_python1300c/fmc_python1300c_app/build/fmc_python1300c_app.elf
 
-$(VITIS_PLATFORM_PROJ) : vitis_platform.tcl $(VIVADO_HW)
-	xsct $< ${PROJECT} ${VITIS_PLATFORM_NAME} ${TOP} ${VITIS_WS} ${VIVADO_HW} -notrace
+#$(VITIS_PLATFORM_PROJ) : vitis_platform.tcl $(VIVADO_HW)
+#	xsct $< ${PROJECT} ${VITIS_PLATFORM_NAME} ${TOP} ${VITIS_WS} ${VIVADO_HW} -notrace
+$(APP_FILE): vitis_app.py $(VIVADO_HW)
+	echo "Building Vitis Application... "
+	echo $(APP_FILE)
+	vitis -s vitis_app.py
 
-$(BOOT_FILE): vitis_app.tcl $(VITIS_PLATFORM_PROJ) $(AVNET_SW_BSP_SOURCES) $(AVNET_SW_APP_SOURCES)
-	xsct $< ${PROJECT} ${VITIS_PLATFORM_NAME} ${VITIS_APP_NAME} ${VITIS_SYS_NAME} ${TOP} ${VITIS_WS} $(BUILD) -notrace
+#$(BOOT_FILE): vitis_app.tcl $(VITIS_PLATFORM_PROJ) $(AVNET_SW_BSP_SOURCES) $(AVNET_SW_APP_SOURCES)
+#	xsct $< ${PROJECT} ${VITIS_PLATFORM_NAME} ${VITIS_APP_NAME} ${VITIS_SYS_NAME} ${TOP} ${VITIS_WS} $(BUILD) -notrace
+
+$(BOOT_FILE): vitis_app.py $(APP_FILE) $(BIF_FILE)
+	rm $(BOOT_FILE)
+	bootgen -image $(BIF_FILE) -arch zynq -o $@
 
 all: $(BOOT_FILE)
-	cp $< $(TARGET_DIR)/
+#	cp $< $(TARGET_DIR)/
 	
 .PHONY: all
