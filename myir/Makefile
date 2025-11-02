@@ -73,5 +73,6 @@ $(BOOT_FILE): vitis_app.py $(APP_FILE) $(BIF_FILE)
 
 all: $(BOOT_FILE)
 #	cp $< $(TARGET_DIR)/
+	rm -rf $(TOP)/myir/vivado*.jou $(TOP)/myir/vivado*.log $(TOP)/myir/video_ip_core_status.log
 	
 .PHONY: all
