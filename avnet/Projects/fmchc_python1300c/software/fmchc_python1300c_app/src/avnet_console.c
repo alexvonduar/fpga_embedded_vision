@@ -197,7 +197,11 @@ void avnet_console_process( avnet_console_t *pConsole )
     }
     else if ( !strcmp(cargv[0],"camreg") )
     {
+#if !defined(SDT)
         avnet_console_mem_command( pConsole, cargc, cargv, XPAR_ONSEMI_PYTHON_CAM_0_S00_AXI_BASEADDR );
+#else
+        avnet_console_mem_command( pConsole, cargc, cargv, XPAR_ONSEMI_PYTHON_CAM_0_BASEADDR );
+#endif
     }
     //else if ( !strcmp(cargv[0],"trig") )
     //{

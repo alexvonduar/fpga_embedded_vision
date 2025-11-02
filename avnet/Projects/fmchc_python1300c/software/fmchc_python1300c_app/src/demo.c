@@ -125,14 +125,26 @@ int demo_init( demo_t *pdemo )
     xil_printf( "FMC-HDMI-CAM Initialization ...\n\r" );
 
     //Initialize the Video Test Pattern Generator
+#if !defined(SDT)
     XV_tpg_Config *ptpg_config = XV_tpg_LookupConfig(XPAR_V_TPG_0_DEVICE_ID);
+#else
+    XV_tpg_Config *ptpg_config = XV_tpg_LookupConfig(XPAR_V_TPG_0_BASEADDR);
+#endif
     XV_tpg_CfgInitialize(pdemo->ptpg, ptpg_config, ptpg_config->BaseAddress);
 
     //Initialize the Video mixer
+#if !defined(SDT)
     XVMix_Initialize(pdemo->pmixer, XPAR_V_MIX_0_DEVICE_ID);
+#else
+    XVMix_Initialize(pdemo->pmixer, XPAR_V_MIX_0_BASEADDR);
+#endif
 
     //Initialize the color space converter
+#if !defined(SDT)
     XVprocSs_Config* pcsc_config = XVprocSs_LookupConfig(XPAR_V_CSC_0_DEVICE_ID);
+#else
+    XVprocSs_Config* pcsc_config = XVprocSs_LookupConfig(XPAR_V_CSC_0_BASEADDR);
+#endif
     /* Start capturing event log. */
     XVprocSs_LogReset(pdemo->pcsc);
     XVprocSs_CfgInitialize(pdemo->pcsc, pcsc_config, pcsc_config->BaseAddress);
@@ -144,7 +156,11 @@ int demo_init( demo_t *pdemo )
     //XVtc_ConvVideoMode2Timing(pdemo->pvtc, XVTC_VMODE_1080P, &(pdemo->vtctiming));
     pdemo->pvtiming = XVidC_GetTimingInfo(XVIDC_VM_1080_60_P);
 
+#if !defined(SDT)
     paxivdma_config = XAxiVdma_LookupConfig(XPAR_AXIVDMA_0_DEVICE_ID);
+#else
+    paxivdma_config = XAxiVdma_LookupConfig(XPAR_XAXIVDMA_0_BASEADDR);
+#endif
     XAxiVdma_CfgInitialize(pdemo->paxi_vdma_cam, paxivdma_config,
             paxivdma_config->BaseAddress);
 
@@ -154,7 +170,11 @@ int demo_init( demo_t *pdemo )
             paxivdma_config->BaseAddress);
 #endif
 
+#if !defined(SDT)
     pcfa_config = XV_demosaic_LookupConfig(XPAR_V_CFA_0_DEVICE_ID);
+#else
+    pcfa_config = XV_demosaic_LookupConfig(XPAR_V_CFA_0_BASEADDR);
+#endif
     XV_demosaic_CfgInitialize(pdemo->pcfa, pcfa_config, pcfa_config->BaseAddress);
     xil_printf("demosaic initialization done\n\r");
 
@@ -295,9 +315,15 @@ int demo_start_cam_in( demo_t *pdemo )
 
     // PYTHON Receiver Initialization
     xil_printf( "PYTHON Receiver Initialization ...\n\r" );
+#if !defined(SDT)
     onsemi_python_init(pdemo->ppython_receiver, "PYTHON-1300-C",
             XPAR_ONSEMI_PYTHON_SPI_0_S00_AXI_BASEADDR,
             XPAR_ONSEMI_PYTHON_CAM_0_S00_AXI_BASEADDR);
+#else
+    onsemi_python_init(pdemo->ppython_receiver, "PYTHON-1300-C",
+            XPAR_ONSEMI_PYTHON_SPI_0_BASEADDR,
+            XPAR_ONSEMI_PYTHON_CAM_0_BASEADDR);
+#endif
     pdemo->ppython_receiver->uManualTap = 25; // IDELAY setting (0-31)
     //xil_printf( "PYTHON SPI Config for 10MHz ...\n\r" );
     // axi4lite_0_clk = 75MHz
@@ -346,7 +372,11 @@ int demo_start_cam_in( demo_t *pdemo )
     XV_demosaic_Set_HwReg_width(pdemo->pcfa, 1280);
     XV_demosaic_Set_HwReg_height(pdemo->pcfa, 1024);
     XV_demosaic_Set_HwReg_bayer_phase(pdemo->pcfa, pdemo->cam_bayer);
+#if !defined(SDT)
     XV_demosaic_WriteReg(XPAR_XV_DEMOSAIC_0_S_AXI_CTRL_BASEADDR, XV_DEMOSAIC_CTRL_ADDR_AP_CTRL, 0x81);
+#else
+    XV_demosaic_WriteReg(XPAR_XV_DEMOSAIC_0_BASEADDR, XV_DEMOSAIC_CTRL_ADDR_AP_CTRL, 0x81);
+#endif
 
 
 #if defined(XPAR_AXI_VDMA_HDMII_DEVICE_ID)

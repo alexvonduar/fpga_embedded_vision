@@ -46,7 +46,11 @@
 
 //#define COUNTS_PER_SECOND          (XPAR_CPU_CORTEXA9_CORE_CLOCK_FREQ_HZ / 64)
 // the above runs 64x too fast, so remove the division by 64 ...
+#if !defined(SDT)
 #define COUNTS_PER_SECOND          (XPAR_CPU_CORTEXA9_CORE_CLOCK_FREQ_HZ)
+#else
+#define COUNTS_PER_SECOND          (XPAR_CPU_CORE_CLOCK_FREQ_HZ)
+#endif
 
 int usleep(unsigned int useconds)
 {
