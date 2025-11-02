@@ -46,6 +46,7 @@
 
 set required_version 2021.2
 set top "init"
+set ws "init"
 set board "init"
 #"MYIR7020_FMC"
 set project "init"
@@ -66,6 +67,7 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
     if {[string match -nocase "*help*" [lindex $argv $i]]} {
         puts "Parameters are:"
         puts "top=<top_dir>\n top directory for the repository"
+        puts "ws=<workspace_dir>\n workspace directory"
         puts "board=<board_name>\n boards are listed in the /Boards folder"
         puts "project=<project_name>\n project names are listed in the /Scripts/ProjectScripts folder"
         puts "xdc=<xdc_file>\n xdc file to use for constraints"
@@ -82,6 +84,16 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
             append printmessage " "
         }
         append build_params "| Top            |     $printmessage |\n"
+    }
+    # check workspace directory
+    if {[string match -nocase "ws=*" [lindex $argv $i]]} {
+        set ws [string range [lindex $argv $i] 3 end]
+        #puts "******* $ws ********"
+        set printmessage $ws
+        for {set j 0} {$j < [expr $chart_wdith - [string length $board]]} {incr j} {
+            append printmessage " "
+        }
+        append build_params "| Workspace      |     $printmessage |\n"
     }
     # check for BOARD parameter
     if {[string match -nocase "board=*" [lindex $argv $i]]} {
@@ -166,6 +178,10 @@ if {[string match -nocase "init" $top]} {
     puts "Top directory was not defined, please define and try again!"
     return -code ok
 }
+if {[string match -nocase "init" $ws]} {
+    puts "Workspace directory was not defined, please define and try again!"
+    return -code ok
+}
 if {[string match -nocase "init" $board]} {
     puts "Board was not defined, please define and try again!"
     return -code ok
@@ -186,7 +202,8 @@ source ${scriptdir}/utils.tcl -notrace
 set numberOfCores [numberOfCPUs]
 
 # create variables with absolute folders for all necessary folders
-set projects_folder [file normalize ${top}/${project}_${board}_${vivado_ver}]
+set projects_folder [file normalize ${ws}/${project}_${board}_${vivado_ver}]
+puts "\nproject folder $projects_folder\n"
 
 
 puts "\n\n*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"

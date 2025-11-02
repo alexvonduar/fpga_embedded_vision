@@ -83,6 +83,16 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
         }
         append build_params "| Top            |     $printmessage |\n"
     }
+    # check for TOP parameter
+    if {[string match -nocase "ws=*" [lindex $argv $i]]} {
+        set ws [string range [lindex $argv $i] 3 end]
+        puts "******* $ws ********"
+        set printmessage $ws
+        for {set j 0} {$j < [expr $chart_wdith - [string length $board]]} {incr j} {
+            append printmessage " "
+        }
+        append build_params "| Workspace      |     $printmessage |\n"
+    }
     # check for Output parameter
     if {[string match -nocase "output=*" [lindex $argv $i]]} {
         set output [string range [lindex $argv $i] 7 end]
@@ -153,6 +163,11 @@ if {[string match -nocase "init" $top]} {
     return -code ok
 }
 
+if {[string match -nocase "init" $ws]} {
+    puts "Workspace directory was not defined, please define and try again!"
+    return -code ok
+}
+
 if {[string match -nocase "init" $output]} {
     puts "output xsa was not defined, please define and try again!"
     return -code ok
@@ -180,7 +195,7 @@ if {$numberOfCores > 2} {
 }
 
 # create variables with absolute folders for all necessary folders
-set projects_folder [file normalize ${top}/${project}_${board}_${vivado_ver}]
+set projects_folder [file normalize ${ws}/${project}_${board}_${vivado_ver}]
 
 
 puts "\n\n*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
