@@ -1,0 +1,30 @@
+# Copyright (C) 2023 - 2025 Advanced Micro Devices, Inc.  All rights reserved.
+# SPDX-License-Identifier: MIT
+%YAML 1.2
+---
+title: fmc hdmi cam sw
+
+type: library
+
+version: 2.1
+
+description: fmc hdmi cam sw
+
+supported_processors:
+  - psu_cortexa53
+  - psu_cortexr5
+  - psv_cortexa72
+  - psv_cortexr5
+  - ps7_cortexa9
+  - psx_cortexa78
+  - cortexa78
+  - psx_cortexr52
+  - cortexr52
+
+supported_os:
+  - standalone
+
+properties:
+  compatible:
+    - xlnx,avnet-hdmi-in
+    - xlnx,avnet-hdmi-out
