@@ -6100,7 +6100,7 @@ int imx682_sensor_init(XIicPs *IicInstance,u16 config_number)
         }
         return 682;
 	}
-	
+	return 0;
 }
 
 int imx682_read_register(XIicPs *IicInstance,u16 addr)

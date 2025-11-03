@@ -7,4 +7,3 @@ int ar1335_read_register(XIicPs *IicInstance,u16 addr);
 int ar1335_write_register(XIicPs *IicInstance,u16 addr,u8 data);
 int ar1335_write_read_register(XIicPs *IicInstance,u16 addr,u8 data);
 int ar1335_camera_sensor_init(XIicPs *IicInstance);
-

@@ -46,12 +46,12 @@ static int ap1302_detect_chip()
 	unsigned int version;
 	unsigned int revision;
 
-	if (ap1302_read(AP1302_CHIP_VERSION, &version) != XST_SUCCESS) {
+	if (ap1302_read(AP1302_CHIP_VERSION, (u8 *)(&version)) != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
 
-	if (ap1302_read(AP1302_CHIP_REV, &revision) != XST_SUCCESS) {
+	if (ap1302_read(AP1302_CHIP_REV, (u8 *)(&revision)) != XST_SUCCESS) {
 		return XST_FAILURE;
 	}
 
@@ -61,8 +61,8 @@ static int ap1302_detect_chip()
 	}
 
 	xil_printf("AP1302 revision %u.%u.%u detected\r\n",
-		 (revision & 0xf000) >> 12, (revision & 0x0f00) >> 8,
-		 revision & 0x00ff);
+		(revision & 0xf000) >> 12, (revision & 0x0f00) >> 8,
+		revision & 0x00ff);
 
 	return XST_SUCCESS;
 }
@@ -146,7 +146,7 @@ int ap1302_init() {
 	}
 
     if (ap1302_detect_chip() != XST_SUCCESS) {
-    	return XST_FAILURE;
+        return XST_FAILURE;
     }
 
 	return XST_SUCCESS;
@@ -194,4 +194,3 @@ int ap1302_read(u32 reg, u8 *data) {
 	}
 	return XST_SUCCESS;
 }
-
