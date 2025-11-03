@@ -37,8 +37,14 @@ SOFTWARE.
 int mix_init() {
 	XVidC_VideoStream video_stream;
 	XV_Mix_l2 mix;
+    int status;
 
-    if (XVMix_Initialize(&mix, XPAR_XV_MIX_0_DEVICE_ID) != XST_SUCCESS) {
+#if !defined(SDT)
+    status = XVMix_Initialize(&mix, XPAR_XV_MIX_0_DEVICE_ID);
+#else
+    status = XVMix_Initialize(&mix, XPAR_XV_MIX_0_BASEADDR);
+#endif
+    if (status != XST_SUCCESS) {
     	xil_printf("XVMix_Initialize() failed\r\n");
     	return XST_FAILURE;
     }

@@ -411,11 +411,13 @@ int imx219_read(XIicPs * iic, u16 addr, u8 *data) {
 }
 
 #endif
+#if 0
 int scan_read(XIicPs *IicInstance,u16 addr,u8 *read_buf,u16 scan_addr)
 {
 	*read_buf=i2c_reg16_read(IicInstance,scan_addr,addr);
 	return XST_SUCCESS;
 }
+#endif
 
 void imx219_sensor_write_array(XIicPs *IicInstance, struct reginfo *regarray)
 {

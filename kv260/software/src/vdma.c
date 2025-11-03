@@ -40,7 +40,12 @@ int vdma_init() {
 	XAxiVdma_DmaSetup dma_setup;
 	u32 addr;
 
-	if ( (vdma_config = XAxiVdma_LookupConfig(XPAR_AXI_VDMA_0_DEVICE_ID)) == NULL) {
+#if !defined(SDT)
+	vdma_config = XAxiVdma_LookupConfig(XPAR_AXI_VDMA_0_DEVICE_ID);
+#else
+	vdma_config = XAxiVdma_LookupConfig(XPAR_AXI_VDMA_0_BASEADDR);
+#endif
+	if (vdma_config == NULL) {
 		xil_printf("XAxiVdma_LookupConfig() failed\r\n");
 		return XST_FAILURE;
 	}

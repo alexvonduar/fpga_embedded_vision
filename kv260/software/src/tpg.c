@@ -38,7 +38,12 @@ int tpg_init() {
 	XV_tpg tpg;
 	XV_tpg_Config *tpg_config;
 
-    if ( (tpg_config = XV_tpg_LookupConfig(XPAR_XV_TPG_0_DEVICE_ID)) == NULL) {
+#if !defined(SDT)
+    tpg_config = XV_tpg_LookupConfig(XPAR_XV_TPG_0_DEVICE_ID);
+#else
+	tpg_config = XV_tpg_LookupConfig(XPAR_XV_TPG_0_BASEADDR);
+#endif
+    if (tpg_config == NULL) {
 		xil_printf("XV_tpg_LookupConfig() failed\r\n");
 		return XST_FAILURE;
 	}

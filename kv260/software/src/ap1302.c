@@ -80,7 +80,12 @@ int ap1302_init() {
 	 * For KV260, IMX219 power supply is enabled by FPGA pin tied high,
 	 * i2c expander reset_b is tied high on board
 	 */
-	if ((gpio_config = XGpioPs_LookupConfig(XPAR_PSU_GPIO_0_DEVICE_ID)) == NULL) {
+#if !defined(SDT)
+    gpio_config = XGpioPs_LookupConfig(XPAR_PSU_GPIO_0_DEVICE_ID);
+#else
+    gpio_config = XGpioPs_LookupConfig(XPAR_XGPIOPS_0_BASEADDR);
+#endif
+	if (gpio_config == NULL) {
 		xil_printf("XGpioPs_LookupConfig() failed\r\n");
 		return XST_FAILURE;
 	}
@@ -101,8 +106,12 @@ int ap1302_init() {
     XGpioPs_WritePin(&gpio, 0, 0);
     usleep(100000);
 
-
-	if ( (iic_config = XIicPs_LookupConfig(XPAR_PSU_I2C_1_DEVICE_ID)) == NULL) {
+#if !defined(SDT)
+	iic_config = XIicPs_LookupConfig(XPAR_PSU_I2C_1_DEVICE_ID);
+#else
+	iic_config = XIicPs_LookupConfig(XPAR_XIICPS_0_BASEADDR);
+#endif
+	if (iic_config == NULL) {
 		xil_printf("XIicPs_LookupConfig() failed\r\n");
 		return XST_FAILURE;
 	}

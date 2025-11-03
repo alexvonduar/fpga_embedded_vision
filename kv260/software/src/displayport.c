@@ -50,13 +50,27 @@ int displayport_init() {
 
 	memset(&avbuf, 0, sizeof(XAVBuf)); // XAVBuf_CfgInitialize does not properly initialize
 
-	if ( (dppsu_config = XDpPsu_LookupConfig(XPAR_PSU_DP_DEVICE_ID)) == NULL) {
+#if !defined(SDT)
+    dppsu_config = XDpPsu_LookupConfig(XPAR_PSU_DP_DEVICE_ID);
+#else
+	dppsu_config = XDpPsu_LookupConfig(XPAR_XDPPSU_0_BASEADDR);
+#endif
+	if (dppsu_config == NULL) {
 		xil_printf("XDpPsu_LookupConfig() failed\r\n");
 		return XST_FAILURE;
 	}
 	XDpPsu_CfgInitialize(&dppsu, dppsu_config, dppsu_config->BaseAddr);
+#if !defined(SDT)
 	XAVBuf_CfgInitialize(&avbuf, dppsu_config->BaseAddr, XPAR_PSU_DP_DEVICE_ID);
-	if ( (dpdma_config = XDpDma_LookupConfig(XPAR_PSU_DPDMA_DEVICE_ID)) == NULL) {
+#else
+	XAVBuf_CfgInitialize(&avbuf, dppsu_config->BaseAddr);
+#endif
+#if !defined(SDT)
+    dpdma_config = XDpDma_LookupConfig(XPAR_PSU_DPDMA_DEVICE_ID);
+#else
+	dpdma_config = XDpDma_LookupConfig(XPAR_XDPDMA_0_BASEADDR);
+#endif
+	if (dpdma_config == NULL) {
 		xil_printf("XDpDma_LookupConfig() failed\r\n");
 		return XST_FAILURE;
 	}
@@ -101,7 +115,12 @@ int displayport_setup_interrupts() {
 	XDpPsu_SetHpdEventHandler(&dppsu, displayport_hpd_event_isr, &dummy_user_data);
 	XDpPsu_SetHpdPulseHandler(&dppsu, displayport_hpd_pulse_isr, &dummy_user_data);
 
-	if ( (ic_config = XScuGic_LookupConfig(XPAR_SCUGIC_0_DEVICE_ID)) == NULL) {
+#if !defined(SDT)
+	ic_config = XScuGic_LookupConfig(XPAR_SCUGIC_0_DEVICE_ID);
+#else
+	ic_config = XScuGic_LookupConfig(XPAR_XSCUGIC_0_BASEADDR);
+#endif
+	if (ic_config == NULL) {
 		xil_printf("XScuGic_LookupConfig() failed\r\n");
 		return XST_FAILURE;
 	}
@@ -130,8 +149,13 @@ int displayport_setup_interrupts() {
 	/* Initialize exceptions. */
 	Xil_ExceptionInit();
 	Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_IRQ_INT,
-			(Xil_ExceptionHandler) XScuGic_DeviceInterruptHandler,
-			XPAR_SCUGIC_0_DEVICE_ID);
+			(Xil_ExceptionHandler) XScuGic_DeviceInterruptHandler
+#if !defined(SDT)
+			, XPAR_SCUGIC_0_DEVICE_ID
+#else
+			, NULL
+#endif
+		);
 
 	/* Enable exceptions for interrupts. */
 	Xil_ExceptionEnableMask(XIL_EXCEPTION_IRQ);

@@ -36,7 +36,12 @@ int vtc_init() {
 	XVtc vtc;
 	XVtc_Config *vtc_config;
 
-    if ( (vtc_config = XVtc_LookupConfig(XPAR_VTC_0_DEVICE_ID)) == NULL) {
+#if !defined(SDT)
+    vtc_config = XVtc_LookupConfig(XPAR_VTC_0_DEVICE_ID);
+#else
+	vtc_config = XVtc_LookupConfig(XPAR_XVTC_0_BASEADDR);
+#endif
+    if (vtc_config == NULL) {
 		xil_printf("XVtc_LookupConfig() failed\r\n");
 		return XST_FAILURE;
 	}

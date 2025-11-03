@@ -6,7 +6,7 @@ DESCRIPTION:
 
 CHANGE HISTORY:
 12 Aug 2019		Greg Taylor
-	Initial version
+    Initial version
 
 MIT License
 
@@ -33,34 +33,39 @@ SOFTWARE.
 #include "xcsiss.h"
 
 int mipi_init() {
-	XCsiSs mipi;
-	XCsiSs_Config *mipi_config;
+    XCsiSs mipi;
+    XCsiSs_Config *mipi_config;
 
-	if ( (mipi_config = XCsiSs_LookupConfig(XPAR_MIPI_CSI2_RX_SUBSYST_0_DEVICE_ID)) == NULL) {
-		xil_printf("XCsiSs_LookupConfig() failed\r\n");
-		return XST_FAILURE;
-	}
-	if (XCsiSs_CfgInitialize(&mipi, mipi_config, mipi_config->BaseAddr) != XST_SUCCESS) {
-		xil_printf("XCsiSs_CfgInitialize() failed\r\n");
-		return XST_FAILURE;
-	}
+#if !defined(SDT)
+    mipi_config = XCsiSs_LookupConfig(XPAR_MIPI_CSI2_RX_SUBSYST_0_DEVICE_ID);
+#else
+    mipi_config = XCsiSs_LookupConfig(XPAR_MIPI_CSI2_RX_SUBSYST_0_BASEADDR);
+#endif
+    if (mipi_config == NULL) {
+        xil_printf("XCsiSs_LookupConfig() failed\r\n");
+        return XST_FAILURE;
+    }
+    if (XCsiSs_CfgInitialize(&mipi, mipi_config, mipi_config->BaseAddr) != XST_SUCCESS) {
+        xil_printf("XCsiSs_CfgInitialize() failed\r\n");
+        return XST_FAILURE;
+    }
 
-	if (XCsiSs_Configure(&mipi, 2, 0) != XST_SUCCESS) {
-		xil_printf("mipi core failed to configure\r\n");
-		return XST_FAILURE;
-	}
+    if (XCsiSs_Configure(&mipi, 2, 0) != XST_SUCCESS) {
+        xil_printf("mipi core failed to configure\r\n");
+        return XST_FAILURE;
+    }
 
-	if (XCsiSs_SelfTest(&mipi) != XST_SUCCESS) {
-		xil_printf("mipi core failed self test\r\n");
-		return XST_FAILURE;
-	}
+    if (XCsiSs_SelfTest(&mipi) != XST_SUCCESS) {
+        xil_printf("mipi core failed self test\r\n");
+        return XST_FAILURE;
+    }
 
-	if (XCsiSs_Activate(&mipi, 1) != XST_SUCCESS) {
-		xil_printf("mipi core failed to activate\r\n");
-		return XST_FAILURE;
-	}
+    if (XCsiSs_Activate(&mipi, 1) != XST_SUCCESS) {
+        xil_printf("mipi core failed to activate\r\n");
+        return XST_FAILURE;
+    }
 
-	xil_printf("MIPI CSI-2 Rx Subsystem initialized\r\n");
+    xil_printf("MIPI CSI-2 Rx Subsystem initialized\r\n");
 
-	return XST_SUCCESS;
+    return XST_SUCCESS;
 }
