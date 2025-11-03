@@ -55,7 +55,7 @@ ifeq (${BOARD}, ultra96v2)
 endif
 ifeq (${BOARD}, kv260)
 	BD_SRC = \
-		${HDL_DIR}/bd/imx219_to_kria_displayport_vivado2024.2.tcl
+		${HDL_DIR}/bd/imx219_to_kria_displayport_vivado.tcl
 
 	XDC_SRC = \
 		${HDL_DIR}/constraints/Kria_KV_CarrierCard_Rev1.xdc
@@ -111,6 +111,13 @@ clean:
 ${VIVADO_DIR}:
 	test -e ${VIVADO_DIR} || mkdir -p ${VIVADO_DIR}
 
+${VIVADO_DIR}/${PROJECT_NAME}.xsa: $(BD_SRC) $(XDC_SRC)
+	test -e ${VIVADO_DIR} || mkdir -p ${VIVADO_DIR}
+	cd ${VIVADO_DIR}
+	vivado -mode batch -notrace -source ${HDL_DIR}/scripts/vivado_run.tcl -nojournal \
+	-log ${VIVADO_DIR}/bd_log.txt -tclargs "$(BD_SRC)" " $(XDC_SRC)" "${BOARD}" "${VIVADO_DIR}" "${PROJECT_NAME}"
+	cd -
+
 ${VIVADO_DIR}/design_1/design_1.bd: $(BD_SRC)
 	test -e ${VIVADO_DIR} || mkdir -p ${VIVADO_DIR}
 	cd ${VIVADO_DIR}
@@ -139,7 +146,7 @@ ${VIVADO_DIR}/post_route.dcp: ${VIVADO_DIR}/post_place.dcp
 	-tclargs "${VIVADO_DIR}"
 	cd -
 
-${VIVADO_DIR}/${PROJECT_NAME}.xsa: ${VIVADO_DIR}/post_route.dcp
+${VIVADO_DIR}/${PROJECT_NAME}.xsas: ${VIVADO_DIR}/post_route.dcp
 	test -e ${VIVADO_DIR} || mkdir -p ${VIVADO_DIR}
 	cd ${VIVADO_DIR}
 	vivado -mode batch -notrace -source ${HDL_DIR}/scripts/vivado_bitstream.tcl -log ${VIVADO_DIR}/bitstream_log.txt -nojournal	\

@@ -39,7 +39,7 @@ BUILD ?= Release
 
 SOURCE_DIR   := ${TOP}/kv260
 APP_SRC_DIR =${SOURCE_DIR}/software/src
-APP_SRCs =$(wildcard $(APP_SRC_DIR)/*)
+APP_SRCs = $(wildcard $(APP_SRC_DIR)/*) $(wildcard $(APP_SRC_DIR)/*/*) $(wildcard $(APP_SRC_DIR)/*/*/*)
 APP_SCRIPT = ${CURDIR}/scripts/vitis_app.py
 APP_BIN := ${VITIS_DIR}/${VITIS_APP_NAME}/build/${VITIS_APP_NAME}.elf
 BIF_FILE = ${VITIS_DIR}/boot.bif
@@ -51,7 +51,6 @@ BOOT_BIN := ${TARGET_DIR}/BOOT.BIN
 #	xsct $< ${PROJECT_NAME} ${VITIS_PLATFORM_NAME} ${TOP} ${VITIS_DIR} ${VIVADO_HW}
 
 $(APP_BIN): ${APP_SCRIPT} $(APP_SRCs) $(VIVADO_HW)
-	#xsct $< ${PROJECT_NAME} ${VITIS_PLATFORM_NAME} ${VITIS_APP_NAME} ${VITIS_SYS_NAME} ${TOP} ${VITIS_DIR} $(BUILD) -notrace
 	vitis -s ${APP_SCRIPT} --hardware=${VIVADO_HW} --source=${APP_SRC_DIR} --workspace=${VITIS_DIR} --project=${PROJECT_NAME}
 
 $(BOOT_BIN): $(APP_BIN) $(BIF_FILE)
@@ -59,7 +58,6 @@ $(BOOT_BIN): $(APP_BIN) $(BIF_FILE)
 	bootgen -image $(BIF_FILE) -arch zynqmp -w -o $(BOOT_BIN)
 
 all: $(BOOT_BIN)
-	#cp $< $(TARGET_DIR)/
 	rm -rf ${CURDIR}/vivado*.jou ${CURDIR}/vivado*.log
 
 .PHONY: all
