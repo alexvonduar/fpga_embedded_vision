@@ -289,7 +289,7 @@ set_property -dict [list \
 ] [get_bd_cells v_tpg_0]
 
 # Create instance: v_mix_0, and set properties
-set v_mix_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_mix:5.2 v_mix_0 ]
+set v_mix_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_mix v_mix_0 ]
 set_property -dict [ list \
   CONFIG.VIDEO_FORMAT {0} \
   CONFIG.SAMPLES_PER_CLOCK {1} \
