@@ -36,7 +36,7 @@
 uname_O := $(shell sh -c 'uname -o 2>/dev/null || echo not')
 
 # set to ultra96v2 or kv260
-BOARD = kv260
+BOARD := kv260
 HDL_DIR = ${SOURCE_DIR}/fpga
 VIVADO_DIR = ${PROJECT_DIR}/vivado
 

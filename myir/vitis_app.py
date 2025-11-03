@@ -8,13 +8,13 @@ def build_app(args):
     print ("\n-----------------------------------------------------------------")
     print("top dir: {}".format(args.top))
 
-    proj_name = "fmchc_python1300c"
+    #proj_name = "fmchc_python1300c"
 
     #target_dir = os.path.join(top_dir, args.project + "_" + args.target + "_" + args.version)
 
     client = vitis.create_client()
 
-    vitis_workspace = os.path.join(args.output, proj_name + ".vitis")
+    vitis_workspace = os.path.join(args.output, args.project + ".vitis")
 
     #Delete the vitis workspace if already exists.
     if (os.path.exists(vitis_workspace)):
@@ -26,7 +26,7 @@ def build_app(args):
 
     #print("===============================================================")
     local_repo_name = 'avnet_drivers'
-    local_repo_path = os.path.join(args.top, "avnet/Projects", proj_name, "software/sw_repository")
+    local_repo_path = os.path.join(args.top, "avnet/Projects", args.project, "software/sw_repository")
     local_repo_description = "avnet driver repository"
     #os.makedirs(local_repo_path, exist_ok = True)
 
@@ -38,8 +38,8 @@ def build_app(args):
     # XSA directory path
     #xsa_dir = os.environ.get('XILINX_VITIS')
     #xsa = os.path.join(xsa_dir, "data/embeddedsw/lib/fixed_hwplatforms/vck190.xsa")
-    xsa = os.path.join(args.output, proj_name + ".xsa")
-    platform_name = proj_name + "_platform"
+    xsa = os.path.join(args.output, args.project + ".xsa")
+    platform_name = args.project + "_platform"
 
     #advanced_options = client.create_advanced_options_dict(dt_overlay = "1",dt_zocl = "1")
 
@@ -85,8 +85,8 @@ def build_app(args):
 
     status = platform.build()
 
-    app_name = proj_name + "_app"
-    app_src = os.path.join(args.top, "avnet/Projects/" + proj_name + "/software/" + proj_name + "_app/src")
+    app_name = args.project + "_app"
+    app_src = os.path.join(args.top, "avnet/Projects/" + args.project + "/software/" + args.project + "_app/src")
     print("app source: {}".format(app_src))
     exported_plaftorm = os.path.join(vitis_workspace, platform_name, "export", platform_name, platform_name + ".xpfm")
     print("exported_plaftorm: " + exported_plaftorm)
@@ -121,7 +121,7 @@ def build_app(args):
 
     bif_name = os.path.join(args.output, "boot.bif")
     fsbl_name = os.path.join(vitis_workspace, platform_name, "export", platform_name, "sw/boot/fsbl.elf")
-    bitfile_name = os.path.join(vitis_workspace, platform_name, "export", platform_name, "hw/sdt/" + proj_name + ".bit")
+    bitfile_name = os.path.join(vitis_workspace, platform_name, "export", platform_name, "hw/sdt/" + args.project + ".bit")
     appfile_name = os.path.join(vitis_workspace, app_name, "build", app_name + ".elf")
     with open(bif_name, "w") as bif_file:
         bif_file.write("the_ROM_image:\n")
