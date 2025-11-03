@@ -30,6 +30,7 @@ $(boot_bin): $(app_file) $(bif_file)
 
 all: $(boot_bin)
 	@echo "Done"
+	rm -rf .Xil fpga/.Xil fpga/.srcs fpga/clockInfo.txt fpga/logs fpga/prj fpga/runhls.tcl
 
 .PHONY: all
 
