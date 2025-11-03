@@ -7,7 +7,7 @@ This project is now updated to **2024.2**.
 
 ```shell
 source $(VITIS_PATH)/settings64.sh
-make myir
+make fmchc_python1300c_myir7020
 ```
 
 <p align="center">

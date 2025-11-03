@@ -4,7 +4,7 @@ Tested Raspberry Pi Camera module V2(IMX219) & Raspberry Pi Camera HQ (IMX477)
 
 ```shell
 source $(VITIS_PATH)/settings64.sh
-make kv260_rpi_mipi
+make rpi_mipi_dp_kv260
 ```
 
 Since KV260 fw bootloader is not compatible with standalone BOOT.BIN. So we need a Jtag to run the demo. Need to set KV260 to jtag boot mode:

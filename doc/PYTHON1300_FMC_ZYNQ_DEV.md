@@ -7,7 +7,7 @@ This project is now updated to **2024.2**.
 
 ```shell
 source $(VITIS_PATH)/settings64.sh
-make zynqdev_fmchc_python1300c
+make fmchc_python1300c_zynqdev
 ```
 
 <p align="center">

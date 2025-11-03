@@ -2,7 +2,7 @@
 
 ```shell
 source $(VITIS_PATH)/settings64.sh
-make me_xu6_st1_mipi
+make rpi_mipi_dp_me_st1_xu6
 ```
 
 <p align="center">
