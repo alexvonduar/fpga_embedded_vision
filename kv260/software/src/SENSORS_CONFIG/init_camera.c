@@ -26,15 +26,23 @@
 #include "init_camera.h"
 #include "parameters.h"
 XIicPs iic_cam;
-#if !defined(SDT)
+
 #if defined(BOARD) && (BOARD == KV260)
+#if !defined(SDT)
 #define IIC_DEVICEID        XPAR_XIICPS_0_DEVICE_ID
+#else
+#define IIC_DEVICEID        XPAR_XIICPS_0_BASEADDR
+#endif
 #elif defined(BOARD) && (BOARD == ME_XU6_ST1)
+#if !defined(SDT)
 #define IIC_DEVICEID        XPAR_XIICPS_1_DEVICE_ID
+#else
+#define IIC_DEVICEID        XPAR_XIICPS_1_BASEADDR
+#endif
 #else
 #error "Please define BOARD in parameters.h"
 #endif
-#endif
+
 #define IIC_SCLK_RATE		400000
 #define SW_IIC_ADDR         0x74
 u8 SendBuffer [10];
@@ -44,22 +52,17 @@ int init_camera()
 
     XIicPs_Config *iic_conf;
     int Status;
-#if !defined(SDT)
+
     iic_conf = XIicPs_LookupConfig(IIC_DEVICEID);
-#else
-    iic_conf = XIicPs_LookupConfig(XPAR_XIICPS_0_BASEADDR);
-#endif
     XIicPs_CfgInitialize(&iic_cam,iic_conf,iic_conf->BaseAddress);
     if (XIicPs_SelfTest(&iic_cam) != XST_SUCCESS) {
         xil_printf("XIicPs_SelfTest() failed\r\n");
         return XST_FAILURE;
     }
+
     XIicPs_SetSClk(&iic_cam, IIC_SCLK_RATE);
-#if !defined(SDT)
+
     i2c_init(&iic_cam, IIC_DEVICEID,IIC_SCLK_RATE);
-#else
-    i2c_init(&iic_cam, XPAR_XIICPS_0_BASEADDR,IIC_SCLK_RATE);
-#endif
 #if defined(BOARD) && (BOARD == KV260)
     SendBuffer[0]= 0x02;
     Status = XIicPs_MasterSendPolled(&iic_cam, SendBuffer, 1, SW_IIC_ADDR);
