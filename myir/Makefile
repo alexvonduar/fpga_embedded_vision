@@ -7,7 +7,7 @@ endif
 
 PROJECT ?= fmchc_python1300c
 #BOARD ?= MYIR7020
-VIVADO_VER ?= 2024.2
+VIVADO_VER ?= 2025.1
 
 ifeq ("$(wildcard $(TOP))", "")
 $(error TOP ${TOP} does not exist)

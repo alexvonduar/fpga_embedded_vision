@@ -8,7 +8,7 @@ SOM := ME-XU6-2CG-1E-D10H
 BOARD ?= me_st1_xu6_2cg
 INPUT ?= rpi_mipi0
 OUTPUT ?= dp
-VIVADO_VER ?= 2024.2
+VIVADO_VER ?= 2025.1
 PROJECT_NAME ?= $(INPUT)_$(OUTPUT)_$(BOARD)
 
 ifeq ("$(wildcard $(TOP))", "")
