@@ -1580,7 +1580,7 @@ set_property -dict [ list \
 ] $v_axi4s_vid_out_0
 
 # Create instance: concat_vid_out_0, and set properties
-set concat_vid_out_0 [create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 xlconcat_0]
+set concat_vid_out_0 [create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconcat xlconcat_0]
 set_property -dict [list \
     CONFIG.NUM_PORTS {4} \
     CONFIG.IN0_WIDTH.VALUE_SRC USER \
@@ -1730,13 +1730,13 @@ set_property -dict [ list \
 }
 
 # Create instance: xlconstant_0, and set properties
-set xlconstant_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant xlconstant_0 ]
+set xlconstant_0 [ create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconstant xlconstant_0 ]
 set_property -dict [ list \
     CONFIG.CONST_VAL {0} \
 ] $xlconstant_0
 
 # Create instance: xlconstant_1, and set properties
-set xlconstant_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant xlconstant_1 ]
+set xlconstant_1 [ create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconstant xlconstant_1 ]
 
 # Create interface connections
 connect_bd_intf_net -intf_net IO_CAM_IN_1 [get_bd_intf_ports IO_PYTHON_CAM] [get_bd_intf_pins onsemi_python_cam_0/IO_CAM_IN]
