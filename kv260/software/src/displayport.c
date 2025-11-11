@@ -31,11 +31,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
  */
 #include "xdpdma.h"			/* DPDMA device driver */
+#ifndef SDT
 #include "xscugic.h"		/* Interrupt controller device driver */
+#else
+#include "xinterrupt_wrap.h"
+#endif
 #include "xdppsu.h"			/* DP controller device driver */
 #include "xavbuf.h"    		/* AVBUF is the video pipeline driver */
 #include "xavbuf_clk.h"		/* Clock Driver for Video(VPLL) and Audio(RPLL) clocks */
-#include "xscugic.h"		/* Interrupt controller device driver */
+//#include "xscugic.h"		/* Interrupt controller device driver */
 #include "displayport.h"
 
 XDpPsu dppsu;
@@ -117,9 +121,6 @@ int displayport_setup_interrupts() {
 
 #if !defined(SDT)
 	ic_config = XScuGic_LookupConfig(XPAR_SCUGIC_0_DEVICE_ID);
-#else
-	ic_config = XScuGic_LookupConfig(XPAR_XSCUGIC_0_BASEADDR);
-#endif
 	if (ic_config == NULL) {
 		xil_printf("XScuGic_LookupConfig() failed\r\n");
 		return XST_FAILURE;
@@ -149,12 +150,8 @@ int displayport_setup_interrupts() {
 	/* Initialize exceptions. */
 	Xil_ExceptionInit();
 	Xil_ExceptionRegisterHandler(XIL_EXCEPTION_ID_IRQ_INT,
-			(Xil_ExceptionHandler) XScuGic_DeviceInterruptHandler
-#if !defined(SDT)
-			, XPAR_SCUGIC_0_DEVICE_ID
-#else
-			, NULL
-#endif
+			(Xil_ExceptionHandler) XScuGic_DeviceInterruptHandler,
+			XPAR_SCUGIC_0_DEVICE_ID
 		);
 
 	/* Enable exceptions for interrupts. */
@@ -168,6 +165,14 @@ int displayport_setup_interrupts() {
 	/* Enable DPDMA Interrupts */
 	XScuGic_Enable(&ic, DPDMA_INTR_ID);
 	XDpDma_InterruptEnable(&dpdma, XDPDMA_IEN_VSYNC_INT_MASK);
+#else
+	XSetupInterruptSystem(&dppsu, &XDpPsu_HpdInterruptHandler, dppsu.Config.IntrId,
+			dppsu.Config.IntrParent, XINTERRUPT_DEFAULT_PRIORITY);
+	XDpPsu_WriteReg(dppsu.Config.BaseAddr, XDPPSU_INTR_EN, interrupt_mask);
+	XSetupInterruptSystem(&dpdma, &XDpDma_InterruptHandler, dpdma.Config.IntrId,
+			dpdma.Config.IntrParent, XINTERRUPT_DEFAULT_PRIORITY);
+	XDpDma_InterruptEnable(&dpdma, XDPDMA_IEN_VSYNC_INT_MASK);
+#endif
 
 	return XST_SUCCESS;
 }
