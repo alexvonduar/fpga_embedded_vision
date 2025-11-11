@@ -182,8 +182,8 @@ source ${scriptdir}/utils.tcl -notrace
 set numberOfCores [numberOfCPUs]
 set numberOfJobs numberOfCores
 
-if {$numberOfCores > 2} {
-    set numberOfJobs [expr $numberOfCores - 2]
+if {$numberOfCores > 16} {
+    set numberOfJobs [expr $numberOfCores - 10]
     puts "CPU: $numberOfCores jobs: $numberOfJobs"
 }
 
