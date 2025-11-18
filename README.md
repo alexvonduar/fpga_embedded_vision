@@ -256,3 +256,20 @@
     </td>
 </tr>
 </table>
+
+##Camera Adapter Boards
+
+<table>
+<tr>
+    <th>Board</th>
+    <th>Description</th>
+</tr>
+<tr>
+    <td>ALINX FL1404</td>
+    <td>MIPI CSI*4, 20Pin 1mm, LPC</td>
+</tr>
+<tr>
+    <td>Opsero RPi Camera FMC</td>
+    <td>RPi 15P*4, LPC</td>
+</tr>
+</table>
