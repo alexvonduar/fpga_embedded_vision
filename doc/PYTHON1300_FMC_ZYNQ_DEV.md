@@ -1,5 +1,15 @@
 #PYTHON1300 FMC + ZYNQ_DEV
 
+##Board
+<p align="center">
+      <img title="Zynq_DEV" src="pictures/zynq_dev.png" alt="Resizable Image" class="resizable-image" width="640"/>
+      <a herf="">ZYNQ_DEV</a>
+</p>
+
+##Camera
+
+##Project
+
 This project is now updated to **2024.2**.
    * combined color space convert and chroma subsampling into single Video Processing Subsystem IP;
    * replace OSD with Video Mixer IP;

@@ -18,7 +18,7 @@
 
 1. [PYTHON1300 FMC + ZCU104(under developing)](doc/PYTHON1300_FMC_ZCU104.md)
 
-2. [LI-IMX274-FMC + ZCU104](doc/LI-IMX274-FMC%20_ZCU104.md)
+2. [LI-IMX274-FMC + ZCU104](doc/LI-IMX274-FMC_ZCU104.md)
 
 3. [PYTHON1300 FMC + MYD-C7Z020](doc/PYTHON1300_FMC_MYD-C7Z020.md)
 
@@ -33,74 +33,135 @@
 <table>
     <tr>
         <th>Board</th>
-        <th>Features</th>
+        <th>SoC</th>
+        <th>MIPI</th>
+        <th>FMC</th>
+        <th>Output</th>
+        <th>Other</th>
     </tr>
     <tr>
         <td>
             <p align="center">
-                <img src="doc/pictures/AES-PZ-EMBV-KIT-G-front_small.png" title="Embedded Vision Kit" alt="Resizable Image" class="resizable-image" width="640"/>
                 <a herf="https://www.avnet.com/wps/portal/apac/products/products/xilinx-embedded-vision-development-kit-picozed-7030-som-based/">Picozed Zynq 7030 som + FMC carrier v2</a>
             </p>
         </td>
         <td>
-        Zynq 7030,<br>FMC LPC
+        Zynq7030
+        </td>
+        <td>
+        </td>
+        <td>
+        LPC
+        </td>
+        <td>
+        </td>
+        <td>
         </td>
     </tr>
     <tr>
         <td>
             <p align="center">
-                <img title="MYD-C7Z020" src="doc/pictures/MYD-C7Z010_20_2.png" alt="Resizable Image" class="resizable-image" width="640"/>
                 <a herf="http://www.myir-tech.com/product/myd_C7Z010_20.htm">MYD-C7Z020</a>
             </p>
         </td>
         <td>
-        Zynq 7020,<br>FMC LPC,<br>HDMI out
+        Zynq7020
+        </td>
+        <td>
+        </td>
+        <td>
+        LPC
+        </td>
+        <td>
+        HDMI
+        </td>
+        <td>
         </td>
     </tr>
     <tr>
         <td>
             <p align="center">
-                <img title="Zynq_DEV" src="doc/pictures/zynq_dev.png" alt="Resizable Image" class="resizable-image" width="640"/>
                 <a herf="">ZYNQ_DEV</a>
             </p>
         </td>
         <td>
-        Zynq 7020,<br>FMC LPC,<br>RaspberryPi 15Pin MIPI-CSI,<br>2x HDMI out
+        Zynq7020
+        </td>
+        <td>
+        RPi 15P
+        </td>
+        <td>
+        LPC
+        </td>
+        <td>
+        HDMIx2
+        </td>
+        <td>
         </td>
     </tr>
     <tr>
         <td>
             <p align="center">
-                <img title="ZCU104" src="doc/pictures/zcu104.png" alt="Resizable Image" class="resizable-image" width="640"/>
                 <a herf="https://www.amd.com/en/products/adaptive-socs-and-fpgas/evaluation-boards/zcu104.html">AMD Zynq™ UltraScale+™ MPSoC ZCU104 Evaluation Kit</a>
             </p>
         </td>
         <td>
-        Zynq MPSoC ZU7EV,<br>FMC LPC,<br>HDMI in,<br>HDMI out,<br>DisplayPort
+        ZU7EV
+        </td>
+        <td>
+        </td>
+        <td>
+        LPC
+        </td>
+        <td>
+        HDMI in,<br>HDMI out,<br>DisplayPort
+        </td>
+        <td>
         </td>
     </tr>
     <tr>
         <td>
             <p align="center">
-                <img title="KV260" src="doc/pictures/kv260.png" alt="Resizable Image" class="resizable-image" width="640"/>
                 <a herf="https://www.amd.com/en/products/system-on-modules/kria/k26/kv260-vision-starter-kit.html">Kria KV260 Vision AI Starter Kit</a>
             </p>
         </td>
         <td>
-        Kria K26,<br>RaspberryPi 15Pin MIPI-CSI,<br>IASx2, one with AR1330 & AR1302,<br>PS DisplayPort(splited HDMI)
+        Kria K26
+        </td>
+        <td>
+        RPi 15P
+        </td>
+        <td>
+        </td>
+        <td>
+        DisplayPort(PS)<br>
+        HDMI(DP splited)
+        </td>
+        <td>
+        IAS1: AR1330+AR1302<br><br>
+        IAS2:
         </td>
     </tr>
     <tr>
         <td>
             <p align="center">
-                <img title="Enclustra Mercury+ ST1" src="doc/pictures/mercury_st1_front_600.png" alt="Resizable Image" class="resizable-image" width="640"/>
                 <a herf="https://www.enclustra.com/en/products/base-boards/mercury-st1/">Enclustra Mercury+ ST1</a>
-                <img title="Enclustra Mercury+ XU6" src="doc/pictures/mercury_xu6_front_600.jpg" alt="Resizable Image" class="resizable-image" width="640"/>
                 <a herf="https://www.enclustra.com/en/products/system-on-chip-modules/mercury-xu6/">Enclustra Mercury+ XU6</a>
             </p>
         </td>
         <td>
-        Zynq MPSoC ZU2CG,<br>FMC HPC,<br>2x RaspberryPi 15Pin MIPI-CSI,<br>HDMI out(redriver),<br>PS DisplayPort
+        ZU2CG
+        </td>
+        <td>
+        RPi 15P * 2
+        </td>
+        <td>
+        HPC
+        </td>
+        <td>
+        HDMI out(redriver)<br>DisplayPort(PS, miniDP)
+        </td>
+        <td>
         </td>
     </tr>
 </table>
