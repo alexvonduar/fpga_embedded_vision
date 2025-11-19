@@ -1,10 +1,7 @@
 #PYTHON1300 FMC + ZYNQ_DEV
 
 ##Board
-<p align="center">
-      <img title="Zynq_DEV" src="pictures/zynq_dev.png" alt="Resizable Image" class="resizable-image" width="640"/>
-      <a herf="">ZYNQ_DEV</a>
-</p>
+[ZYNQ_DEV](Boards.md###ZYNQ_DEV)
 
 ##Camera
 

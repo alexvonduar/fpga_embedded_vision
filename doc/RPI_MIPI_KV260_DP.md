@@ -1,9 +1,6 @@
 #RaspberryPi 15pin MIPI camera module + KV260
 ##Board
-<p align="center">
-    <img title="KV260" src="pictures/kv260.png" alt="Resizable Image" class="resizable-image" width="640"/>
-    <a herf="https://www.amd.com/en/products/system-on-modules/kria/k26/kv260-vision-starter-kit.html">Kria KV260 Vision AI Starter Kit</a>
-</p>
+[Kria KV260 Vision Kit](Boards.md###Kria-KV260-Vision-Kit)
 
 ##Camera
 
