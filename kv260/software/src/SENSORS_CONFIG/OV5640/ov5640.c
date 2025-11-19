@@ -2,13 +2,13 @@
 #include <xil_types.h>
 #include <stdio.h>
 #include <xstatus.h>
-#include "xiicps.h"
+//#include "xiicps.h"
 #include "xparameters.h"
 #include "sleep.h"
 #include <xil_printf.h>
 #include "parameters.h"
-#include "../I2c_transections.h"
-#include "../init_camera.h"
+#include "I2c_transections.h"
+#include "init_camera.h"
 #define IIC_OV5640_ADDR  	        0X3C
 struct reginfo cfg_ov5640_init_data[] =
 {	
@@ -272,21 +272,21 @@ struct reginfo cfg_ov5640_advanced_awb[] =
 		{0x5001 ,0x03},
 		{SEQUENCE_END, 0x00}
 };
-int ov5640_read(XIicPs *IicInstance,u16 addr,u8 *read_buf)
+int ov5640_read(XIIC *IicInstance,u16 addr,u8 *read_buf)
 {
 	*read_buf=i2c_reg16_read(IicInstance,IIC_OV5640_ADDR,addr);
 	return XST_SUCCESS;
 }
 
-int ov5640_write(XIicPs *IicInstance,u16 addr,u8 data)
+int ov5640_write(XIIC *IicInstance,u16 addr,u8 data)
 {
 	return i2c_reg16_write(IicInstance,IIC_OV5640_ADDR,addr,data);
 }
-int ov5640_soft_write(XIicPs *IicInstance,u16 addr,u8 data)
+int ov5640_soft_write(XIIC *IicInstance,u16 addr,u8 data)
 {
 	return i2c_reg16_write(IicInstance,0x74,addr,data);
 }
-void ov5640_sensor_write_array(XIicPs *IicInstance, struct reginfo *regarray)
+void ov5640_sensor_write_array(XIIC *IicInstance, struct reginfo *regarray)
 {
 	int i = 0;
 	while (regarray[i].reg != SEQUENCE_END) {
@@ -294,7 +294,7 @@ void ov5640_sensor_write_array(XIicPs *IicInstance, struct reginfo *regarray)
 		i++;
 	}
 }
-int ov5640_camera_sensor_init(XIicPs *IicInstance)
+int ov5640_camera_sensor_init(XIIC *IicInstance)
 {
 	u8 sensor_id[2] ;
 	ov5640_read(IicInstance, 0x300A, &sensor_id[0]);

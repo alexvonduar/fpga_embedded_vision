@@ -44,7 +44,7 @@ SOFTWARE.
 #include "mix.h"
 #include "vdma.h"
 #include "gamma_lut.h"
-#include "SENSORS_CONFIG/init_camera.h"
+#include "init_camera.h"
 
 int main() {
     init_platform();

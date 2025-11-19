@@ -11,13 +11,13 @@
 #include <xil_types.h>
 #include <stdio.h>
 #include <xstatus.h>
-#include "xiicps.h"
+//#include "xiicps.h"
 #include "xparameters.h"
 #include "sleep.h"
 #include <xil_printf.h>
 #include "parameters.h"
-#include "../I2c_transections.h"
-#include "../init_camera.h"
+#include "I2c_transections.h"
+#include "init_camera.h"
 #define IIC_AR1335_ADDR  	        (0x6c>>1)
 
 
@@ -963,21 +963,21 @@ struct reg2info cfg_ar1335_2048x1536p_30fps[] =
     {0x301A, 0x021C},   // RESET_REGISTER
     {SEQUENCE_END, 0x00}
 };
-int ar1335_read(XIicPs *IicInstance,u16 addr,u8 *read_buf)
+int ar1335_read(XIIC *IicInstance,u16 addr,u8 *read_buf)
 {
     *read_buf=i2c_reg16_read(IicInstance,IIC_AR1335_ADDR,addr);
     return XST_SUCCESS;
 }
-int ar1335_2bytes_read(XIicPs *IicInstance,u16 addr,u8 *read_buf)
+int ar1335_2bytes_read(XIIC *IicInstance,u16 addr,u8 *read_buf)
 {
     *read_buf=i2c_reg16_2read(IicInstance,IIC_AR1335_ADDR,addr);
     return XST_SUCCESS;
 }
-int ar1335_write(XIicPs *IicInstance,u16 addr,u16 data)
+int ar1335_write(XIIC *IicInstance,u16 addr,u16 data)
 {
     return i2c_reg16_write2bytes(IicInstance,IIC_AR1335_ADDR,addr,data);
 }
-void ar1335_sensor_write_array(XIicPs *IicInstance, struct reg2info *regarray)
+void ar1335_sensor_write_array(XIIC *IicInstance, struct reg2info *regarray)
 {
     int i = 0;
     while (regarray[i].reg != SEQUENCE_END) {
@@ -985,13 +985,13 @@ void ar1335_sensor_write_array(XIicPs *IicInstance, struct reg2info *regarray)
         i++;
     }
 }
-int write_ar1335_camera_reg(XIicPs *IicInstance,u16 addr,u8 data)
+int write_ar1335_camera_reg(XIIC *IicInstance,u16 addr,u8 data)
 {
     ar1335_write(IicInstance,addr,data);
     printf("ar1335 Reg Address = %x, Wrote Value = %x \n",addr,data);
     return 0;
 }
-int read_ar1335_camera_reg(XIicPs *IicInstance,u16 addr)
+int read_ar1335_camera_reg(XIIC *IicInstance,u16 addr)
 {
     int Status;
     u8 sensor_id[2];
@@ -999,13 +999,13 @@ int read_ar1335_camera_reg(XIicPs *IicInstance,u16 addr)
     printf("ar1335 Reg Address = %x, Read Value = %x \n",addr,sensor_id[0]);
     return Status;
 }
-int write_read_ar1335_camera_reg(XIicPs *IicInstance,u16 addr,u8 data)
+int write_read_ar1335_camera_reg(XIIC *IicInstance,u16 addr,u8 data)
 {
     write_ar1335_camera_reg(IicInstance,addr,data);
     read_ar1335_camera_reg(IicInstance,addr);
     return 0;
 }
-int ar1335_camera_sensor_init(XIicPs *IicInstance)
+int ar1335_camera_sensor_init(XIIC *IicInstance)
 {
     u8 sensor_id[2] ;
     ar1335_read(IicInstance, 0x0000, &sensor_id[0]);
@@ -1031,14 +1031,14 @@ int ar1335_camera_sensor_init(XIicPs *IicInstance)
     }
     return 0;
 }
-int ar1335_read_register(XIicPs *IicInstance,u16 addr)
+int ar1335_read_register(XIIC *IicInstance,u16 addr)
 {
     u8 sensor_id[1];
     ar1335_read(IicInstance, addr, &sensor_id[0]);
     printf("Read ar1335 Read Reg Address  =  %x   Value = %x\n",addr,sensor_id[0]);
     return 0;
 }
-//int ar1335_write_register(XIicPs *IicInstance,u16 addr,u8 data)
+//int ar1335_write_register(XIIC *IicInstance,u16 addr,u8 data)
 //{
 //	ar1335_write(IicInstance,REG_MODE_SEL,0x00);
 //	ar1335_write(IicInstance,addr,data);
@@ -1046,7 +1046,7 @@ int ar1335_read_register(XIicPs *IicInstance,u16 addr)
 //    printf("Read ar1335 Write Reg Address  =  %x   Value = %x\n",addr,data);
 //	return 0;
 //}
-// int ar1335_write_read_register(XIicPs *IicInstance,u16 addr,u8 data)
+// int ar1335_write_read_register(XIIC *IicInstance,u16 addr,u8 data)
 // {
     // ar1335_write_register(IicInstance,addr,data);
     // ar1335_read_register(IicInstance,addr);
