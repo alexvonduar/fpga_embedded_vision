@@ -1,23 +1,23 @@
 /*
-   MODIFICATION HISTORY:
-   Ver   Who Date     Changes
-   ----- -------- -------- -----------------------------------------------
-   1.0	 Sakinder 06/01/22 Initial Release
-   1.5   Sakinder 07/06/22 Added IMX682 Camera functions.
-   -----------------------------------------------------------------------
+    MODIFICATION HISTORY:
+    Ver   Who Date     Changes
+    ----- -------- -------- -----------------------------------------------
+    1.0	 Sakinder 06/01/22 Initial Release
+    1.5   Sakinder 07/06/22 Added IMX682 Camera functions.
+    -----------------------------------------------------------------------
 */
 #include "imx682.h"
 #include <xil_types.h>
 #include <stdio.h>
 #include <xstatus.h>
-#include "xiicps.h"
+//#include "xiicps.h"
 #include "xparameters.h"
 #include "sleep.h"
 #include <xil_printf.h>
 #include "parameters.h"
-#include "../I2c_transections.h"
-#include "../init_camera.h"
-#include "../imx_registers.h"
+#include "I2c_transections.h"
+#include "init_camera.h"
+#include "imx_registers.h"
 #define IIC_IMX682_ADDR  	        0x9A
 #define SENSOR_GW1_WBGAIN_RED		0x0D82
 #define SENSOR_GW1_WBGAIN_GREEN		0x0D84
@@ -6006,16 +6006,16 @@ struct reginfo imx682_seamless_custom5[] = {
 };
 
 
-int imx682_read(XIicPs *IicInstance,u16 addr,u8 *read_buf)
+int imx682_read(XIIC *IicInstance,u16 addr,u8 *read_buf)
 {
 	*read_buf=i2c_reg16_read(IicInstance,IIC_IMX682_ADDR,addr);
 	return XST_SUCCESS;
 }
-int imx682_write(XIicPs *IicInstance,u16 addr,u8 data)
+int imx682_write(XIIC *IicInstance,u16 addr,u8 data)
 {
 	return i2c_reg16_write(IicInstance,IIC_IMX682_ADDR,addr,data);
 }
-void imx_682_sensor_write_array(XIicPs *IicInstance, struct reginfo *regarray)
+void imx_682_sensor_write_array(XIIC *IicInstance, struct reginfo *regarray)
 {
 	int i = 0;
 	while (regarray[i].reg != SEQUENCE_END) {
@@ -6023,7 +6023,7 @@ void imx_682_sensor_write_array(XIicPs *IicInstance, struct reginfo *regarray)
 		i++;
 	}
 }
-int imx682_sensor_init(XIicPs *IicInstance,u16 config_number)
+int imx682_sensor_init(XIIC *IicInstance,u16 config_number)
 {
 	u8 sensor_id[2];
 	imx682_read(IicInstance, 0x0016, &sensor_id[0]);
@@ -6103,14 +6103,14 @@ int imx682_sensor_init(XIicPs *IicInstance,u16 config_number)
 	return 0;
 }
 
-int imx682_read_register(XIicPs *IicInstance,u16 addr)
+int imx682_read_register(XIIC *IicInstance,u16 addr)
 {
 	u8 sensor_id[1];
     imx682_read(IicInstance, addr, &sensor_id[0]);
     printf("Read imx682 Read Reg Address  =  %x   Value = %x\n",addr,sensor_id[0]);
 	return 0;
 }
-int imx682_write_register(XIicPs *IicInstance,u16 addr,u8 data)
+int imx682_write_register(XIIC *IicInstance,u16 addr,u8 data)
 {
 	imx682_write(IicInstance,REG_MODE_SEL,0x00);
 	imx682_write(IicInstance,addr,data);
@@ -6118,7 +6118,7 @@ int imx682_write_register(XIicPs *IicInstance,u16 addr,u8 data)
     printf("Read imx682 Write Reg Address  =  %x   Value = %x\n",addr,data);
 	return 0;
 }
-int imx682_write_read_register(XIicPs *IicInstance,u16 addr,u8 data)
+int imx682_write_read_register(XIIC *IicInstance,u16 addr,u8 data)
 {
 	imx682_write_register(IicInstance,addr,data);
 	imx682_read_register(IicInstance,addr);

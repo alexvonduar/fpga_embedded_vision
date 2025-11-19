@@ -30,29 +30,71 @@ def build_app(args):
     domain.set_lib('xilffs')
     domain.report()
 
+    if (args.build_type.lower() == "debug"):
+        config = domain.get_config(option="proc", param="proc_extra_compiler_flags")
+        default_flags = config['default_value'].split()
+        print("Default compiler flags: " + str(default_flags))
+        for flag in default_flags:
+            if flag.startswith("-O"):
+                default_flags.remove(flag)
+            if flag == "-g":
+                default_flags.remove(flag)
+        #default_flags.append("-g3")
+        #default_flags.append("-O0")
+        #default_flags = default_flags.join(" ")
+        default_flags = ' '.join(['-O0', '-g3', '-DDEBUG=1'] + default_flags)
+        print("Modified compiler flags for debug build: " + str(default_flags))
+        domain.set_config(
+            option="proc",
+            param="proc_extra_compiler_flags",
+            value=default_flags
+        )
+
     status = platform.build()
 
     app_name = args.project + "_app"
     exported_plaftorm = os.path.join(args.workspace, platform_name, "export", platform_name, platform_name + ".xpfm")
     print("exported plaftorm: " + exported_plaftorm)
     app = client.create_app_component(name=app_name, platform=exported_plaftorm, domain="standalone_ps7_cortexa9_0")
-    app.import_files(from_loc=args.source, dest_dir_in_cmp='src')
+    app.import_files(from_loc=args.source, dest_dir_in_cmp='src', is_skip_copy_sources = False)
     app.generate_build_files()
-    
+
     app.append_app_config(
         key="USER_INCLUDE_DIRECTORIES",
         values=[
-            '.'
+            '.',
+            './SENSORS_CONFIG'
         ]
     )
+
+    user_compile_defs = ['-DBOARD=2']
+    if args.fmc_board.lower() == 'opsero':
+        user_compile_defs.append('-DOPSERO=1')
+        if args.mipi_port == '1':
+            user_compile_defs.append('-DMIPI1')
+        elif args.mipi_port == '2':
+            user_compile_defs.append('-DMIPI2')
+        else:
+            print("Error: Invalid MIPI port selected. Choose '1' or '2'.")
+            exit(1)
+    else:
+        print("No FMC board selected or unsupported board.")
+        if args.mipi_port == '1':
+            user_compile_defs.append('-DMIPI1=1')
+        else:
+            user_compile_defs.append('-DMIPI0=1')  # Default to MIPI0 if no FMC board is selected
+
     app.append_app_config(
         key = "USER_COMPILE_DEFINITIONS",
-        values = [
-            '-DBOARD=2'
-        ]
+        values = user_compile_defs
     )
     app.set_app_config(key='USER_COMPILE_OTHER_FLAGS', values='-Wno-unused-variable -Wno-unused-function -Wno-unused-but-set-variable')
     #app.set_app_config(key = 'USER_COMPILE_WARNINGS_AS_ERRORS',values = 'TRUE')
+    if (args.build_type.lower() == "debug"):
+        app.set_app_config(key='USER_COMPILE_OPTIMIZATION_LEVEL', values=['-O0'])
+        app.set_app_config(key='USER_COMPILE_DEBUG_LEVEL', values=['-g3'])
+        app.set_app_config(key='USER_COMPILE_DEBUG_OTHER_FLAGS', values=['-DDEBUG=1'])
+        app.append_app_config(key='USER_LINK_LIBRARIES', values=['-lm'])
 
     values = app.get_app_config()
     print("Application configuration before build:")
@@ -91,7 +133,7 @@ if __name__ == "__main__":
     print("Test script is running.")
     print("Current working directory:", os.getcwd())
     parser = argparse.ArgumentParser(description="Test script for myir.")
-    #parser.add_argument("--top", help="Top directory", type=str)
+    parser.add_argument("--top", help="Top directory", type=str, required=True)
     parser.add_argument("--build_type", help="Build type (debug/release)", type=str, default="debug")
     #parser.add_argument("--target", help="Target name", type=str)
     parser.add_argument("--project", help="Project name", type=str, required=True)
@@ -99,6 +141,8 @@ if __name__ == "__main__":
     parser.add_argument("--workspace", help="Workspace directory", type=str, required=True)
     parser.add_argument("--source", help="Source directory", type=str, required=True)
     parser.add_argument("--hardware", help="XSA hardware design file", type=str, required=True)
+    parser.add_argument("--fmc_board", help="FMC board type", type=str, default="none")
+    parser.add_argument("--mipi_port", help="selected MIPI port", type=str, default="0")
     args = parser.parse_args()
     if not args.project or not args.workspace or not args.source or not args.hardware:
         parser.print_help()

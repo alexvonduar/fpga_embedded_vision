@@ -1,23 +1,24 @@
 /*
-   MODIFICATION HISTORY:
-   
-   Ver   Who Date     Changes
-   ----- -------- -------- -----------------------------------------------
-   1.0	 Sakinder 06/01/22 Initial Release
-   1.1   Sakinder 06/08/22 Added IMX219 Camera functions.
-   -----------------------------------------------------------------------
+    MODIFICATION HISTORY:
+
+    Ver   Who Date     Changes
+    ----- -------- -------- -----------------------------------------------
+    1.0	 Sakinder 06/01/22 Initial Release
+    1.1   Sakinder 06/08/22 Added IMX219 Camera functions.
+    -----------------------------------------------------------------------
 */
 #include "imx219.h"
 #include <xil_types.h>
 #include <stdio.h>
 #include <xstatus.h>
-#include "xiicps.h"
+//#include "xiicps.h"
 #include "xparameters.h"
 #include "sleep.h"
 #include <xil_printf.h>
 #include "parameters.h"
-#include "../I2c_transections.h"
-#include "../init_camera.h"
+#include "I2c_transections.h"
+#include "init_camera.h"
+
 #define IIC_IMX219_ADDR  	        0x10
 #define IMX219_ANA_GAIN_GLOBAL      0x0157
 #define IMX219_SENSOR_ID			0x0219
@@ -361,30 +362,30 @@ struct reginfo cfg1_imx219_1920_1080p_60fps[] =
         {SEQUENCE_END, 0x00}
 };
 #if 1
-int imx219_read(XIicPs *IicInstance,u16 addr,u8 *read_buf)
+int imx219_read(XIIC *IicInstance,u16 addr,u8 *read_buf)
 {
 	*read_buf=i2c_reg16_read(IicInstance,IIC_IMX219_ADDR,addr);
 	return XST_SUCCESS;
 }
-int imx219_write(XIicPs *IicInstance,u16 addr,u8 data)
+int imx219_write(XIIC *IicInstance,u16 addr,u8 data)
 {
 	return i2c_reg16_write(IicInstance,IIC_IMX219_ADDR,addr,data);
 }
 #else
 
-int imx219_write(XIicPs * iic, u16 addr, u8 data) {
+int imx219_write(XIIC * iic, u16 addr, u8 data) {
 	u8 buf[3];
 
 	buf[0] = addr >> 8;
 	buf[1] = addr & 0xff;
 	buf[2] = data;
 
-	while (TransmitFifoFill(iic) || XIicPs_BusIsBusy(&iic)) { //while (XIicPs_BusIsBusy(&iic)) {
+	while (TransmitFifoFill(iic) || XIIC_BusIsBusy(&iic)) { //while (XIIC_BusIsBusy(&iic)) {
 		usleep(1);
 		xil_printf("waiting for transmit...\r\n");
 	}
 
-	if (XIicPs_MasterSendPolled(iic, buf, 3, IIC_IMX219_ADDR) != XST_SUCCESS) {
+	if (XIIC_MasterSendPolled(iic, buf, 3, IIC_IMX219_ADDR) != XST_SUCCESS) {
 		xil_printf("imx219 write failed, addr: %x\r\n", addr);
 		return XST_FAILURE;
 	}
@@ -393,17 +394,17 @@ int imx219_write(XIicPs * iic, u16 addr, u8 data) {
 	return XST_SUCCESS;
 }
 
-int imx219_read(XIicPs * iic, u16 addr, u8 *data) {
+int imx219_read(XIIC * iic, u16 addr, u8 *data) {
 	u8 buf[2];
 
 	buf[0] = addr >> 8;
 	buf[1] = addr & 0xff;
 
-	if (XIicPs_MasterSendPolled(&iic, buf, 2, IIC_IMX219_ADDR) != XST_SUCCESS) {
+	if (XIIC_MasterSendPolled(&iic, buf, 2, IIC_IMX219_ADDR) != XST_SUCCESS) {
 		xil_printf("imx219 write failed\r\n");
 		return XST_FAILURE;
 	}
-	if (XIicPs_MasterRecvPolled(&iic, data, 1, IIC_IMX219_ADDR) != XST_SUCCESS) {
+	if (XIIC_MasterRecvPolled(&iic, data, 1, IIC_IMX219_ADDR) != XST_SUCCESS) {
 		xil_printf("imx219 receive failed\r\n");
 		return XST_FAILURE;
 	}
@@ -412,14 +413,14 @@ int imx219_read(XIicPs * iic, u16 addr, u8 *data) {
 
 #endif
 #if 0
-int scan_read(XIicPs *IicInstance,u16 addr,u8 *read_buf,u16 scan_addr)
+int scan_read(XIIC *IicInstance,u16 addr,u8 *read_buf,u16 scan_addr)
 {
 	*read_buf=i2c_reg16_read(IicInstance,scan_addr,addr);
 	return XST_SUCCESS;
 }
 #endif
 
-void imx219_sensor_write_array(XIicPs *IicInstance, struct reginfo *regarray)
+void imx219_sensor_write_array(XIIC *IicInstance, struct reginfo *regarray)
 {
 	int i = 0;
 	while (regarray[i].reg != SEQUENCE_END) {
@@ -427,13 +428,13 @@ void imx219_sensor_write_array(XIicPs *IicInstance, struct reginfo *regarray)
 		i++;
 	}
 }
-int write_imx219_camera_reg(XIicPs *IicInstance,u16 addr,u8 data)
+int write_imx219_camera_reg(XIIC *IicInstance,u16 addr,u8 data)
 {
     imx219_write(IicInstance,addr,data);
     printf("IMX219 Reg Address = %x, Wrote Value = %x \n",addr,data);
     return XST_SUCCESS;
 }
-int read_imx219_camera_reg(XIicPs *IicInstance,u16 addr)
+int read_imx219_camera_reg(XIIC *IicInstance,u16 addr)
 {
     int Status;
 	u8 sensor_id[2];
@@ -441,13 +442,13 @@ int read_imx219_camera_reg(XIicPs *IicInstance,u16 addr)
     printf("IMX219 Reg Address = %x, Read Value = %x \n",addr,sensor_id[0]);
     return XST_SUCCESS;
 }
-int write_read_imx219_camera_reg(XIicPs *IicInstance,u16 addr,u8 data)
+int write_read_imx219_camera_reg(XIIC *IicInstance,u16 addr,u8 data)
 {
     write_imx219_camera_reg(IicInstance,addr,data);
     read_imx219_camera_reg(IicInstance,addr);
     return XST_SUCCESS;
 }
-int imx219_camera_sensor_init(XIicPs *IicInstance)
+int imx219_camera_sensor_init(XIIC *IicInstance)
 {
 	u8 sensor_id[2] ;
 	imx219_read(IicInstance, 0x0000, &sensor_id[0]);
@@ -462,9 +463,9 @@ int imx219_camera_sensor_init(XIicPs *IicInstance)
         imx219_sensor_write_array(IicInstance,cfg_imx219_1280_702p_60fps);
         #endif
         imx219_write(IicInstance, IMX219_ANA_GAIN_GLOBAL, 50);
-    	imx219_read(IicInstance, 0x0158, &sensor_id[0]);
-    	imx219_read(IicInstance, 0x0159, &sensor_id[1]);
-    	printf("Read imx219 id IMX219_ANA_GAIN_GLOBAL 0x0158: %x  id 0x0159: %x\n", sensor_id[0], sensor_id[1]);
+        imx219_read(IicInstance, 0x0158, &sensor_id[0]);
+        imx219_read(IicInstance, 0x0159, &sensor_id[1]);
+        printf("Read imx219 id IMX219_ANA_GAIN_GLOBAL 0x0158: %x  id 0x0159: %x\n", sensor_id[0], sensor_id[1]);
         //imx219_write(IicInstance, 0x0190, 1);
 //    	imx219_read(IicInstance, 0x0190, &sensor_id[0]);
 //    	printf("Read imx219 id 0x0190 LSC_ENABLE_A                  = %x\n",sensor_id[0]);
@@ -542,14 +543,14 @@ int imx219_camera_sensor_init(XIicPs *IicInstance)
         return 0;
     }
 }
-int imx219_read_register(XIicPs *IicInstance,u16 addr)
+int imx219_read_register(XIIC *IicInstance,u16 addr)
 {
 	u8 sensor_id[1];
     imx219_read(IicInstance, addr, &sensor_id[0]);
     printf("Read imx219 Read Reg Address  =  %x   Value = %x\n",addr,sensor_id[0]);
 	return 0;
 }
-int imx219_write_register(XIicPs *IicInstance,u16 addr,u8 data)
+int imx219_write_register(XIIC *IicInstance,u16 addr,u8 data)
 {
 	imx219_write(IicInstance,REG_MODE_SEL,0x00);
 	imx219_write(IicInstance,addr,data);
@@ -557,7 +558,7 @@ int imx219_write_register(XIicPs *IicInstance,u16 addr,u8 data)
     printf("Read imx219 Write Reg Address  =  %x   Value = %x\n",addr,data);
 	return 0;
 }
-int imx219_write_read_register(XIicPs *IicInstance,u16 addr,u8 data)
+int imx219_write_read_register(XIIC *IicInstance,u16 addr,u8 data)
 {
 	imx219_write_register(IicInstance,addr,data);
 	imx219_read_register(IicInstance,addr);

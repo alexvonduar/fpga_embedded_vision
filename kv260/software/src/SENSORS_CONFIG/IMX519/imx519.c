@@ -11,14 +11,14 @@
 #include <xil_types.h>
 #include <stdio.h>
 #include <xstatus.h>
-#include "xiicps.h"
+//#include "xiicps.h"
 #include "xparameters.h"
 #include "sleep.h"
 #include <xil_printf.h>
 #include "parameters.h"
-#include "../I2c_transections.h"
-#include "../init_camera.h"
-#include "../imx_registers.h"
+#include "I2c_transections.h"
+#include "init_camera.h"
+#include "imx_registers.h"
 #define IIC_IMX519_ADDR  	        0x9A
 #define IMX519_REG_CHIP_ID		    0x0016
 #define IMX519_CHIP_ID			    0x0519
@@ -728,16 +728,16 @@ struct reginfo cfg_imx519_testpattern_bar_regs[] =
     {REG_MODE_SEL, 0x01},
     {SEQUENCE_END, 0x00}
 };
-int imx519_read(XIicPs *IicInstance,u16 addr,u8 *read_buf)
+int imx519_read(XIIC *IicInstance,u16 addr,u8 *read_buf)
 {
     *read_buf=i2c_reg16_read(IicInstance,IIC_IMX519_ADDR,addr);
     return XST_SUCCESS;
 }
-int imx519_write(XIicPs *IicInstance,u16 addr,u8 data)
+int imx519_write(XIIC *IicInstance,u16 addr,u8 data)
 {
     return i2c_reg16_write(IicInstance,IIC_IMX519_ADDR,addr,data);
 }
-void imx_519_sensor_write_array(XIicPs *IicInstance, struct reginfo *regarray)
+void imx_519_sensor_write_array(XIIC *IicInstance, struct reginfo *regarray)
 {
     int i = 0;
     while (regarray[i].reg != SEQUENCE_END) {
@@ -745,7 +745,7 @@ void imx_519_sensor_write_array(XIicPs *IicInstance, struct reginfo *regarray)
         i++;
     }
 }
-int imx519_sensor_init(XIicPs *IicInstance,u16 config_number)
+int imx519_sensor_init(XIIC *IicInstance,u16 config_number)
 {
     u8 sensor_id[2];
     imx519_read(IicInstance, 0x0016, &sensor_id[0]);
@@ -772,14 +772,14 @@ int imx519_sensor_init(XIicPs *IicInstance,u16 config_number)
     }
     return 0;
 }
-int imx519_read_register(XIicPs *IicInstance,u16 addr)
+int imx519_read_register(XIIC *IicInstance,u16 addr)
 {
     u8 sensor_id[1];
     imx519_read(IicInstance, addr, &sensor_id[0]);
     printf("Read imx519 Read Reg Address  =  %x   Value = %x\n",addr,sensor_id[0]);
     return 0;
 }
-int imx519_write_register(XIicPs *IicInstance,u16 addr,u8 data)
+int imx519_write_register(XIIC *IicInstance,u16 addr,u8 data)
 {
     imx519_write(IicInstance,REG_MODE_SEL,0x00);
     imx519_write(IicInstance,addr,data);
@@ -787,7 +787,7 @@ int imx519_write_register(XIicPs *IicInstance,u16 addr,u8 data)
     printf("Read imx519 Write Reg Address  =  %x   Value = %x\n",addr,data);
     return 0;
 }
-int imx519_write_read_register(XIicPs *IicInstance,u16 addr,u8 data)
+int imx519_write_read_register(XIIC *IicInstance,u16 addr,u8 data)
 {
     imx519_write_register(IicInstance,addr,data);
     imx519_read_register(IicInstance,addr);

@@ -26,7 +26,7 @@
 
 5. [RPI MIPI + KV260 DisplayPort](doc/RPI_MIPI_KV260_DP.md)
 
-6. [IMX219 RaspberryPi 15pin MIPI camera module + Mercury+ ST1 + XU6](doc/IMX219_RPI_MIPI0_ME_ST1_XU6_2CG_DP.md)
+6. [Mercury+ ST1 + XU6](doc/ME_ST1_XU6_2CG.md)
 
 ## Boards
 

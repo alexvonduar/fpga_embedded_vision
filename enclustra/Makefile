@@ -7,9 +7,12 @@ SOM := ME-XU6-2CG-1E-D10H
 #BOARD ?= ME_ST1_XU6_2CG_1E_D10H
 BOARD ?= me_st1_xu6_2cg
 INPUT ?= rpi_mipi0
+MIPI_PORT ?= 0
+FMC_BOARD ?=
 OUTPUT ?= dp
 VIVADO_VER ?= 2025.1
 PROJECT_NAME ?= $(INPUT)_$(OUTPUT)_$(BOARD)
+BUILD ?= Debug
 
 ifeq ("$(wildcard $(TOP))", "")
 $(error TOP ${TOP} does not exist)
@@ -24,7 +27,7 @@ VIVADO_PRJ := $(VIVADO_DIR)/$(PROJECT_NAME).xpr
 VIVADO_HW := $(VIVADO_DIR)/$(PROJECT_NAME).xsa
 
 $(VIVADO_PRJ): ${CURDIR}/scripts/create_project.tcl
-	vivado -mode batch -notrace -source $< -tclargs $(SOM) project_name=$(PROJECT_NAME) vivado_dir=${VIVADO_DIR}
+	vivado -mode batch -notrace -source $< -tclargs $(SOM) project_name=$(PROJECT_NAME) vivado_dir=${VIVADO_DIR} fmc_board=${FMC_BOARD} mipi_port=${MIPI_PORT}
 
 $(VIVADO_HW) : ${CURDIR}/scripts/run.tcl $(CURDIR)/scripts/utils.tcl $(VIVADO_PRJ)
 	vivado -mode batch -notrace -source $< -tclargs top=${TOP} project=$(PROJECT_NAME) vivado_dir=${VIVADO_DIR} output=${VIVADO_HW}
@@ -51,7 +54,7 @@ BOOT_BIN := ${TARGET_DIR}/BOOT.BIN
 #	xsct $< ${PROJECT_NAME} ${VITIS_PLATFORM_NAME} ${TOP} ${VITIS_DIR} ${VIVADO_HW}
 
 $(APP_BIN): ${APP_SCRIPT} $(APP_SRCs) $(VIVADO_HW)
-	vitis -s ${APP_SCRIPT} --hardware=${VIVADO_HW} --source=${APP_SRC_DIR} --workspace=${VITIS_DIR} --project=${PROJECT_NAME}
+	vitis -s ${APP_SCRIPT} --hardware=${VIVADO_HW} --source=${APP_SRC_DIR} --workspace=${VITIS_DIR} --project=${PROJECT_NAME} --top=${TOP} --build_type=${BUILD} --fmc_board=${FMC_BOARD} --mipi_port=${MIPI_PORT}
 
 $(BOOT_BIN): $(APP_BIN) $(BIF_FILE)
 	@echo "Building boot.bin"

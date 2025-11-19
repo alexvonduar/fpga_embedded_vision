@@ -10,7 +10,8 @@
     1.5   Sakinder 07/06/22 Added IMX682 Camera functions.
     -----------------------------------------------------------------------
 */
-#include <xiicps.h>
+#include "init_camera.h"
+#include <xiltimer.h>
 #include <xil_printf.h>
 #include <xil_types.h>
 #include <xstatus.h>
@@ -23,9 +24,9 @@
 #include "AR1335/ar1335.h"
 #include "OV5640/ov5640.h"
 #include "OV5647/ov5647.h"
-#include "init_camera.h"
 #include "parameters.h"
-XIicPs iic_cam;
+
+XIIC iic_cam;
 
 #if defined(BOARD) && (BOARD == KV260)
 #if !defined(SDT)
@@ -34,13 +35,32 @@ XIicPs iic_cam;
 #define IIC_DEVICEID        XPAR_XIICPS_0_BASEADDR
 #endif
 #elif defined(BOARD) && (BOARD == ME_XU6_ST1)
+#if defined(OPSERO)
+#if !defined(SDT)
+#define IIC_DEVICEID        XPAR_FMC_CAM_IIC_DEVICE_ID
+#define FMC_CAM_IO_DEVICEID XPAR_FMC_CAM_IO_DEVICE_ID
+#define LED_GPIO_DEVICEID   XPAR_LED_DEVICE_ID
+#else
+#define IIC_DEVICEID        XPAR_FMC_CAM_IIC_BASEADDR
+#define FMC_CAM_IO_DEVICEID XPAR_FMC_CAM_IO_BASEADDR
+#define LED_GPIO_DEVICEID   XPAR_LED_BASEADDR
+#endif
+#define RPI_CAM_POW_ON      0
+#define RPI_CAM_IO1         1
+#else
 #if !defined(SDT)
 #define IIC_DEVICEID        XPAR_XIICPS_1_DEVICE_ID
 #else
 #define IIC_DEVICEID        XPAR_XIICPS_1_BASEADDR
 #endif
+#endif
 #else
 #error "Please define BOARD in parameters.h"
+#endif
+
+#if defined(OPSERO)
+#include "xgpio.h"
+XGpio fmc_cam_gpio;
 #endif
 
 #define IIC_SCLK_RATE		400000
@@ -49,23 +69,63 @@ u8 SendBuffer [10];
 
 int init_camera()
 {
-
-    XIicPs_Config *iic_conf;
     int Status;
 
-    iic_conf = XIicPs_LookupConfig(IIC_DEVICEID);
-    XIicPs_CfgInitialize(&iic_cam,iic_conf,iic_conf->BaseAddress);
-    if (XIicPs_SelfTest(&iic_cam) != XST_SUCCESS) {
-        xil_printf("XIicPs_SelfTest() failed\r\n");
+#if defined(BOARD) && (BOARD == ME_XU6_ST1)
+#if 0
+    XGpio_Config * led_config = XGpio_LookupConfig(LED_GPIO_DEVICEID);
+    if (led_config == NULL) {
+        xil_printf("XGpioPs_LookupConfig() failed\r\n");
+        return XST_FAILURE;
+    }
+    if (XGpio_CfgInitialize(&fmc_cam_gpio, led_config, led_config->BaseAddress)) {
+        xil_printf("XGpioPs_CfgInitialize() failed\r\n");
         return XST_FAILURE;
     }
 
-    XIicPs_SetSClk(&iic_cam, IIC_SCLK_RATE);
+    // Set all LEDs to output
+    XGpio_SetDataDirection(&fmc_cam_gpio, 1, 0x00);
+    // Turn off all LEDs
+    XGpio_DiscreteClear(&fmc_cam_gpio, 1, 0xFF);
+    usleep(100000);
+    // Turn on LED 0 to indicate camera init start
+    XGpio_DiscreteSet(&fmc_cam_gpio, 1, 0x07);
+    usleep(100000);
+    // Turn off all LEDs
+    XGpio_DiscreteClear(&fmc_cam_gpio, 1, 0xFF);
+    usleep(100000);
+    // Turn on LED 1 to indicate camera init in progress
+    XGpio_DiscreteSet(&fmc_cam_gpio, 1, 0x02);
+    usleep(100000);
+#endif
+#endif
 
-    i2c_init(&iic_cam, IIC_DEVICEID,IIC_SCLK_RATE);
+#if defined(FMC_CAM_IO_DEVICEID)
+    // power off and power on the camera via FMC_CAM_IO
+    XGpio_Config *gpio_config = XGpio_LookupConfig(FMC_CAM_IO_DEVICEID);
+    if (gpio_config == NULL) {
+        xil_printf("XGpioPs_LookupConfig() failed\r\n");
+        return XST_FAILURE;
+    }
+    if (XGpio_CfgInitialize(&fmc_cam_gpio, gpio_config, gpio_config->BaseAddress)) {
+        xil_printf("XGpioPs_CfgInitialize() failed\r\n");
+        return XST_FAILURE;
+    }
+
+    // Reset and enable RPI power supplies
+    XGpio_SetDataDirection(&fmc_cam_gpio, 1, 0);
+    XGpio_DiscreteClear(&fmc_cam_gpio, 1, 1);
+    usleep(100000);
+    XGpio_DiscreteSet(&fmc_cam_gpio, 1, 1);
+    usleep(100000);
+
+    xil_printf("Reset and enabled RPI Camera power supplies\r\n");
+#endif
+
+    i2c_init(&iic_cam, IIC_DEVICEID, IIC_SCLK_RATE);
 #if defined(BOARD) && (BOARD == KV260)
     SendBuffer[0]= 0x02;
-    Status = XIicPs_MasterSendPolled(&iic_cam, SendBuffer, 1, SW_IIC_ADDR);
+    Status = XIIC_MasterSendPolled(&iic_cam, SendBuffer, 1, SW_IIC_ADDR);
     if (Status != XST_SUCCESS) {
         print("TCA9546 switch channel to IAS1 Failed\n\r");
         return XST_FAILURE;
@@ -76,7 +136,7 @@ int init_camera()
         //return 153;
     }
     SendBuffer[0]= 0x04;
-    Status = XIicPs_MasterSendPolled(&iic_cam, SendBuffer, 1, SW_IIC_ADDR);
+    Status = XIIC_MasterSendPolled(&iic_cam, SendBuffer, 1, SW_IIC_ADDR);
     if (Status != XST_SUCCESS) {
         print("I2C Write Error\n\r");
         return XST_FAILURE;
@@ -191,7 +251,7 @@ void write_imx219_reg(u16 addr,u8 data)
         print("Unable to Write IMX219 Camera Sensor\n\r");
     }
 }
-int scan_sensor1(XIicPs *IicInstance)
+int scan_sensor1(XIIC *IicInstance)
 {
     u8 sensor_id[2];
     for(int address = 0; address < 256; address++ )
@@ -210,7 +270,7 @@ int scan_sensor1(XIicPs *IicInstance)
     }
     return 0;
 }
-int scan_sensor2(XIicPs *IicInstance)
+int scan_sensor2(XIIC *IicInstance)
 {
     u8 sensor_id[2];
     for(int address = 0; address < 255; address++)
@@ -221,7 +281,7 @@ int scan_sensor2(XIicPs *IicInstance)
     }
     return 0;
 }
-int scan_sensor3(XIicPs *IicInstance)
+int scan_sensor3(XIIC *IicInstance)
 {
     u8 sensor_id[2];
     for(int address = 0; address < 256; address++ )

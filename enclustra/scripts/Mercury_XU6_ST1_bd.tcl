@@ -230,14 +230,53 @@ set_property -dict [list \
   CONFIG.DPY_LINE_RATE {912} \
   CONFIG.SupportLevel {1} \
   CONFIG.VFB_TU_WIDTH {1} \
-  CONFIG.HP_IO_BANK_SELECTION {64} \
-  CONFIG.CLK_LANE_IO_LOC {AC9} \
-  CONFIG.CLK_LANE_IO_LOC_NAME {IO_L1P_T0L_N0_DBC_64} \
-  CONFIG.DATA_LANE0_IO_LOC {AE9} \
-  CONFIG.DATA_LANE0_IO_LOC_NAME {IO_L2P_T0L_N2_64} \
-  CONFIG.DATA_LANE1_IO_LOC {AB8} \
-  CONFIG.DATA_LANE1_IO_LOC_NAME {IO_L3P_T0L_N4_AD15P_64} \
 ] [get_bd_cells mipi_csi2_rx_subsyst_0]
+
+if { $fmc_board == "opsero"} {
+  if { $mipi_port == "1" }  {
+    set_property -dict [list \
+      CONFIG.HP_IO_BANK_SELECTION {65} \
+      CONFIG.CLK_LANE_IO_LOC {L7} \
+      CONFIG.CLK_LANE_IO_LOC_NAME {IO_L13P_T2L_N0_GC_QBC_65} \
+      CONFIG.DATA_LANE0_IO_LOC {L1} \
+      CONFIG.DATA_LANE0_IO_LOC_NAME {IO_L7P_T1L_N0_QBC_AD13P_65} \
+      CONFIG.DATA_LANE1_IO_LOC {J1} \
+      CONFIG.DATA_LANE1_IO_LOC_NAME {IO_L8P_T1L_N2_AD5P_65} \
+    ] [get_bd_cells mipi_csi2_rx_subsyst_0]
+  } elseif { $mipi_port == "2" } {
+    set_property -dict [list \
+      CONFIG.HP_IO_BANK_SELECTION {66} \
+      CONFIG.CLK_LANE_IO_LOC {D7} \
+      CONFIG.CLK_LANE_IO_LOC_NAME {IO_L13P_T2L_N0_GC_QBC_66} \
+      CONFIG.DATA_LANE0_IO_LOC {C8} \
+      CONFIG.DATA_LANE0_IO_LOC_NAME {IO_L22P_T3U_N6_DBC_AD0P_66} \
+      CONFIG.DATA_LANE1_IO_LOC {E5} \
+      CONFIG.DATA_LANE1_IO_LOC_NAME {IO_L14P_T2L_N2_GC_66} \
+    ] [get_bd_cells mipi_csi2_rx_subsyst_0]
+  }
+} else {
+  if { $mipi_port == "0" }  {
+    set_property -dict [list \
+      CONFIG.HP_IO_BANK_SELECTION {64} \
+      CONFIG.CLK_LANE_IO_LOC {AC9} \
+      CONFIG.CLK_LANE_IO_LOC_NAME {IO_L1P_T0L_N0_DBC_64} \
+      CONFIG.DATA_LANE0_IO_LOC {AE9} \
+      CONFIG.DATA_LANE0_IO_LOC_NAME {IO_L2P_T0L_N2_64} \
+      CONFIG.DATA_LANE1_IO_LOC {AB8} \
+      CONFIG.DATA_LANE1_IO_LOC_NAME {IO_L3P_T0L_N4_AD15P_64} \
+    ] [get_bd_cells mipi_csi2_rx_subsyst_0]
+  } elseif { $mipi_port == "1" } {
+    set_property -dict [list \
+      CONFIG.HP_IO_BANK_SELECTION {64} \
+      CONFIG.CLK_LANE_IO_LOC {AD7} \
+      CONFIG.CLK_LANE_IO_LOC_NAME {IO_L4P_T0U_N6_DBC_AD7P_64} \
+      CONFIG.DATA_LANE0_IO_LOC {AB6} \
+      CONFIG.DATA_LANE0_IO_LOC_NAME {IO_L6P_T0U_N10_AD6P_64} \
+      CONFIG.DATA_LANE1_IO_LOC {AB7} \
+      CONFIG.DATA_LANE1_IO_LOC_NAME {IO_L5P_T0U_N8_AD14P_64} \
+    ] [get_bd_cells mipi_csi2_rx_subsyst_0]
+  }
+}
 
 # Create instance: axi_vdma_0, and set properties
 set axi_vdma_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_vdma:6.3 axi_vdma_0 ]
@@ -298,7 +337,7 @@ set_property -dict [ list \
   CONFIG.MAX_DATA_WIDTH {10} \
   CONFIG.MAX_ROWS {1080} \
   CONFIG.NR_LAYERS {2} \
- ] [get_bd_cells v_mix_0]
+] [get_bd_cells v_mix_0]
 
 set CONST1 [ create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconstant:1.0 CONST1 ]
 set_property -dict [list \
@@ -314,9 +353,65 @@ set_property -dict [list \
 
 # Create instance: axi_smc, and set properties
 set axi_smc [ create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 axi_smc ]
+set_property -dict [ list \
+  CONFIG.NUM_SI {2} \
+] [get_bd_cells axi_smc]
+
+if {$fmc_board == "opsero"} {
+  # enable pl_ps irq1
   set_property -dict [ list \
-   CONFIG.NUM_SI {2} \
- ] [get_bd_cells axi_smc]
+    CONFIG.PSU__USE__IRQ1  {1} \
+  ] [get_bd_cells zynq_ultra_ps_e]
+  # Create MIPI I2C interface
+  set FMC_CAM_IIC [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic FMC_CAM_IIC ]
+  set_property -dict [ list \
+    CONFIG.TEN_BIT_ADR {10_bit} \
+    CONFIG.IIC_FREQ_KHZ {400} \
+  ] [get_bd_cells FMC_CAM_IIC]
+  set FMC_CAM_IIC [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:iic_rtl:1.0 FMC_CAM_IIC ]
+  connect_bd_intf_net [get_bd_intf_ports FMC_CAM_IIC] [get_bd_intf_pins FMC_CAM_IIC/IIC]
+  connect_bd_net [get_bd_pins FMC_CAM_IIC/iic2intc_irpt] [get_bd_pins zynq_ultra_ps_e/pl_ps_irq1]
+  # Create GPIO for FMC camera power down and reset
+  set FMC_CAM_IO [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio FMC_CAM_IO ]
+  set_property -dict [ list \
+    CONFIG.C_GPIO_WIDTH {2} \
+    CONFIG.C_All_INPUTS {0} \
+    CONFIG.C_ALL_OUTPUTS {0} \
+    CONFIG.C_DOUT_DEFAULT {0x00000003} \
+  ] [get_bd_cells FMC_CAM_IO]
+  set FMC_CAM_IO [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:gpio_rtl:1.0 FMC_CAM_IO ]
+  connect_bd_intf_net [get_bd_intf_ports FMC_CAM_IO] [get_bd_intf_pins FMC_CAM_IO/GPIO]
+  # Create constants for FMC camera IO direction and output enable
+  # 0 = input
+  # 1 = output
+  set FMC_CAM_IO_DIR [ create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconstant FMC_CAM_IO_DIR]
+  set_property -dict [list \
+    CONFIG.CONST_VAL {3} \
+    CONFIG.CONST_WIDTH {2} \
+  ] [get_bd_cells FMC_CAM_IO_DIR]
+  set FMC_CAM_IO_DIR [ create_bd_port -dir O -from 1 -to 0 FMC_CAM_IO_DIR ]
+  connect_bd_net [get_bd_ports FMC_CAM_IO_DIR] [get_bd_pins FMC_CAM_IO_DIR/dout]
+  # Create constant for FMC camera IO output enable negated
+  # 0 = output enabled
+  # 1 = high impedance
+  set FMC_CAM_IO_OE_N [ create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconstant FMC_CAM_IO_OE_N]
+  set_property -dict [list \
+    CONFIG.CONST_VAL {2} \
+    CONFIG.CONST_WIDTH {2} \
+  ] [get_bd_cells FMC_CAM_IO_OE_N]
+  set FMC_CAM_IO_OE_N [ create_bd_port -dir O -from 1 -to 0 FMC_CAM_IO_OE_N ]
+  connect_bd_net [get_bd_ports FMC_CAM_IO_OE_N] [get_bd_pins FMC_CAM_IO_OE_N/dout]
+  # Create constant for FMC camera 1 and camera 3 clock selection
+  # SEL[0]: 0=CAM1_CLK => LA01 1=CAM1_CLK => LA16
+  # SEL[1]: 0=CAM3_CLK => LA26 1=CAM3_CLK => LA31
+  set FMC_CAM_CLK_SEL [ create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconstant FMC_CAM_CLK_SEL ]
+  set_property -dict [list \
+    CONFIG.CONST_VAL {0} \
+    CONFIG.CONST_WIDTH {2} \
+  ] [get_bd_cells FMC_CAM_CLK_SEL]
+  set FMC_CAM_CLK_SEL [ create_bd_port -dir O -from 1 -to 0 FMC_CAM_CLK_SEL ]
+  connect_bd_net [get_bd_ports FMC_CAM_CLK_SEL] [get_bd_pins FMC_CAM_CLK_SEL/dout]
+}
 
 connect_bd_net [get_bd_pins zynq_ultra_ps_e/maxihpm0_lpd_aclk] [get_bd_pins zynq_ultra_ps_e/pl_clk0]
 create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 ps_sys_rst
@@ -400,7 +495,11 @@ connect_bd_net [get_bd_pins CLK_148M5/clk_out1] [get_bd_pins v_axi4s_vid_out_0/v
 #connect_bd_net [get_bd_pins CLK_148M5/clk_out1] [get_bd_pins zynq_ultra_ps_e/maxihpm1_fpd_aclk]
 
 create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 axi_interconnect_0
+if { $fmc_board == "opsero"} {
+set_property -dict [list CONFIG.NUM_MI {11} CONFIG.NUM_SI {1}] [get_bd_cells axi_interconnect_0]
+} else {
 set_property -dict [list CONFIG.NUM_MI {9} CONFIG.NUM_SI {1}] [get_bd_cells axi_interconnect_0]
+}
 connect_bd_intf_net [get_bd_intf_pins zynq_ultra_ps_e/M_AXI_HPM0_LPD] [get_bd_intf_pins axi_interconnect_0/S00_AXI]
 connect_bd_net [get_bd_pins axi_interconnect_0/ACLK    ] [get_bd_pins zynq_ultra_ps_e/pl_clk0]
 connect_bd_net [get_bd_pins axi_interconnect_0/ARESETN ] [get_bd_pins ps_sys_rst/interconnect_aresetn]
@@ -433,11 +532,25 @@ connect_bd_net      [get_bd_pins      axi_interconnect_0/M07_ARESETN] [get_bd_pi
 connect_bd_intf_net [get_bd_intf_pins axi_interconnect_0/M08_AXI    ] [get_bd_intf_pins v_tc_0/ctrl]
 connect_bd_net      [get_bd_pins      axi_interconnect_0/M08_ACLK   ] [get_bd_pins zynq_ultra_ps_e/pl_clk0]
 connect_bd_net      [get_bd_pins      axi_interconnect_0/M08_ARESETN] [get_bd_pins ps_sys_rst/interconnect_aresetn]
+if { $fmc_board == "opsero"} {
+connect_bd_intf_net [get_bd_intf_pins axi_interconnect_0/M09_AXI    ] [get_bd_intf_pins FMC_CAM_IIC/S_AXI]
+connect_bd_net      [get_bd_pins      axi_interconnect_0/M09_ACLK   ] [get_bd_pins zynq_ultra_ps_e/pl_clk0]
+connect_bd_net      [get_bd_pins      axi_interconnect_0/M09_ARESETN] [get_bd_pins ps_sys_rst/interconnect_aresetn]
+connect_bd_intf_net [get_bd_intf_pins axi_interconnect_0/M10_AXI    ] [get_bd_intf_pins FMC_CAM_IO/S_AXI]
+connect_bd_net      [get_bd_pins      axi_interconnect_0/M10_ACLK   ] [get_bd_pins zynq_ultra_ps_e/pl_clk0]
+connect_bd_net      [get_bd_pins      axi_interconnect_0/M10_ARESETN] [get_bd_pins ps_sys_rst/interconnect_aresetn]
+}
 
 connect_bd_net [get_bd_pins ps_sys_rst/peripheral_aresetn] [get_bd_pins system_management_wiz/s_axi_aresetn]
 connect_bd_net [get_bd_pins zynq_ultra_ps_e/pl_clk0] [get_bd_pins system_management_wiz/s_axi_aclk]
 connect_bd_net [get_bd_pins ps_sys_rst/peripheral_aresetn] [get_bd_pins led/s_axi_aresetn]
 connect_bd_net [get_bd_pins zynq_ultra_ps_e/pl_clk0] [get_bd_pins led/s_axi_aclk]
+if { $fmc_board == "opsero"} {
+connect_bd_net [get_bd_pins ps_sys_rst/peripheral_aresetn] [get_bd_pins FMC_CAM_IIC/s_axi_aresetn]
+connect_bd_net [get_bd_pins zynq_ultra_ps_e/pl_clk0] [get_bd_pins FMC_CAM_IIC/s_axi_aclk]
+connect_bd_net [get_bd_pins ps_sys_rst/peripheral_aresetn] [get_bd_pins FMC_CAM_IO/s_axi_aresetn]
+connect_bd_net [get_bd_pins zynq_ultra_ps_e/pl_clk0] [get_bd_pins FMC_CAM_IO/s_axi_aclk]
+}
 connect_bd_net [get_bd_pins CLK_148M5_RST/peripheral_aresetn] [get_bd_pins mipi_csi2_rx_subsyst_0/lite_aresetn]
 connect_bd_net [get_bd_pins CLK_148M5_RST/peripheral_aresetn] [get_bd_pins mipi_csi2_rx_subsyst_0/video_aresetn]
 connect_bd_net [get_bd_pins CLK_148M5_RST/peripheral_aresetn] [get_bd_pins v_demosaic_0/ap_rst_n]
