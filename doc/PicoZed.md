@@ -1,7 +1,9 @@
+#PicoZed
+
 ##Board
 
 [PicoZed](Boards.md###PicoZed)
 
-## Camera
+##Project
 
-## Project
+###Camera

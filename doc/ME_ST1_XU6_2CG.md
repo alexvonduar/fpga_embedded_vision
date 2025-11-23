@@ -1,9 +1,9 @@
-# Mercury+ ST1 + XU6
+#Mercury+ ST1 + XU6
 
-## Board
+##Board
 [Mercury+ ST1 + XU6](Boards.md######Mercury+-ST1-+-XU6)
 
-## Onboard RPi Camera MIPI0
+##Onboard RPi Camera MIPI0
 
 ```shell
 source $(VITIS_PATH)/settings64.sh
@@ -16,7 +16,9 @@ imx219 module tested, video out 1080p at 60fps.
 <img title="IMX219 RPi at MIPI0 on Mercury ST+" src="pictures/me_xu6_st1_imx219.jpg" alt="Resizable Image" class="resizable-image" width="640"/>
 </p>
 
-## Opsero RPi Camera FMC
+##Opsero RPi Camera FMC
+
+###Design Settings
 
 Opsero RPi Camera FMC adapter have 4 RPI 15 pin mipi camera ports, only port 1 with CLK_SEL=0 and port 2 could be used on Mercury+ ST1 with XU6 2CG.
 |MIPI|Bank|FPGA PIN|Clock SEL|
@@ -34,6 +36,17 @@ According to [opsero detail description](https://camerafmc.com/docs/rpi-camera-f
 CAM_IO1_DIR|LA13_N|IO1direction (0=Cam-to-FPGA,1=FPGA-to-cam)|
 |CAM_IO0_OE_N|LA27_P|IO0 output enable (0=Enabled,1=Hi-Z output)|
 |CAM_IO1_OE_N|LA27_N|IO1 output enable (0=Enabled,1=Hi-Z output)|
+
+###Board Settings
+According to Opsero documents, it is recommended to set FMC VAD_J as 1.2V. Connect jumper 5-6: VCC_IO_A=VCC_OUT_B; 10-12,11-13: VCC_IO_B=VCC_IO_C=VCC_1V2.
+
+<p align="center">
+<img title="jumper setting" src="pictures/mercury_st1_vadj.jpg" alt="Resizable Image" class="resizable-image" width="640"/>
+</p>
+
+###Build and rund
+
+At top dir, run
 
 ```shell
 source $(VITIS_PATH)/settings64.sh

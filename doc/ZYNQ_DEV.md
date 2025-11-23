@@ -1,11 +1,13 @@
-#PYTHON1300 FMC + MYD-C7Z020
+#ZYNQ_DEV
 
 ##Board
-[MYD-C7Z020](Boards.md###MYD-C7Z020)
+[ZYNQ_DEV](Boards.md###ZYNQ_DEV)
 
-##Camera
+##PYTHON1300 FMC
 
-##Project
+###Camera
+
+###Build and rund
 
 This project is now updated to **2024.2**.
    * combined color space convert and chroma subsampling into single Video Processing Subsystem IP;
@@ -14,9 +16,9 @@ This project is now updated to **2024.2**.
 
 ```shell
 source $(VITIS_PATH)/settings64.sh
-make fmchc_python1300c_myir7020
+make fmchc_python1300c_zynqdev
 ```
 
 <p align="center">
-<img title="Onsemi PYTHON1300 FMC + MYD-C7Z020" src="pictures/myir7020_fmchc_python1300c.jpeg" alt="Resizable Image" class="resizable-image" width="640"/>
+<img title="Onsemi PYTHON1300 FMC + ZYNQ_DEV" src="pictures/zynq_dev_fmchc_python1300c.jpg" alt="Resizable Image" class="resizable-image" width="640"/>
 </p>
