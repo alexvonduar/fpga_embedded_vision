@@ -211,6 +211,18 @@ entity Mercury_XU6_ST1 is
     FMC_LA32_P                     : inout   std_logic;
     FMC_LA33_N                     : inout   std_logic;
     FMC_LA33_P                     : inout   std_logic;
+    FMC_DP1_C2M_N                  : inout   std_logic;
+    FMC_DP1_C2M_P                  : inout   std_logic;
+    FMC_DP1_M2C_N                  : inout   std_logic;
+    FMC_DP1_M2C_P                  : inout   std_logic;
+    FMC_DP2_C2M_N                  : inout   std_logic;
+    FMC_DP2_C2M_P                  : inout   std_logic;
+    FMC_DP2_M2C_N                  : inout   std_logic;
+    FMC_DP2_M2C_P                  : inout   std_logic;
+    FMC_DP3_C2M_N                  : inout   std_logic;
+    FMC_DP3_C2M_P                  : inout   std_logic;
+    FMC_DP3_M2C_N                  : inout   std_logic;
+    FMC_DP3_M2C_P                  : inout   std_logic;
     FMC_DP4_C2M_N                  : inout   std_logic;
     FMC_DP4_C2M_P                  : inout   std_logic;
     FMC_DP4_M2C_N                  : inout   std_logic;

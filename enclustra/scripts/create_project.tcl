@@ -59,7 +59,7 @@ if { ${fmc_board} eq "none"} {
 if {[file exists [file join scripts settings.tcl]] } { source [file join scripts settings.tcl] }
 
 # Create project
-create_project ${project_name} ${vivado_dir} -part ${part}
+create_project ${project_name} ${vivado_dir} -part ${part} -force
 
 # Set project directory
 set proj_dir [get_property directory [current_project]]
