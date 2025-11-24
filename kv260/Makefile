@@ -1,6 +1,7 @@
 BOARD ?= kv260
 INPUT ?= rpi_mipi
 OUTPUT ?= dp
+BUILD ?= Debug
 PROJECT_NAME := $(INPUT)_$(OUTPUT)
 VIVADO_VER ?= 2025.1
 PROJECT_DIR  := ${TOP}/projects/$(PROJECT_NAME)_$(BOARD)_$(VIVADO_VER)
@@ -20,7 +21,7 @@ bif_file = ${app_workspace}/boot.bif
 boot_bin = ${PROJECT_DIR}/BOOT.BIN
 
 $(app_file): $(hw_file) $(app_src) $(app_script)
-	vitis -s ${app_script} --hardware=${hw_file} --source=${app_src_dir} --workspace=${app_workspace} --project=${PROJECT_NAME}
+	vitis -s ${app_script} --hardware=${hw_file} --source=${app_src_dir} --workspace=${app_workspace} --project=${PROJECT_NAME} --build_type=${BUILD}
 
 $(boot_bin): $(app_file) $(bif_file)
 	bootgen -image $(bif_file) -arch zynqmp -w -o $(boot_bin)
