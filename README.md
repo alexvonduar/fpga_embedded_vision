@@ -40,6 +40,6 @@ List of supported boards and projects
 |KV260|-|-|-|-|[project](doc/KV260.md)|
 |Mercury+ ST1 XU6 2CG|TODO|TODO|[project](doc/ME_ST1_XU6_2CG.md)|TODO|[project](doc/ME_ST1_XU6_2CG.md)|
 |TQ15EG|TODO|TODO|TODO|TODO|TODO|
-|MYD-C7Z020|[project](doc/MYD-C7Z020.md)|TODO|TODO|TODO|-|
-|ZYNQ_DEV|[project](doc/ZYNQ_DEV.md)|TODO|TODO|TODO|TODO|
+|MYD-C7Z020|[project](doc/MYD-C7Z020.md)|-|-|-|-|
+|ZYNQ_DEV|[project](doc/ZYNQ_DEV.md)|-|-|-|TODO|
 |PicoZed Ebedded Vision Kit|[project](doc/PicoZed.md)|||||
