@@ -343,6 +343,38 @@ if {[string match -nocase "ZYNQ_DEV" $board]} {
         CONFIG.PCW_UIPARAM_DDR_ENABLE {1} \
         CONFIG.PCW_UIPARAM_DDR_PARTNO {MT41K256M16 RE-125} \
     ] [get_bd_cells processing_system7_0]
+
+    # PL clock 50MHz
+    create_bd_port -dir I -type clk -freq_hz 50000000 PL_CLK_50M
+    # PL EEPROM I2C
+    create_bd_intf_port -mode Master -vlnv xilinx.com:interface:iic_rtl:1.0 PL_EEPROM_IIC
+    # PL LEDs
+    create_bd_port -dir O -from 3 -to 0 PL_LED
+
+    # PL OLED
+    create_bd_port -dir O -from 1 -to 0 PL_OLED_D
+    create_bd_port -dir O PL_OLED_DC
+    create_bd_port -dir O PL_OLED_RST
+
+    # PL KEY
+    create_bd_port -dir I PL_KEY_RSTN
+    create_bd_port -dir I PL_KEY3
+
+    # on board MIPI
+    create_bd_intf_port -mode Master -vlnv xilinx.com:interface:iic_rtl:1.0 MIPI_CAM_IIC
+    create_bd_intf_port -mode Master -vlnv xilinx.com:interface:gpio_rtl:1.0 MIPI_GPIO
+    create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:mipi_phy_rtl:1.0 MIPI_DPHY
+
+    # on board HDMI
+    create_bd_port -dir O -from 1 -to 0 HDMI_OE
+    create_bd_port -dir I HDMI2_HPD
+    create_bd_intf_port -mode Master -vlnv xilinx.com:interface:iic_rtl:1.0 HDMI2_IIC
+    create_bd_intf_port -mode Master -vlnv digilentinc.com:interface:tmds_rtl:1.0 HDMI1
+    create_bd_intf_port -mode Master -vlnv digilentinc.com:interface:tmds_rtl:1.0 HDMI2
+
+    # PL NET
+    create_bd_intf_port -mode Master -vlnv xilinx.com:interface:rgmii_rtl:1.0 PL_NET_RGMII
+    create_bd_intf_port -mode Master -vlnv xilinx.com:interface:mdio_rtl:1.0  PL_NET_MDIO_PHY
 } else {
     #puts "Creating project for MYIR7020 board"
     #create_project $project $projects_folder -part xc7z020clg400-1 -force

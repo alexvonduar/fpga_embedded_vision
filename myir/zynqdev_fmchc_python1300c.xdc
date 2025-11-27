@@ -149,3 +149,124 @@ set_clock_groups -asynchronous -group [get_clocks clk_fpga_0] \
 set_input_delay -clock [get_clocks hdmii_clk] -clock_fall -min -add_delay 0.500 [get_ports {IO_HDMII_data[*]}]
 set_input_delay -clock [get_clocks hdmii_clk] -clock_fall -max -add_delay 1.300 [get_ports {IO_HDMII_data[*]}]
 
+
+#zynqdev board interface pin constraints
+
+# PL clock 50MHz
+set_property IOSTANDARD  LVCMOS33 [get_ports PL_CLK_50M]
+set_property PACKAGE_PIN W17      [get_ports PL_CLK_50M]
+
+# PL key
+set_property IOSTANDARD  LVCMOS33 [get_ports PL_KEY_RSTN]
+set_property PACKAGE_PIN V4       [get_ports PL_KEY_RSTN]
+set_property IOSTANDARD  LVCMOS33 [get_ports PL_KEY3]
+set_property PACKAGE_PIN V5       [get_ports PL_KEY3]
+
+# PL EEPROM I2C
+set_property IOSTANDARD  LVCMOS33 [get_ports PL_EEPROM_IIC_scl_io]
+set_property PACKAGE_PIN N15      [get_ports PL_EEPROM_IIC_scl_io]
+set_property SLEW        SLOW     [get_ports PL_EEPROM_IIC_scl_io]
+set_property DRIVE       12       [get_ports PL_EEPROM_IIC_scl_io]
+set_property IOSTANDARD  LVCMOS33 [get_ports PL_EEPROM_IIC_sda_io]
+set_property PACKAGE_PIN M15      [get_ports PL_EEPROM_IIC_sda_io]
+set_property SLEW        SLOW     [get_ports PL_EEPROM_IIC_sda_io]
+set_property DRIVE       8        [get_ports PL_EEPROM_IIC_sda_io]
+
+# PL LEDs
+set_property IOSTANDARD  LVCMOS33 [get_ports {PL_LED[0]}]
+set_property PACKAGE_PIN Y14      [get_ports {PL_LED[0]}]
+set_property IOSTANDARD  LVCMOS33 [get_ports {PL_LED[1]}]
+set_property PACKAGE_PIN AA13     [get_ports {PL_LED[1]}]
+set_property IOSTANDARD  LVCMOS33 [get_ports {PL_LED[2]}]
+set_property PACKAGE_PIN AB14     [get_ports {PL_LED[2]}]
+set_property IOSTANDARD  LVCMOS33 [get_ports {PL_LED[3]}]
+set_property PACKAGE_PIN AB15     [get_ports {PL_LED[3]}]
+
+# PL OLED
+set_property IOSTANDARD  LVCMOS33 [get_ports {PL_OLED_D[1]}]
+set_property PACKAGE_PIN T22      [get_ports {PL_OLED_D[1]}]
+set_property IOSTANDARD  LVCMOS33 [get_ports {PL_OLED_D[0]}]
+set_property PACKAGE_PIN U22      [get_ports {PL_OLED_D[0]}]
+set_property IOSTANDARD  LVCMOS33 [get_ports {PL_OLED_DC}]
+set_property PACKAGE_PIN V22      [get_ports {PL_OLED_DC}]
+set_property IOSTANDARD  LVCMOS33 [get_ports {PL_OLED_RST}]
+set_property PACKAGE_PIN W22      [get_ports {PL_OLED_RST}]
+
+# MIPI
+set_property -dict {PACKAGE_PIN AA14 IOSTANDARD LVCMOS33} [get_ports MIPI_CAM_IIC_scl_io]
+set_property -dict {PACKAGE_PIN U14  IOSTANDARD LVCMOS33} [get_ports MIPI_CAM_IIC_sda_io]
+set_property PULLUP true [get_ports MIPI_CAM_IIC_scl_io]
+set_property PULLUP true [get_ports MIPI_CAM_IIC_sda_io]
+
+set_property PACKAGE_PIN Y15      [get_ports {MIPI_GPIO_tri_io[0]}]
+set_property IOSTANDARD  LVCMOS33 [get_ports {MIPI_GPIO_tri_io[0]}]
+set_property PULLUP      true     [get_ports {MIPI_GPIO_tri_io[0]}]
+set_property PACKAGE_PIN W15      [get_ports {MIPI_GPIO_tri_io[1]}]
+set_property IOSTANDARD  LVCMOS33 [get_ports {MIPI_GPIO_tri_io[1]}]
+set_property PULLUP      true     [get_ports {MIPI_GPIO_tri_io[1]}]
+
+set_property INTERNAL_VREF 0.6 [get_iobanks 13]
+
+set_property -dict {PACKAGE_PIN U5 IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_clk_lp_rxn}]
+set_property -dict {PACKAGE_PIN U6 IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_clk_lp_rxp}]
+
+set_property -dict {PACKAGE_PIN T6 IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_data_lp_rxn[0]}]
+set_property -dict {PACKAGE_PIN R6 IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_data_lp_rxp[0]}]
+set_property -dict {PACKAGE_PIN W7 IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_data_lp_rxn[1]}]
+set_property -dict {PACKAGE_PIN V7 IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_data_lp_rxp[1]}]
+
+set_property IOSTANDARD LVDS_25 [get_ports MIPI_DPHY_clk_hs_rxn]
+set_property IOSTANDARD LVDS_25 [get_ports MIPI_DPHY_clk_hs_rxp]
+
+set_property -dict {PACKAGE_PIN W5 IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_data_hs_rxn[0]}]
+set_property -dict {PACKAGE_PIN W6 IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_data_hs_rxp[0]}]
+set_property -dict {PACKAGE_PIN U4 IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_data_hs_rxn[1]}]
+set_property -dict {PACKAGE_PIN T4 IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_data_hs_rxp[1]}]
+
+# HDMI1
+set_property -dict {PACKAGE_PIN V18  IOSTANDARD LVCMOS33} [get_ports {HDMI_OE[0]}]
+set_property -dict {PACKAGE_PIN V13  IOSTANDARD TMDS_33 } [get_ports {HDMI1_Data_p[0]}]
+set_property -dict {PACKAGE_PIN W13  IOSTANDARD TMDS_33 } [get_ports {HDMI1_Data_n[0]}]
+set_property -dict {PACKAGE_PIN V14  IOSTANDARD TMDS_33 } [get_ports {HDMI1_Data_p[1]}]
+set_property -dict {PACKAGE_PIN V15  IOSTANDARD TMDS_33 } [get_ports {HDMI1_Data_n[1]}]
+set_property -dict {PACKAGE_PIN AA16 IOSTANDARD TMDS_33 } [get_ports {HDMI1_Data_p[2]}]
+set_property -dict {PACKAGE_PIN AB16 IOSTANDARD TMDS_33 } [get_ports {HDMI1_Data_n[2]}]
+set_property -dict {PACKAGE_PIN Y18  IOSTANDARD TMDS_33 } [get_ports {HDMI1_Clk_p}]
+set_property -dict {PACKAGE_PIN AA18 IOSTANDARD TMDS_33 } [get_ports {HDMI1_Clk_n}]
+
+# HDMI2
+set_property -dict {PACKAGE_PIN W18  IOSTANDARD LVCMOS33} [get_ports {HDMI_OE[1]}]
+set_property -dict {PACKAGE_PIN W18  IOSTANDARD LVCMOS33} [get_ports {HDMI2_HPD}]
+set_property -dict {PACKAGE_PIN U15  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data_p[0]}]
+set_property -dict {PACKAGE_PIN U16  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data_n[0]}]
+set_property -dict {PACKAGE_PIN U17  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data_p[1]}]
+set_property -dict {PACKAGE_PIN V17  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data_n[1]}]
+set_property -dict {PACKAGE_PIN AA17 IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data_p[2]}]
+set_property -dict {PACKAGE_PIN AB17 IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data_n[2]}]
+set_property -dict {PACKAGE_PIN W16  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Clk_p}]
+set_property -dict {PACKAGE_PIN Y16  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Clk_n}]
+
+set_property IOSTANDARD  LVCMOS33 [get_ports HDMI2_IIC_scl_io]
+set_property PACKAGE_PIN R16      [get_ports HDMI2_IIC_scl_io]
+set_property SLEW        SLOW     [get_ports HDMI2_IIC_scl_io]
+set_property DRIVE       12       [get_ports HDMI2_IIC_scl_io]
+set_property IOSTANDARD  LVCMOS33 [get_ports HDMI2_IIC_sda_io]
+set_property PACKAGE_PIN P16      [get_ports HDMI2_IIC_sda_io]
+set_property SLEW        SLOW     [get_ports HDMI2_IIC_sda_io]
+set_property DRIVE       8        [get_ports HDMI2_IIC_sda_io]
+
+# PL ETNET
+set_property -dict {PACKAGE_PIN AB22 IOSTANDARD LVCMOS33} [get_ports PL_NET_RGMII_txc]
+set_property -dict {PACKAGE_PIN AB21 IOSTANDARD LVCMOS33} [get_ports PL_NET_RGMII_tx_ctl]
+set_property -dict {PACKAGE_PIN Y19  IOSTANDARD LVCMOS33} [get_ports PL_NET_RGMII_rxc]
+set_property -dict {PACKAGE_PIN V19  IOSTANDARD LVCMOS33} [get_ports PL_NET_RGMII_rx_ctl]
+set_property -dict {PACKAGE_PIN T21  IOSTANDARD LVCMOS33} [get_ports {PL_NET_RGMII_td[0]}]
+set_property -dict {PACKAGE_PIN U21  IOSTANDARD LVCMOS33} [get_ports {PL_NET_RGMII_td[1]}]
+set_property -dict {PACKAGE_PIN AA22 IOSTANDARD LVCMOS33} [get_ports {PL_NET_RGMII_td[2]}]
+set_property -dict {PACKAGE_PIN AA21 IOSTANDARD LVCMOS33} [get_ports {PL_NET_RGMII_td[3]}]
+set_property -dict {PACKAGE_PIN W20  IOSTANDARD LVCMOS33} [get_ports {PL_NET_RGMII_rd[0]}]
+set_property -dict {PACKAGE_PIN W21  IOSTANDARD LVCMOS33} [get_ports {PL_NET_RGMII_rd[1]}]
+set_property -dict {PACKAGE_PIN U20  IOSTANDARD LVCMOS33} [get_ports {PL_NET_RGMII_rd[2]}]
+set_property -dict {PACKAGE_PIN V20  IOSTANDARD LVCMOS33} [get_ports {PL_NET_RGMII_rd[3]}]
+set_property -dict {PACKAGE_PIN AB19 IOSTANDARD LVCMOS33} [get_ports PL_NET_MDIO_PHY_mdio_io]
+set_property -dict {PACKAGE_PIN AB20 IOSTANDARD LVCMOS33} [get_ports PL_NET_MDIO_PHY_mdc]
