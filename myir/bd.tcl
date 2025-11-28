@@ -227,7 +227,7 @@ add_files -fileset constrs_1 -norecurse ${xdc}
 
 # Add Avnet IP Repository
 puts "***** Updating Vivado to include IP Folder"
-set_property ip_repo_paths  ${avnet_dir}/IP [current_fileset]
+set_property ip_repo_paths [list ${top}/avnet/IP ${top}/digilent] [current_fileset]
 update_ip_catalog
 
 puts "***** Creating Block Design..."
@@ -430,6 +430,13 @@ if {[string match -nocase "ZYNQ_DEV" $board]} {
         CONFIG.PCW_SD1_SD1_IO {MIO 10 .. 15} \
     ] [get_bd_cells processing_system7_0]
 
+    set SDIO1_CDN_0 [create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconstant:1.0 SDIO1_CDN_0]
+    set_property -dict [list \
+        CONFIG.CONST_VAL {0} \
+        CONFIG.CONST_WIDTH {1} \
+    ] [get_bd_cells SDIO1_CDN_0]
+    connect_bd_net [get_bd_pins SDIO1_CDN_0/dout] [get_bd_pins processing_system7_0/SDIO1_CDN]
+
     # enable UART1
     set_property -dict [list \
         CONFIG.PCW_UART1_PERIPHERAL_ENABLE {1} \
@@ -480,6 +487,23 @@ if {[string match -nocase "ZYNQ_DEV" $board]} {
         CONFIG.PCW_UIPARAM_DDR_PARTNO {MT41J256M16 RE-125} \
     ] [get_bd_cells processing_system7_0]
 
+    # on board HDMI
+    create_bd_port -dir O VID_HS
+    create_bd_port -dir O VID_VS
+    create_bd_port -dir O VID_DE
+    create_bd_port -dir O -type clk VID_CLK
+    create_bd_port -dir O -from 15 -to 0 RGB_D
+    create_bd_port -dir O LCD_EN
+    create_bd_port -dir O LCD_BL_EN
+    create_bd_port -dir O TP_RST
+    create_bd_port -dir I TP_INTR
+    create_bd_port -dir I HDMI_INTR
+
+    # 4 Pmods
+    create_bd_port -dir IO -from 7 -to 0 PMOD1
+    create_bd_port -dir IO -from 7 -to 0 PMOD2
+    create_bd_port -dir IO -from 7 -to 0 PMOD3
+    create_bd_port -dir IO -from 7 -to 0 PMOD4
 }
 
 # General Config
