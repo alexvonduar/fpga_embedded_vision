@@ -344,6 +344,13 @@ if {[string match -nocase "ZYNQ_DEV" $board]} {
         CONFIG.PCW_UIPARAM_DDR_PARTNO {MT41K256M16 RE-125} \
     ] [get_bd_cells processing_system7_0]
 
+    # enable interupt if using axi iic
+    set_property -dict [list \
+        CONFIG.PCW_IRQ_F2P_INTR {1} \
+        CONFIG.PCW_USE_FABRIC_INTERRUPT {1} \
+    ] [get_bd_cells processing_system7_0]
+    #connect_bd_net [get_bd_pins HDMI2_IIC/iic2intc_irpt] [get_bd_pins processing_system7_0/IRQ_F2P]
+
     # PL clock 50MHz
     create_bd_port -dir I -type clk -freq_hz 50000000 PL_CLK_50M
     # PL EEPROM I2C
@@ -367,7 +374,8 @@ if {[string match -nocase "ZYNQ_DEV" $board]} {
 
     # on board HDMI
     create_bd_port -dir O -from 1 -to 0 HDMI_OE
-    create_bd_port -dir I HDMI2_HPD
+    #create_bd_port -dir IO HDMI2_HPD
+    create_bd_intf_port -mode Master -vlnv xilinx.com:interface:gpio_rtl:1.0 HDMI2_HPD
     create_bd_intf_port -mode Master -vlnv xilinx.com:interface:iic_rtl:1.0 HDMI2_IIC
     create_bd_intf_port -mode Master -vlnv digilentinc.com:interface:tmds_rtl:1.0 HDMI1
     create_bd_intf_port -mode Master -vlnv digilentinc.com:interface:tmds_rtl:1.0 HDMI2

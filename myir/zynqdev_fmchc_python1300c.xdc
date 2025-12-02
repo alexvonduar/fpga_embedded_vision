@@ -236,7 +236,7 @@ set_property -dict {PACKAGE_PIN AA18 IOSTANDARD TMDS_33 } [get_ports {HDMI1_Clk_
 
 # HDMI2
 set_property -dict {PACKAGE_PIN W18  IOSTANDARD LVCMOS33} [get_ports {HDMI_OE[1]}]
-set_property -dict {PACKAGE_PIN W18  IOSTANDARD LVCMOS33} [get_ports {HDMI2_HPD}]
+set_property -dict {PACKAGE_PIN U19  IOSTANDARD LVCMOS33 PULLUP true} [get_ports {HDMI2_HPD_tri_io}]
 set_property -dict {PACKAGE_PIN U15  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data_p[0]}]
 set_property -dict {PACKAGE_PIN U16  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data_n[0]}]
 set_property -dict {PACKAGE_PIN U17  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data_p[1]}]
@@ -246,11 +246,12 @@ set_property -dict {PACKAGE_PIN AB17 IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data
 set_property -dict {PACKAGE_PIN W16  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Clk_p}]
 set_property -dict {PACKAGE_PIN Y16  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Clk_n}]
 
-set_property IOSTANDARD  LVCMOS33 [get_ports HDMI2_IIC_scl_io]
+# Bank 34
+set_property IOSTANDARD  LVCMOS25 [get_ports HDMI2_IIC_scl_io]
 set_property PACKAGE_PIN R16      [get_ports HDMI2_IIC_scl_io]
 set_property SLEW        SLOW     [get_ports HDMI2_IIC_scl_io]
 set_property DRIVE       12       [get_ports HDMI2_IIC_scl_io]
-set_property IOSTANDARD  LVCMOS33 [get_ports HDMI2_IIC_sda_io]
+set_property IOSTANDARD  LVCMOS25 [get_ports HDMI2_IIC_sda_io]
 set_property PACKAGE_PIN P16      [get_ports HDMI2_IIC_sda_io]
 set_property SLEW        SLOW     [get_ports HDMI2_IIC_sda_io]
 set_property DRIVE       8        [get_ports HDMI2_IIC_sda_io]
