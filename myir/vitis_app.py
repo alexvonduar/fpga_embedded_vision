@@ -14,7 +14,7 @@ def build_app(args):
 
     client = vitis.create_client()
 
-    vitis_workspace = os.path.join(args.output, args.project + ".vitis")
+    vitis_workspace = os.path.join(args.output, args.project + "_vitis")
 
     #Delete the vitis workspace if already exists.
     if (os.path.exists(vitis_workspace)):
@@ -26,7 +26,7 @@ def build_app(args):
 
     #print("===============================================================")
     local_repo_name = 'avnet_drivers'
-    local_repo_path = os.path.join(args.top, "avnet/Projects", args.project, "software/sw_repository")
+    local_repo_path = os.path.join(args.top, "avnet/Projects/fmchc_python1300c/software/sw_repository")
     local_repo_description = "avnet driver repository"
     #os.makedirs(local_repo_path, exist_ok = True)
 
@@ -38,13 +38,13 @@ def build_app(args):
     # XSA directory path
     #xsa_dir = os.environ.get('XILINX_VITIS')
     #xsa = os.path.join(xsa_dir, "data/embeddedsw/lib/fixed_hwplatforms/vck190.xsa")
-    xsa = os.path.join(args.output, args.project + ".xsa")
+    #xsa = os.path.join(args.output, args.project + ".xsa")
     platform_name = args.project + "_platform"
 
     #advanced_options = client.create_advanced_options_dict(dt_overlay = "1",dt_zocl = "1")
 
     #platform = client.create_platform_component(name = "platform_vck", hw_design = xsa, no_boot_bsp = True, generate_dtb = True, advanced_options = advanced_options, architecture = "64-bit", desc = "A base platform targeting vck190")
-    platform = client.create_platform_component(name = platform_name, hw_design = xsa, cpu = "ps7_cortexa9_0", os = "standalone")
+    platform = client.create_platform_component(name = platform_name, hw_design = args.hw, cpu = "ps7_cortexa9_0", os = "standalone")
     #platform = client.create_platform_component(name = platform_name, hw_design = 'zcu102', cpu = "psu_cortexa53", os = "linux", domain_name = "linux_a53")
     #platform.report()
     #platform.list_embedded_sw_repos()
@@ -86,7 +86,7 @@ def build_app(args):
     status = platform.build()
 
     app_name = args.project + "_app"
-    app_src = os.path.join(args.top, "avnet/Projects/" + args.project + "/software/" + args.project + "_app/src")
+    app_src = os.path.join(args.top, "avnet/Projects/fmchc_python1300c/software/fmchc_python1300c_app/src")
     print("app source: {}".format(app_src))
     exported_plaftorm = os.path.join(vitis_workspace, platform_name, "export", platform_name, platform_name + ".xpfm")
     print("exported_plaftorm: " + exported_plaftorm)
@@ -119,7 +119,7 @@ def build_app(args):
         print(f"Deleted workspace {workspace}")
     '''
 
-    bif_name = os.path.join(args.output, "boot.bif")
+    bif_name = os.path.join(vitis_workspace, args.project + "_BOOT.bif")
     fsbl_name = os.path.join(vitis_workspace, platform_name, "export", platform_name, "sw/boot/fsbl.elf")
     bitfile_name = os.path.join(vitis_workspace, platform_name, "export", platform_name, "hw/sdt/" + args.project + ".bit")
     appfile_name = os.path.join(vitis_workspace, app_name, "build", app_name + ".elf")
@@ -147,17 +147,19 @@ if __name__ == "__main__":
     print("Test script is running.")
     print("Current working directory:", os.getcwd())
     parser = argparse.ArgumentParser(description="Test script for myir.")
-    parser.add_argument("--top", help="Top directory", type=str)
+    parser.add_argument("--top", help="Top directory", type=str, required=True)
     parser.add_argument("--build_type", help="Build type (debug/release)", type=str, default="debug")
-    parser.add_argument("--target", help="Target name", type=str)
+    parser.add_argument("--target", help="Target name", type=str, required=True)
     parser.add_argument("--project", help="Project name", type=str)
+    parser.add_argument("--hw", help="Hardware file", type=str, required=True)
     parser.add_argument("--version", help="Version string", type=str)
-    parser.add_argument("--output", help="Output directory", type=str)
+    parser.add_argument("--output", help="Output directory", type=str, required=True)
     args = parser.parse_args()
     if not args.top or not args.target or not args.project or not args.version:
         parser.print_help()
         exit(1)
     print("Top directory:", args.top)
+    print("Hardware file:", args.hw)
     print("Build type:", args.build_type)
     print("Target name:", args.target)
     print("Project name:", args.project)
@@ -167,4 +169,3 @@ if __name__ == "__main__":
     print("Output directory: ", args.output)
     build_app(args)
     exit(0)
-

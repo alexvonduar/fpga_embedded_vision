@@ -46,10 +46,12 @@
 
 set required_version 2021.2
 set top "init"
-set ws "init"
 set board "init"
 #"MYIR7020_FMC"
-set project "init"
+set project_name "init"
+set project_dir "init"
+set input_port "init"
+set output_port "init"
 #"fmchc_python1300c"
 set xdc "init"
 set version_override "yes"
@@ -67,9 +69,9 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
     if {[string match -nocase "*help*" [lindex $argv $i]]} {
         puts "Parameters are:"
         puts "top=<top_dir>\n top directory for the repository"
-        puts "ws=<workspace_dir>\n workspace directory"
+        puts "project_dir=<project_dir>\n project directory"
         puts "board=<board_name>\n boards are listed in the /Boards folder"
-        puts "project=<project_name>\n project names are listed in the /Scripts/ProjectScripts folder"
+        puts "project_name=<project_name>\n project names are listed in the /Scripts/ProjectScripts folder"
         puts "xdc=<xdc_file>\n xdc file to use for constraints"
         puts "vivado_ver=${vivado_ver}\n vivado version to use"
         puts "version_override=yes\n ***************************** \n CAUTION: \n Override the Version Check\n and attempt to make project\n *****************************"
@@ -85,16 +87,6 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
         }
         append build_params "| Top            |     $printmessage |\n"
     }
-    # check workspace directory
-    if {[string match -nocase "ws=*" [lindex $argv $i]]} {
-        set ws [string range [lindex $argv $i] 3 end]
-        #puts "******* $ws ********"
-        set printmessage $ws
-        for {set j 0} {$j < [expr $chart_wdith - [string length $board]]} {incr j} {
-            append printmessage " "
-        }
-        append build_params "| Workspace      |     $printmessage |\n"
-    }
     # check for BOARD parameter
     if {[string match -nocase "board=*" [lindex $argv $i]]} {
         set board [string range [lindex $argv $i] 6 end]
@@ -104,14 +96,41 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
         }
         append build_params "| Board            |     $printmessage |\n"
     }
-    # check for PROJECT parameter
-    if {[string match -nocase "project=*" [lindex $argv $i]]} {
-        set project [string range [lindex $argv $i] 8 end]
-        set printmessage $project
-        for {set j 0} {$j < [expr $chart_wdith - [string length $project]]} {incr j} {
+    # check for project_name parameter
+    if {[string match -nocase "project_name=*" [lindex $argv $i]]} {
+        set project_name [string range [lindex $argv $i] 13 end]
+        set printmessage $project_name
+        for {set j 0} {$j < [expr $chart_wdith - [string length $project_name]]} {incr j} {
             append printmessage " "
         }
         append build_params "| Project          |     $printmessage |\n"
+    }
+    # check for project_dir parameter
+    if {[string match -nocase "project_dir=*" [lindex $argv $i]]} {
+        set project_dir [string range [lindex $argv $i] 12 end]
+        set printmessage $project_dir
+        for {set j 0} {$j < [expr $chart_wdith - [string length $project_dir]]} {incr j} {
+            append printmessage " "
+        }
+        append build_params "| Project Dir      |     $printmessage |\n"
+    }
+    # check for input_port parameter
+    if {[string match -nocase "input_port=*" [lindex $argv $i]]} {
+        set input_port [string range [lindex $argv $i] 11 end]
+        set printmessage $input_port
+        for {set j 0} {$j < [expr $chart_wdith - [string length $input_port]]} {incr j} {
+            append printmessage " "
+        }
+        append build_params "| Input Port      |     $printmessage |\n"
+    }
+    # check for output_port parameter
+    if {[string match -nocase "output_port=*" [lindex $argv $i]]} {
+        set output_port [string range [lindex $argv $i] 12 end]
+        set printmessage $output_port
+        for {set j 0} {$j < [expr $chart_wdith - [string length $output_port]]} {incr j} {
+            append printmessage " "
+        }
+        append build_params "| Output Port     |     $printmessage |\n"
     }
     # check for Version Override parameter
     if {[string match -nocase "version_override=*" [lindex $argv $i]]} {
@@ -178,16 +197,25 @@ if {[string match -nocase "init" $top]} {
     puts "Top directory was not defined, please define and try again!"
     return -code ok
 }
-if {[string match -nocase "init" $ws]} {
-    puts "Workspace directory was not defined, please define and try again!"
-    return -code ok
-}
 if {[string match -nocase "init" $board]} {
     puts "Board was not defined, please define and try again!"
     return -code ok
 }
-if {[string match -nocase "init" $project]} {
+if {[string match -nocase "init" $project_name]} {
     puts "Project was not defined, please define and try again!"
+    return -code ok
+}
+if {[string match -nocase "init" $project_dir]} {
+    puts "Project dir was not defined, please define and try again!"
+    return -code ok
+}
+if {[string match -nocase "init" $input_port]} {
+    puts "Input port was not defined, please define and try again!"
+    return -code ok
+
+}
+if {[string match -nocase "init" $output_port]} {
+    puts "Output port was not defined, please define and try again!"
     return -code ok
 }
 if {[string match -nocase "init" $xdc]} {
@@ -201,13 +229,9 @@ set avnet_dir "${top}/avnet"
 source ${scriptdir}/utils.tcl -notrace
 set numberOfCores [numberOfCPUs]
 
-# create variables with absolute folders for all necessary folders
-set projects_folder [file normalize ${ws}/${project}_${board}_${vivado_ver}]
-puts "\nproject folder $projects_folder\n"
-
-
+puts "\nproject folder $project_dir\n"
 puts "\n\n*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
-puts " Selected Board and Project as:\n$board and $project"
+puts " Selected Board and Project as:\n$board and $project_name"
 puts "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\n\n"
 
 
@@ -216,10 +240,10 @@ puts "***** Creating Vivado Project..."
 
 if {[string match -nocase "ZYNQ_DEV" $board]} {
     puts "Creating project for ZYNQ_DEV board"
-    create_project $project $projects_folder -part xc7z020clg484-2 -force
+    create_project $project_name $project_dir -part xc7z020clg484-2 -force
 } else {
     puts "Creating project for MYIR7020 board"
-    create_project $project $projects_folder -part xc7z020clg400-1 -force
+    create_project $project_name $project_dir -part xc7z020clg400-1 -force
 }
 remove_files -fileset constrs_1 *.xdc
 #add_files -fileset constrs_1 -norecurse ${scriptdir}/myir7020_fmchc_python1300c.xdc
@@ -231,7 +255,7 @@ set_property ip_repo_paths [list ${top}/avnet/IP ${top}/digilent] [current_files
 update_ip_catalog
 
 puts "***** Creating Block Design..."
-create_bd_design ${project}
+create_bd_design ${project_name}
 # add selection for customization depending on board choice (or none)
 create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7 processing_system7_0
 
@@ -258,7 +282,7 @@ set_property -dict [ list \
 
 if {[string match -nocase "ZYNQ_DEV" $board]} {
     #puts "Creating project for ZYNQ_DEV board"
-    #create_project $project $projects_folder -part xc7z020clg484-2 -force
+    #create_project $project_name $project_dir -part xc7z020clg484-2 -force
     apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 -config \
     { \
         make_external "FIXED_IO, DDR" \
@@ -385,7 +409,7 @@ if {[string match -nocase "ZYNQ_DEV" $board]} {
     create_bd_intf_port -mode Master -vlnv xilinx.com:interface:mdio_rtl:1.0  PL_NET_MDIO_PHY
 } else {
     #puts "Creating project for MYIR7020 board"
-    #create_project $project $projects_folder -part xc7z020clg400-1 -force
+    #create_project $project_name $project_dir -part xc7z020clg400-1 -force
     apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 -config \
     { \
         make_external "FIXED_IO, DDR" \
@@ -549,7 +573,7 @@ if { $valid_cores < 1 } {
 }
 
 # Create Block Diagram
-set design_name ${project}
+set design_name ${project_name}
 
 
 ################################################################
@@ -1172,8 +1196,8 @@ save_bd_design
 
 # Add Project source files
 puts "***** Adding Source Files to Block Design..."
-make_wrapper -files [get_files ${projects_folder}/${project}.srcs/sources_1/bd/${project}/${project}.bd] -top
-add_files -norecurse ${projects_folder}/${project}.srcs/sources_1/bd/${project}/hdl/${project}_wrapper.vhd
+make_wrapper -files [get_files ${project_dir}/${project_name}.srcs/sources_1/bd/${project_name}/${project_name}.bd] -top
+add_files -norecurse ${project_dir}/${project_name}.srcs/sources_1/bd/${project_name}/hdl/${project_name}_wrapper.vhd
 close_project
 
 
@@ -1184,7 +1208,7 @@ set time_string "Your Build Took\nseconds [$number_seconds]\n\nor a total of:\n\
 
 append build_params "\n"
 append build_params $time_string
-set out [open $projects_folder/buildInfo.log w]
+set out [open $project_dir/buildInfo.log w]
 puts -nonewline $out $build_params
 close $out
 

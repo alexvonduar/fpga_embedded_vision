@@ -48,7 +48,8 @@ set required_version 2021.2
 set top "init"
 set board "init"
 #"MYIR7020_FMC"
-set project "init"
+set project_name "init"
+set project_dir "init"
 #"fmchc_python1300c"
 set version_override "yes"
 set vivado_ver "${required_version}"
@@ -67,7 +68,7 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
         puts "Parameters are:"
         puts "top=<top_dir>\n top directory for the repository"
         puts "board=<board_name>\n boards are listed in the /Boards folder"
-        puts "project=<project_name>\n project names are listed in the /Scripts/ProjectScripts folder"
+        puts "project_name=<project_name>\n project names are listed in the /Scripts/ProjectScripts folder"
         puts "vivado_ver=${vivado_ver}\n vivado version to use"
         puts "step=<syn|place|route>\n set step to run"
         puts "version_override=yes\n ***************************** \n CAUTION: \n Override the Version Check\n and attempt to make project\n *****************************"
@@ -84,14 +85,14 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
         append build_params "| Top            |     $printmessage |\n"
     }
     # check for TOP parameter
-    if {[string match -nocase "ws=*" [lindex $argv $i]]} {
-        set ws [string range [lindex $argv $i] 3 end]
-        puts "******* $ws ********"
-        set printmessage $ws
+    if {[string match -nocase "project_dir=*" [lindex $argv $i]]} {
+        set project_dir [string range [lindex $argv $i] 12 end]
+        puts "******* $project_dir ********"
+        set printmessage $project_dir
         for {set j 0} {$j < [expr $chart_wdith - [string length $board]]} {incr j} {
             append printmessage " "
         }
-        append build_params "| Workspace      |     $printmessage |\n"
+        append build_params "| Project dir      |     $printmessage |\n"
     }
     # check for Output parameter
     if {[string match -nocase "output=*" [lindex $argv $i]]} {
@@ -113,10 +114,10 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
         append build_params "| Board            |     $printmessage |\n"
     }
     # check for PROJECT parameter
-    if {[string match -nocase "project=*" [lindex $argv $i]]} {
-        set project [string range [lindex $argv $i] 8 end]
-        set printmessage $project
-        for {set j 0} {$j < [expr $chart_wdith - [string length $project]]} {incr j} {
+    if {[string match -nocase "project_name=*" [lindex $argv $i]]} {
+        set project_name [string range [lindex $argv $i] 13 end]
+        set printmessage $project_name
+        for {set j 0} {$j < [expr $chart_wdith - [string length $project_name]]} {incr j} {
             append printmessage " "
         }
         append build_params "| Project          |     $printmessage |\n"
@@ -163,7 +164,7 @@ if {[string match -nocase "init" $top]} {
     return -code ok
 }
 
-if {[string match -nocase "init" $ws]} {
+if {[string match -nocase "init" $project_dir]} {
     puts "Workspace directory was not defined, please define and try again!"
     return -code ok
 }
@@ -177,7 +178,7 @@ if {[string match -nocase "init" $board]} {
     puts "Board was not defined, please define and try again!"
     return -code ok
 }
-if {[string match -nocase "init" $project]} {
+if {[string match -nocase "init" $project_name]} {
     puts "Project was not defined, please define and try again!"
     return -code ok
 }
@@ -194,17 +195,13 @@ if {$numberOfCores > 2} {
     puts "CPU: $numberOfCores jobs: $numberOfJobs"
 }
 
-# create variables with absolute folders for all necessary folders
-set projects_folder [file normalize ${ws}/${project}_${board}_${vivado_ver}]
-
-
 puts "\n\n*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*"
-puts " Selected Board and Project as:\n$board and $project"
+puts " Selected Board and Project as:\n$board and $project_name"
 puts "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\n\n"
 
 
-puts "***** open project ${project}"
-open_project ${projects_folder}/${project}.xpr
+puts "***** open project ${project_name}"
+open_project ${project_dir}/${project_name}.xpr
 set runlist [get_runs -filter {PROGRESS < 100}]
 puts "**** unfinished runs ${runlist} ****"
 
@@ -229,7 +226,7 @@ if {$impl_out_of_date} {
     wait_on_runs impl_1
 }
 
-set bit_stream_file ${projects_folder}/${project}.runs/impl_1/${project}_wrapper.bit
+set bit_stream_file ${project_dir}/${project_name}.runs/impl_1/${project_name}_wrapper.bit
 if {![file exists ${bit_stream_file} ]} {
     puts "***** Generating bit stream..."
     open_run impl_1
@@ -248,7 +245,7 @@ set time_string "Your Build Took\nseconds [$number_seconds]\n\nor a total of:\n\
 
 append build_params "\n"
 append build_params $time_string
-set out [open $projects_folder/buildInfo.log w]
+set out [open $project_dir/buildInfo.log w]
 puts -nonewline $out $build_params
 close $out
 
