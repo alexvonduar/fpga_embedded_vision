@@ -10,8 +10,6 @@ def build_app(args):
 
     #proj_name = "fmchc_python1300c"
 
-    #target_dir = os.path.join(top_dir, args.project + "_" + args.target + "_" + args.version)
-
     client = vitis.create_client()
 
     vitis_workspace = os.path.join(args.output, args.project + "_vitis")
@@ -34,42 +32,11 @@ def build_app(args):
     status = client.add_embedded_sw_repo(level="local", path=local_repo_path)
     print(f"Local repo '{local_repo_name}' added")
 
-    #print("===============================================================")
-    # XSA directory path
-    #xsa_dir = os.environ.get('XILINX_VITIS')
-    #xsa = os.path.join(xsa_dir, "data/embeddedsw/lib/fixed_hwplatforms/vck190.xsa")
-    #xsa = os.path.join(args.output, args.project + ".xsa")
     platform_name = args.project + "_platform"
 
-    #advanced_options = client.create_advanced_options_dict(dt_overlay = "1",dt_zocl = "1")
-
-    #platform = client.create_platform_component(name = "platform_vck", hw_design = xsa, no_boot_bsp = True, generate_dtb = True, advanced_options = advanced_options, architecture = "64-bit", desc = "A base platform targeting vck190")
     platform = client.create_platform_component(name = platform_name, hw_design = args.hw, cpu = "ps7_cortexa9_0", os = "standalone")
-    #platform = client.create_platform_component(name = platform_name, hw_design = 'zcu102', cpu = "psu_cortexa53", os = "linux", domain_name = "linux_a53")
-    #platform.report()
-    #platform.list_embedded_sw_repos()
-
-    # Add platform repository and get required platform
-    #platforms_dir = os.environ.get('PLATFORM_REPO_PATHS')
-    #if (platforms_dir == None):
-    #    print(f"Set 'PLATFORM_REPO_PATHS' environment variable to add Platform repository")
-    #    exit()
-
-    #print("===============================================================")
-    #platform = client.get_component(name = "platform_vck")
-    #for domain in platform.list_domains():
-    #    print(domain)
-
-    # Create a standlone domain and edit the bsp settings
-    #standalone_a9_0 = platform.add_domain(name = "standalone_a9_0", cpu = "ps7_cortex_a9_0", os = "standalone")
     standalone_a9_0 = platform.get_domain(name = "standalone_ps7_cortexa9_0")
-    #standalone_a9_0.report()
 
-
-    #print("===============================================================")
-    # Add, get libraries and library parameters
-    #print("Applicable libraries:")
-    #standalone_a9_0.get_applicable_libs()
     standalone_a9_0.set_lib('xilffs')
     standalone_a9_0.set_lib('xilrsa')
     standalone_a9_0.set_lib('onsemi_python_sw')
@@ -77,21 +44,58 @@ def build_app(args):
     standalone_a9_0.set_lib('fmc_hdmi_cam_sw')
     #print("List of configured libraries:")
     #standalone_a9_0.get_libs()
-
-
+    #standalone_a9_0.report()
     #status = standalone_a9_0.build()
 
-    #status = domain.set_dtb(path=dtb) # used to bypass sdtgen from generate platform
-
     status = platform.build()
+
+    exported_plaftorm = os.path.join(vitis_workspace, platform_name, "export", platform_name, platform_name + ".xpfm")
+    print("exported_plaftorm: " + exported_plaftorm)
+
+    USE_EDID_DECODE = False
+    if (args.board.lower() == "myir7020" and (args.output_port.lower() == "fmc_hdmi" or args.output_port.lower() == "hdmi")):
+        USE_EDID_DECODE = True
+    elif (args.board.lower() == "zynq_dev" and (args.output_port.lower() == "fmc_hdmi" or args.output_port.lower() == "hdmi2")):
+        USE_EDID_DECODE = True
+
+    if (USE_EDID_DECODE):
+        print("EDID DECODE ENABLED")
+        edid_decode=client.create_library_component(name='edid_decode', platform=exported_plaftorm, domain='standalone_ps7_cortexa9_0')
+        edid_decode_sources = [
+            "edid-decode.cpp",
+            "parse-cta-block.cpp",
+            "parse-ls-ext-block.cpp",
+            "parse-vtb-ext-block.cpp",
+            "parse-eld.cpp",
+            "parse-if.cpp",
+            "calc-ovt.cpp",
+            "parse-displayid-block.cpp",
+            "parse-base-block.cpp",
+            "calc-gtf-cvt.cpp",
+            "parse-di-ext-block.cpp",
+            "oui.h",
+            "edid-decode.h",
+            "edid-decode-export.h"
+        ]
+        print("edid_decode source dir: {}".format(os.path.join(args.top, "edid-sdecode")))
+        edid_decode_source_dir = os.path.join(args.top, "edid-decode")
+        edid_decode.import_files(from_loc=edid_decode_source_dir, files=edid_decode_sources, dest_dir_in_cmp='src', is_skip_copy_sources = False)
+        #edid_decode.generate_build_files()
+        edid_decode.append_app_config(key="USER_INCLUDE_DIRECTORIES", values=['./'])
+        edid_decode.append_app_config(key="USER_COMPILE_DEFINITIONS", values=["__EMSCRIPTEN__=1"])
+        edid_decode.report()
+        edid_decode.build()
 
     app_name = args.project + "_app"
     app_src = os.path.join(args.top, "avnet/Projects/fmchc_python1300c/software/fmchc_python1300c_app/src")
     print("app source: {}".format(app_src))
-    exported_plaftorm = os.path.join(vitis_workspace, platform_name, "export", platform_name, platform_name + ".xpfm")
-    print("exported_plaftorm: " + exported_plaftorm)
+
     app = client.create_app_component(name=app_name, platform=exported_plaftorm, domain="standalone_ps7_cortexa9_0")
     app.import_files(from_loc=app_src, dest_dir_in_cmp='src')
+    if USE_EDID_DECODE:
+        ldscript = app.get_ld_script()
+        ldscript.set_heap_size(size='0x100000')  # 1 MB
+        ldscript.set_stack_size(size='0x100000') # 1 MB
     app.generate_build_files()
     app.append_app_config(
         key="USER_INCLUDE_DIRECTORIES",
@@ -104,21 +108,62 @@ def build_app(args):
             './adi_adv7511_hal/TX/HAL/WIRED/ADV7511/MACROS/',
             './adi_adv7511_hal/TX/LIB/']
     )
+    if USE_EDID_DECODE:
+        app.append_app_config(
+            key="USER_INCLUDE_DIRECTORIES",
+            values=[os.path.join(args.top, "edid-decode")]
+        )
+
+    user_compile_defs = []
+    if USE_EDID_DECODE:
+        user_compile_defs.append('__EMSCRIPTEN__=1')
+    if args.board.lower() == 'myir7020':
+        user_compile_defs.append('-DMYIR7020=1')
+        if args.input_port.lower() == 'fmc_hdmi':
+            user_compile_defs.append('-DFMC_HDMI_IN=1')
+        elif args.input_port.lower() == 'fmc_python1300':
+            user_compile_defs.append('-DPYTHON1300=1')
+        else:
+            print("Error: Invalid input port selected")
+            exit(1)
+        if args.output_port.lower() == 'fmc_hdmi':
+            user_compile_defs.append('-DFMC_HDMI_OUT=1')
+    elif args.board.lower() == 'zynq_dev':
+        user_compile_defs.append('-DZYNQ_DEV=1')
+        if args.input_port.lower() == 'fmc_python1300':
+            user_compile_defs.append('-DPYTHON1300=1')
+        elif args.input_port.lower() == 'fmc_hdmi':
+            user_compile_defs.append('-DFMC_HDMI_IN=1')
+        else:
+            print("Error: Invalid input port selected")
+            exit(1)
+        if args.output_port.lower() == 'fmc_hdmi':
+            user_compile_defs.append('-DFMC_HDMI_OUT=1')
+    else:
+        print("No board selected or unsupported board.")
+        exit(1)
+
+    app.append_app_config(
+        key = "USER_COMPILE_DEFINITIONS",
+        values = user_compile_defs
+    )
+    if args.build_type.lower() == "debug":
+        app.set_app_config(key='USER_COMPILE_OPTIMIZATION_LEVEL', values=['-O0'])
+        app.set_app_config(key='USER_COMPILE_DEBUG_LEVEL', values=['-g3'])
+        app.set_app_config(key='USER_COMPILE_DEBUG_OTHER_FLAGS', values=['-DDEBUG=1'])
+    if USE_EDID_DECODE or args.build_type.lower() == "debug":
+        app.append_app_config(key='USER_LINK_LIBRARIES', values=['-lm'])
+    if USE_EDID_DECODE:
+        linkpath = app.get_app_config(key='USER_LINK_DIRECTORIES')
+        linkpath.append(os.path.join(vitis_workspace, 'edid_decode', 'build'))
+        #print("EDID DECODE link path: {}".format(linkpath))
+        app.set_app_config(key='USER_LINK_DIRECTORIES', values=linkpath)
+        app.append_app_config(key='USER_LINK_LIBRARIES', values=['-ledid_decode', '-lstdc++'])
+        #app.get_app_config()
     app.report()
     app.build()
 
-    '''
-    # Delete domain
-    platform.delete_domain("standalone_ps7_cortexa9_0")
-    #platform.delete_domain("standalone_a9_0")
-    client.delete_component(platform_name)
-
-    # # Delete the workspace
-    if (os.path.isdir(workspace)):
-        shutil.rmtree(workspace, ignore_errors=True)
-        print(f"Deleted workspace {workspace}")
-    '''
-
+    # Create the boot image BIF file
     bif_name = os.path.join(vitis_workspace, args.project + "_BOOT.bif")
     fsbl_name = os.path.join(vitis_workspace, platform_name, "export", platform_name, "sw/boot/fsbl.elf")
     bitfile_name = os.path.join(vitis_workspace, platform_name, "export", platform_name, "hw/sdt/" + args.project + ".bit")
@@ -136,34 +181,29 @@ def build_app(args):
     # Close the client connection and terminate the vitis server
     vitis.dispose()
 
-# input arguments
-# top: top directory mandatory
-# build type: debug/release optional debug as default
-# target: target name mandatory
-# project: project name mandatory
-# version: version string mandatory
-# output: output directory opitional use current directory as default
 if __name__ == "__main__":
     print("Test script is running.")
     print("Current working directory:", os.getcwd())
     parser = argparse.ArgumentParser(description="Test script for myir.")
     parser.add_argument("--top", help="Top directory", type=str, required=True)
     parser.add_argument("--build_type", help="Build type (debug/release)", type=str, default="debug")
-    parser.add_argument("--target", help="Target name", type=str, required=True)
     parser.add_argument("--project", help="Project name", type=str)
     parser.add_argument("--hw", help="Hardware file", type=str, required=True)
     parser.add_argument("--version", help="Version string", type=str)
     parser.add_argument("--output", help="Output directory", type=str, required=True)
+    parser.add_argument("--input_port", help="input port", type=str, required=True)
+    parser.add_argument("--output_port", help="output port", type=str, required=True)
+    parser.add_argument("--board", help="board name", type=str, required=True)
     args = parser.parse_args()
-    if not args.top or not args.target or not args.project or not args.version:
-        parser.print_help()
-        exit(1)
+
     print("Top directory:", args.top)
     print("Hardware file:", args.hw)
     print("Build type:", args.build_type)
-    print("Target name:", args.target)
     print("Project name:", args.project)
     print("Version string:", args.version)
+    print("Board:", args.board)
+    print("Input port:", args.input_port)
+    print("Output port:", args.output_port)
     if not args.output:
         args.output = os.getcwd()
     print("Output directory: ", args.output)

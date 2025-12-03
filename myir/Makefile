@@ -67,7 +67,7 @@ BIF_FILE := ${VITIS_WS}/${PROJECT_NAME}_BOOT.bif
 ${APP_FILE}: vitis_app.py ${VIVADO_HW}
 	echo "Building Vitis Application... "
 	echo ${APP_FILE}
-	vitis -s vitis_app.py --top ${TOP} --hw ${VIVADO_HW} --project ${PROJECT_NAME} --output ${TARGET_DIR} --target ${BOARD} --version ${VIVADO_VER}
+	vitis -s vitis_app.py --top ${TOP} --hw ${VIVADO_HW} --project ${PROJECT_NAME} --output ${TARGET_DIR} --board ${BOARD} --input_port ${INPUT_PORT} --output_port ${OUTPUT_PORT} --version ${VIVADO_VER}
 
 ${BOOT_FILE}: vitis_app.py ${APP_FILE} ${BIF_FILE}
 	#rm ${BOOT_FILE}
