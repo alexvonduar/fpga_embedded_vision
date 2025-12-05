@@ -616,31 +616,31 @@ current_bd_instance $parentObj
 #set DDR [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:ddrx_rtl:1.0 DDR ]
 #set FIXED_IO [ create_bd_intf_port -mode Master -vlnv xilinx.com:display_processing_system7:fixedio_rtl:1.0 FIXED_IO ]
 if {[string match -nocase "yes" $enable_hdmii]} {
-set IO_HDMII [ create_bd_intf_port -mode Slave -vlnv avnet.com:interface:avnet_hdmi_rtl:2.0 IO_HDMII ]
+set FMC_HDMII [ create_bd_intf_port -mode Slave -vlnv avnet.com:interface:avnet_hdmi_rtl:2.0 FMC_HDMII ]
 }
-set IO_HDMIO [ create_bd_intf_port -mode Master -vlnv avnet.com:interface:avnet_hdmi_rtl:2.0 IO_HDMIO ]
-set IO_PYTHON_CAM [ create_bd_intf_port -mode Slave -vlnv avnet.com:interface:onsemi_vita_cam_rtl:1.0 IO_PYTHON_CAM ]
-set IO_PYTHON_SPI [ create_bd_intf_port -mode Master -vlnv avnet.com:interface:onsemi_vita_spi_rtl:1.0 IO_PYTHON_SPI ]
-set fmc_hdmi_cam_iic [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:iic_rtl:1.0 fmc_hdmi_cam_iic ]
+set FMC_HDMIO [ create_bd_intf_port -mode Master -vlnv avnet.com:interface:avnet_hdmi_rtl:2.0 FMC_HDMIO ]
+set FMC_CAM [ create_bd_intf_port -mode Slave -vlnv avnet.com:interface:onsemi_vita_cam_rtl:1.0 FMC_CAM ]
+set FMC_SPI [ create_bd_intf_port -mode Master -vlnv avnet.com:interface:onsemi_vita_spi_rtl:1.0 FMC_SPI ]
+set FMC_IIC_MUX [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:iic_rtl:1.0 FMC_IIC_MUX ]
 
 # Create ports
 #set M_AXI_GP0_ACLK [ create_bd_port -dir I -type clk M_AXI_GP0_ACLK ]
-set fmc_hdmi_cam_iic_rst_n [ create_bd_port -dir O -from 0 -to 0 fmc_hdmi_cam_iic_rst_n ]
-set fmc_hdmi_cam_vclk [ create_bd_port -dir I fmc_hdmi_cam_vclk ]
+set FMC_IIC_MUX_rst_n [ create_bd_port -dir O -from 0 -to 0 FMC_IIC_MUX_rst_n ]
+set FMC_VCLK [ create_bd_port -dir I FMC_VCLK ]
 
 if {[string match -nocase "yes" $enable_hdmii]} {
-# Create instance: avnet_hdmi_in_0, and set properties
-set avnet_hdmi_in_0 [ create_bd_cell -type ip -vlnv avnet:avnet_hdmi:avnet_hdmi_in avnet_hdmi_in_0 ]
+# Create instance: AVNET_HDMII, and set properties
+set AVNET_HDMII [ create_bd_cell -type ip -vlnv avnet:avnet_hdmi:avnet_hdmi_in AVNET_HDMII ]
 set_property -dict [ list \
     CONFIG.C_USE_BUFR {false} \
-] $avnet_hdmi_in_0
+] $AVNET_HDMII
 }
 
-# Create instance: avnet_hdmi_out_0, and set properties
-set avnet_hdmi_out_0 [ create_bd_cell -type ip -vlnv avnet:avnet_hdmi:avnet_hdmi_out avnet_hdmi_out_0 ]
+# Create instance: AVNET_HDMIO, and set properties
+set AVNET_HDMIO [ create_bd_cell -type ip -vlnv avnet:avnet_hdmi:avnet_hdmi_out AVNET_HDMIO ]
 set_property -dict [ list \
     CONFIG.C_DEBUG_PORT {false} \
-] $avnet_hdmi_out_0
+] $AVNET_HDMIO
 
 # Create instance: axi_mem_intercon, and set properties
 set axi_mem_intercon [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect axi_mem_intercon ]
@@ -726,18 +726,18 @@ set_property -dict [ list \
 #    CONFIG.MMCM_COMPENSATION.VALUE_SRC {DEFAULT} \
 #] $clk_wiz_0
 
-# Create instance: fmc_hdmi_cam_iic_0, and set properties
-set fmc_hdmi_cam_iic_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic fmc_hdmi_cam_iic_0 ]
+# Create instance: FMC_IIC_MUX, and set properties
+set FMC_IIC_MUX [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic FMC_IIC_MUX ]
 set_property -dict [ list \
     CONFIG.IIC_BOARD_INTERFACE {Custom} \
     CONFIG.USE_BOARD_FLOW {true} \
-] $fmc_hdmi_cam_iic_0
+] $FMC_IIC_MUX
 
-# Create instance: onsemi_python_cam_0, and set properties
-set onsemi_python_cam_0 [ create_bd_cell -type ip -vlnv avnet:onsemi_vita:onsemi_vita_cam onsemi_python_cam_0 ]
+# Create instance: ONSEMI_PYTHON_CAM, and set properties
+set ONSEMI_PYTHON_CAM [ create_bd_cell -type ip -vlnv avnet:onsemi_vita:onsemi_vita_cam ONSEMI_PYTHON_CAM ]
 
-# Create instance: onsemi_python_spi_0, and set properties
-set onsemi_python_spi_0 [ create_bd_cell -type ip -vlnv avnet:onsemi_vita:onsemi_vita_spi onsemi_python_spi_0 ]
+# Create instance: ONSEMI_PYTHON_SPI, and set properties
+set ONSEMI_PYTHON_SPI [ create_bd_cell -type ip -vlnv avnet:onsemi_vita:onsemi_vita_spi ONSEMI_PYTHON_SPI ]
 
 # Create instance: processing_system7_0, and set properties
 #set processing_system7_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7 processing_system7_0 ]
@@ -929,12 +929,12 @@ set_property -dict [ list \
 set xlconstant_1 [ create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconstant xlconstant_1 ]
 
 # Create interface connections
-connect_bd_intf_net -intf_net IO_CAM_IN_1 [get_bd_intf_ports IO_PYTHON_CAM] [get_bd_intf_pins onsemi_python_cam_0/IO_CAM_IN]
+connect_bd_intf_net -intf_net IO_CAM_IN_1 [get_bd_intf_ports FMC_CAM] [get_bd_intf_pins ONSEMI_PYTHON_CAM/IO_CAM_IN]
 if {[string match -nocase "yes" $enable_hdmii]} {
-connect_bd_intf_net -intf_net IO_HDMII_1 [get_bd_intf_ports IO_HDMII] [get_bd_intf_pins avnet_hdmi_in_0/IO_HDMII]
-connect_bd_intf_net -intf_net avnet_hdmi_in_0_VID_IO_OUT [get_bd_intf_pins avnet_hdmi_in_0/VID_IO_OUT] [get_bd_intf_pins v_vid_in_axi4s_hdmii/vid_io_in]
+connect_bd_intf_net -intf_net IO_HDMII_1 [get_bd_intf_ports FMC_HDMII] [get_bd_intf_pins AVNET_HDMII/IO_HDMII]
+connect_bd_intf_net -intf_net avnet_hdmi_in_0_VID_IO_OUT [get_bd_intf_pins AVNET_HDMII/VID_IO_OUT] [get_bd_intf_pins v_vid_in_axi4s_hdmii/vid_io_in]
 }
-connect_bd_intf_net -intf_net avnet_hdmi_out_0_IO_HDMIO [get_bd_intf_ports IO_HDMIO] [get_bd_intf_pins avnet_hdmi_out_0/IO_HDMIO]
+connect_bd_intf_net -intf_net avnet_hdmi_out_0_IO_HDMIO [get_bd_intf_ports FMC_HDMIO] [get_bd_intf_pins AVNET_HDMIO/IO_HDMIO]
 connect_bd_intf_net -intf_net axi_mem_intercon_M00_AXI [get_bd_intf_pins axi_mem_intercon/M00_AXI] [get_bd_intf_pins processing_system7_0/S_AXI_HP0]
 if {[string match -nocase "yes" $enable_hdmii]} {
 connect_bd_intf_net -intf_net axi_vdma_hdmii_M_AXIS_MM2S \
@@ -957,23 +957,23 @@ connect_bd_intf_net -intf_net v_mix_0_s_axis_video \
     [get_bd_intf_pins v_mix_0/s_axis_video]
 connect_bd_intf_net -intf_net axi_vdma_cam_M_AXI_MM2S [get_bd_intf_pins axi_mem_intercon/S02_AXI] [get_bd_intf_pins axi_vdma_cam/M_AXI_MM2S]
 connect_bd_intf_net -intf_net axi_vdma_cam_M_AXI_S2MM [get_bd_intf_pins axi_mem_intercon/S03_AXI] [get_bd_intf_pins axi_vdma_cam/M_AXI_S2MM]
-connect_bd_intf_net -intf_net fmc_hdmi_cam_iic_0_IIC [get_bd_intf_ports fmc_hdmi_cam_iic] [get_bd_intf_pins fmc_hdmi_cam_iic_0/IIC]
-connect_bd_intf_net -intf_net onsemi_python_cam_0_VID_IO_OUT [get_bd_intf_pins onsemi_python_cam_0/VID_IO_OUT] [get_bd_intf_pins v_vid_in_axi4s_cam/vid_io_in]
-connect_bd_intf_net -intf_net onsemi_python_spi_0_IO_SPI_OUT [get_bd_intf_ports IO_PYTHON_SPI] [get_bd_intf_pins onsemi_python_spi_0/IO_SPI_OUT]
+connect_bd_intf_net -intf_net FMC_IIC_MUX [get_bd_intf_ports FMC_IIC_MUX] [get_bd_intf_pins FMC_IIC_MUX/IIC]
+connect_bd_intf_net -intf_net onsemi_python_cam_0_VID_IO_OUT [get_bd_intf_pins ONSEMI_PYTHON_CAM/VID_IO_OUT] [get_bd_intf_pins v_vid_in_axi4s_cam/vid_io_in]
+connect_bd_intf_net -intf_net onsemi_python_spi_0_IO_SPI_OUT [get_bd_intf_ports FMC_SPI] [get_bd_intf_pins ONSEMI_PYTHON_SPI/IO_SPI_OUT]
 #connect_bd_intf_net -intf_net processing_system7_0_DDR [get_bd_intf_ports DDR] [get_bd_intf_pins processing_system7_0/DDR]
 #connect_bd_intf_net -intf_net processing_system7_0_FIXED_IO [get_bd_intf_ports FIXED_IO] [get_bd_intf_pins processing_system7_0/FIXED_IO]
 connect_bd_intf_net -intf_net processing_system7_0_M_AXI_GP0 [get_bd_intf_pins processing_system7_0/M_AXI_GP0] [get_bd_intf_pins axi_periph/S00_AXI]
-connect_bd_intf_net -intf_net axi_periph_M07_AXI [get_bd_intf_pins fmc_hdmi_cam_iic_0/S_AXI] [get_bd_intf_pins axi_periph/M07_AXI]
+connect_bd_intf_net -intf_net axi_periph_M07_AXI [get_bd_intf_pins FMC_IIC_MUX/S_AXI] [get_bd_intf_pins axi_periph/M07_AXI]
 if {[string match -nocase "yes" $enable_hdmii]} {
 connect_bd_intf_net -intf_net axi_periph_M00_AXI [get_bd_intf_pins axi_vdma_hdmii/S_AXI_LITE] [get_bd_intf_pins axi_periph/M00_AXI]
 }
 connect_bd_intf_net -intf_net axi_periph_M06_AXI \
     [get_bd_intf_pins axi_periph/M06_AXI] \
     [get_bd_intf_pins v_mix_0/s_axi_CTRL]
-connect_bd_intf_net -intf_net axi_periph_M01_AXI [get_bd_intf_pins onsemi_python_cam_0/S00_AXI] [get_bd_intf_pins axi_periph/M01_AXI]
+connect_bd_intf_net -intf_net axi_periph_M01_AXI [get_bd_intf_pins ONSEMI_PYTHON_CAM/S00_AXI] [get_bd_intf_pins axi_periph/M01_AXI]
 connect_bd_intf_net -intf_net axi_periph_M02_AXI [get_bd_intf_pins axi_periph/M02_AXI] [get_bd_intf_pins v_cfa_0/s_axi_CTRL]
 connect_bd_intf_net -intf_net axi_periph_M04_AXI [get_bd_intf_pins axi_vdma_cam/S_AXI_LITE] [get_bd_intf_pins axi_periph/M04_AXI]
-connect_bd_intf_net -intf_net axi_periph_M08_AXI [get_bd_intf_pins onsemi_python_spi_0/S00_AXI] [get_bd_intf_pins axi_periph/M08_AXI]
+connect_bd_intf_net -intf_net axi_periph_M08_AXI [get_bd_intf_pins ONSEMI_PYTHON_SPI/S00_AXI] [get_bd_intf_pins axi_periph/M08_AXI]
 connect_bd_intf_net -intf_net axi_periph_M09_AXI \
     [get_bd_intf_pins axi_gpio_vid_out_0/S_AXI] [get_bd_intf_pins axi_periph/M09_AXI]
 connect_bd_intf_net -intf_net axi_periph_M05_AXI \
@@ -982,7 +982,7 @@ connect_bd_intf_net -intf_net axi_periph_M05_AXI \
 connect_bd_intf_net -intf_net axi_periph_M03_AXI \
     [get_bd_intf_pins v_csc_0/s_axi_ctrl] \
     [get_bd_intf_pins axi_periph/M03_AXI]
-connect_bd_intf_net -intf_net v_axi4s_vid_out_0_vid_io_out [get_bd_intf_pins avnet_hdmi_out_0/VID_IO_IN] [get_bd_intf_pins v_axi4s_vid_out_0/vid_io_out]
+connect_bd_intf_net -intf_net v_axi4s_vid_out_0_vid_io_out [get_bd_intf_pins AVNET_HDMIO/VID_IO_IN] [get_bd_intf_pins v_axi4s_vid_out_0/vid_io_out]
 connect_bd_intf_net -intf_net v_cfa_0_video_out \
     [get_bd_intf_pins v_cfa_0/m_axis_video] \
     [get_bd_intf_pins v_csc_0/s_axis]
@@ -1007,18 +1007,18 @@ connect_bd_intf_net -intf_net v_vid_in_axi4s_hdmii_video_out [get_bd_intf_pins a
 # Create port connections
 #connect_bd_net -net M_AXI_GP0_ACLK_1 [get_bd_ports M_AXI_GP0_ACLK]
 if {[string match -nocase "yes" $enable_hdmii]} {
-connect_bd_net -net avnet_hdmi_in_0_audio_spdif [get_bd_pins avnet_hdmi_in_0/audio_spdif] [get_bd_pins avnet_hdmi_out_0/audio_spdif]
-connect_bd_net -net avnet_hdmi_in_0_hdmii_clk [get_bd_pins avnet_hdmi_in_0/hdmii_clk] [get_bd_pins v_vid_in_axi4s_hdmii/vid_io_in_clk]
+connect_bd_net -net avnet_hdmi_in_0_audio_spdif [get_bd_pins AVNET_HDMII/audio_spdif] [get_bd_pins AVNET_HDMIO/audio_spdif]
+connect_bd_net -net avnet_hdmi_in_0_hdmii_clk [get_bd_pins AVNET_HDMII/hdmii_clk] [get_bd_pins v_vid_in_axi4s_hdmii/vid_io_in_clk]
 }
-connect_bd_net -net clk_wiz_0_clk_out1 [get_bd_pins avnet_hdmi_out_0/clk] [get_bd_pins clk_wiz_0/clk_out1] [get_bd_pins rst_148_5M/slowest_sync_clk] [get_bd_pins v_axi4s_vid_out_0/vid_io_out_clk] [get_bd_pins v_tc_0/clk]
-connect_bd_net -net clk_wiz_0_clk_out2 [get_bd_pins clk_wiz_0/clk_out2] [get_bd_pins onsemi_python_cam_0/clk] [get_bd_pins v_vid_in_axi4s_cam/vid_io_in_clk]
-connect_bd_net -net fmc_hdmi_cam_iic_0_gpo [get_bd_ports fmc_hdmi_cam_iic_rst_n] [get_bd_pins fmc_hdmi_cam_iic_0/gpo]
-connect_bd_net -net fmc_hdmi_cam_vclk_1 [get_bd_ports fmc_hdmi_cam_vclk] [get_bd_pins clk_wiz_0/clk_in1]
+connect_bd_net -net clk_wiz_0_clk_out1 [get_bd_pins AVNET_HDMIO/clk] [get_bd_pins clk_wiz_0/clk_out1] [get_bd_pins rst_148_5M/slowest_sync_clk] [get_bd_pins v_axi4s_vid_out_0/vid_io_out_clk] [get_bd_pins v_tc_0/clk]
+connect_bd_net -net clk_wiz_0_clk_out2 [get_bd_pins clk_wiz_0/clk_out2] [get_bd_pins ONSEMI_PYTHON_CAM/clk] [get_bd_pins v_vid_in_axi4s_cam/vid_io_in_clk]
+connect_bd_net -net FMC_IIC_MUX_gpo [get_bd_ports FMC_IIC_MUX_rst_n] [get_bd_pins FMC_IIC_MUX/gpo]
+connect_bd_net -net FMC_VCLK_1 [get_bd_ports FMC_VCLK] [get_bd_pins clk_wiz_0/clk_in1]
 connect_bd_net -net processing_system7_0_FCLK_CLK0 \
     [get_bd_pins axi_vdma_cam/s_axi_lite_aclk] \
-    [get_bd_pins fmc_hdmi_cam_iic_0/s_axi_aclk] \
-    [get_bd_pins onsemi_python_cam_0/s00_axi_aclk] \
-    [get_bd_pins onsemi_python_spi_0/s00_axi_aclk] \
+    [get_bd_pins FMC_IIC_MUX/s_axi_aclk] \
+    [get_bd_pins ONSEMI_PYTHON_CAM/s00_axi_aclk] \
+    [get_bd_pins ONSEMI_PYTHON_SPI/s00_axi_aclk] \
     [get_bd_pins processing_system7_0/FCLK_CLK0] \
     [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK] \
     [get_bd_pins axi_periph/ACLK] \
@@ -1071,12 +1071,12 @@ connect_bd_net -net processing_system7_0_FCLK_CLK1 \
     [get_bd_pins axis_conv_vdma_hdmii_2_3/aclk] \
     [get_bd_pins v_vid_in_axi4s_hdmii/aclk]
 }
-connect_bd_net -net processing_system7_0_FCLK_CLK2 [get_bd_pins onsemi_python_cam_0/clk200] [get_bd_pins processing_system7_0/FCLK_CLK2]
+connect_bd_net -net processing_system7_0_FCLK_CLK2 [get_bd_pins ONSEMI_PYTHON_CAM/clk200] [get_bd_pins processing_system7_0/FCLK_CLK2]
 connect_bd_net -net processing_system7_0_FCLK_RESET0_N [get_bd_pins processing_system7_0/FCLK_RESET0_N] [get_bd_pins rst_76M/ext_reset_in]
 connect_bd_net -net processing_system7_0_FCLK_RESET1_N [get_bd_pins processing_system7_0/FCLK_RESET1_N] [get_bd_pins rst_149M/ext_reset_in]
 connect_bd_net -net processing_system7_0_FCLK_RESET2_N [get_bd_pins processing_system7_0/FCLK_RESET2_N] [get_bd_pins rst_148_5M/ext_reset_in]
 connect_bd_net -net rst_148_5M_peripheral_aresetn [get_bd_pins rst_148_5M/peripheral_aresetn] [get_bd_pins v_tc_0/resetn]
-connect_bd_net -net rst_148_5M_peripheral_reset [get_bd_pins onsemi_python_cam_0/reset] [get_bd_pins rst_148_5M/peripheral_reset]
+connect_bd_net -net rst_148_5M_peripheral_reset [get_bd_pins ONSEMI_PYTHON_CAM/reset] [get_bd_pins rst_148_5M/peripheral_reset]
 connect_bd_net -net rst_149M_interconnect_aresetn [get_bd_pins axi_mem_intercon/ARESETN] [get_bd_pins rst_149M/interconnect_aresetn]
 connect_bd_net -net rst_149M_peripheral_aresetn \
     [get_bd_pins axi_mem_intercon/M00_ARESETN] \
@@ -1104,9 +1104,9 @@ connect_bd_net -net rst_149M_peripheral_aresetn \
 connect_bd_net -net rst_76M_interconnect_aresetn [get_bd_pins axi_periph/ARESETN] [get_bd_pins rst_76M/interconnect_aresetn]
 connect_bd_net -net rst_76M_peripheral_aresetn \
     [get_bd_pins axi_vdma_cam/axi_resetn] \
-    [get_bd_pins fmc_hdmi_cam_iic_0/s_axi_aresetn] \
-    [get_bd_pins onsemi_python_cam_0/s00_axi_aresetn] \
-    [get_bd_pins onsemi_python_spi_0/s00_axi_aresetn] \
+    [get_bd_pins FMC_IIC_MUX/s_axi_aresetn] \
+    [get_bd_pins ONSEMI_PYTHON_CAM/s00_axi_aresetn] \
+    [get_bd_pins ONSEMI_PYTHON_SPI/s00_axi_aresetn] \
     [get_bd_pins axi_periph/M07_ARESETN] \
     [get_bd_pins axi_periph/M00_ARESETN] \
     [get_bd_pins axi_periph/M01_ARESETN] \
@@ -1122,16 +1122,16 @@ if {[string match -nocase "yes" $enable_hdmii]} {
 connect_bd_net -net rst_76M_peripheral_aresetn \
     [get_bd_pins axi_vdma_hdmii/axi_resetn]
 }
-connect_bd_net -net rst_76M_peripheral_reset [get_bd_pins avnet_hdmi_out_0/reset] [get_bd_pins rst_76M/peripheral_reset] [get_bd_pins v_axi4s_vid_out_0/vid_io_out_reset] [get_bd_pins v_vid_in_axi4s_cam/vid_io_in_reset]
-connect_bd_net -net xlconstant_0_dout [get_bd_pins onsemi_python_cam_0/trigger1] [get_bd_pins xlconstant_0/dout]
+connect_bd_net -net rst_76M_peripheral_reset [get_bd_pins AVNET_HDMIO/reset] [get_bd_pins rst_76M/peripheral_reset] [get_bd_pins v_axi4s_vid_out_0/vid_io_out_reset] [get_bd_pins v_vid_in_axi4s_cam/vid_io_in_reset]
+connect_bd_net -net xlconstant_0_dout [get_bd_pins ONSEMI_PYTHON_CAM/trigger1] [get_bd_pins xlconstant_0/dout]
 if {[string match -nocase "yes" $enable_hdmii]} {
 connect_bd_net -net xlconstant_0_dout [get_bd_pins v_vid_in_axi4s_hdmii/vid_io_in_reset]
 }
 connect_bd_net -net xlconstant_1_dout \
-    [get_bd_pins avnet_hdmi_out_0/embed_syncs] \
-    [get_bd_pins avnet_hdmi_out_0/oe] \
-    [get_bd_pins onsemi_python_cam_0/oe] \
-    [get_bd_pins onsemi_python_spi_0/oe] \
+    [get_bd_pins AVNET_HDMIO/embed_syncs] \
+    [get_bd_pins AVNET_HDMIO/oe] \
+    [get_bd_pins ONSEMI_PYTHON_CAM/oe] \
+    [get_bd_pins ONSEMI_PYTHON_SPI/oe] \
     [get_bd_pins v_axi4s_vid_out_0/aclken] \
     [get_bd_pins v_axi4s_vid_out_0/vid_io_out_ce] \
     [get_bd_pins v_tc_0/clken] \
@@ -1179,10 +1179,10 @@ create_bd_addr_seg -range 0x00010000 -offset 0x43000000 [get_bd_addr_spaces proc
 if {[string match -nocase "yes" $enable_hdmii]} {
 create_bd_addr_seg -range 0x00010000 -offset 0x43010000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_vdma_hdmii/S_AXI_LITE/Reg] SEG_axi_vdma_hdmii_Reg
 }
-create_bd_addr_seg -range 0x00010000 -offset 0x41600000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs fmc_hdmi_cam_iic_0/S_AXI/Reg] SEG_fmc_hdmi_cam_iic_0_Reg
+create_bd_addr_seg -range 0x00010000 -offset 0x41600000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs FMC_IIC_MUX/S_AXI/Reg] SEG_FMC_IIC_MUX_Reg
 create_bd_addr_seg -range 0x00010000 -offset 0x41700000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_gpio_vid_out_0/S_AXI/Reg] SEG_axi_gpio_vid_out_0_Reg
-create_bd_addr_seg -range 0x00010000 -offset 0x43C20000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs onsemi_python_cam_0/S00_AXI/Reg] SEG_onsemi_python_cam_0_Reg
-create_bd_addr_seg -range 0x00010000 -offset 0x43C40000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs onsemi_python_spi_0/S00_AXI/Reg] SEG_onsemi_python_spi_0_Reg
+create_bd_addr_seg -range 0x00010000 -offset 0x43C20000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs ONSEMI_PYTHON_CAM/S00_AXI/Reg] SEG_onsemi_python_cam_0_Reg
+create_bd_addr_seg -range 0x00010000 -offset 0x43C40000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs ONSEMI_PYTHON_SPI/S00_AXI/Reg] SEG_onsemi_python_spi_0_Reg
 create_bd_addr_seg -range 0x00010000 -offset 0x43C30000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_cfa_0/s_axi_CTRL/Reg] SEG_v_cfa_0_Reg
 create_bd_addr_seg -range 0x00010000 -offset 0x43C10000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_mix_0/s_axi_CTRL/Reg] SEG_v_mix_0_Reg
 create_bd_addr_seg -range 0x00010000 -offset 0x43C50000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_csc_0/s_axi_ctrl/Reg] SEG_v_csc_0_Reg

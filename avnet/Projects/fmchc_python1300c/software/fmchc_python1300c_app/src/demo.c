@@ -178,7 +178,7 @@ int demo_init( demo_t *pdemo )
     XV_demosaic_CfgInitialize(pdemo->pcfa, pcfa_config, pcfa_config->BaseAddress);
     xil_printf("demosaic initialization done\n\r");
 
-    status = fmc_iic_xps_init(pdemo->pfmc_hdmi_cam_iic,"FMC-HDMI-CAM I2C Controller", XPAR_FMC_HDMI_CAM_IIC_0_BASEADDR );
+    status = fmc_iic_xps_init(pdemo->pfmc_hdmi_cam_iic,"FMC-HDMI-CAM I2C Controller", XPAR_FMC_IIC_MUX_BASEADDR );
     if ( !status )
     {
         xil_printf( "ERROR : Failed to open FMC-IIC driver\n\r" );
@@ -317,12 +317,12 @@ int demo_start_cam_in( demo_t *pdemo )
     xil_printf( "PYTHON Receiver Initialization ...\n\r" );
 #if !defined(SDT)
     onsemi_python_init(pdemo->ppython_receiver, "PYTHON-1300-C",
-            XPAR_ONSEMI_PYTHON_SPI_0_S00_AXI_BASEADDR,
-            XPAR_ONSEMI_PYTHON_CAM_0_S00_AXI_BASEADDR);
+            XPAR_ONSEMI_PYTHON_SPI_S00_AXI_BASEADDR,
+            XPAR_ONSEMI_PYTHON_CAM_S00_AXI_BASEADDR);
 #else
     onsemi_python_init(pdemo->ppython_receiver, "PYTHON-1300-C",
-            XPAR_ONSEMI_PYTHON_SPI_0_BASEADDR,
-            XPAR_ONSEMI_PYTHON_CAM_0_BASEADDR);
+            XPAR_ONSEMI_PYTHON_SPI_BASEADDR,
+            XPAR_ONSEMI_PYTHON_CAM_BASEADDR);
 #endif
     pdemo->ppython_receiver->uManualTap = 25; // IDELAY setting (0-31)
     //xil_printf( "PYTHON SPI Config for 10MHz ...\n\r" );
