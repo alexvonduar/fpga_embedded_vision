@@ -52,6 +52,8 @@ set project_name "init"
 set project_dir "init"
 set input_port "init"
 set output_port "init"
+set fmc_board "init"
+set use_intr "init"
 #"fmchc_python1300c"
 set xdc "init"
 set version_override "yes"
@@ -131,6 +133,15 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
             append printmessage " "
         }
         append build_params "| Output Port     |     $printmessage |\n"
+    }
+    # check for fmc_board parameter
+    if {[string match -nocase "fmc_board=*" [lindex $argv $i]]} {
+        set fmc_board [string range [lindex $argv $i] 10 end]
+        set printmessage $fmc_board
+        for {set j 0} {$j < [expr $chart_wdith - [string length $fmc_board]]} {incr j} {
+            append printmessage " "
+        }
+        append build_params "| FMC Board       |     $printmessage |\n"
     }
     # check for Version Override parameter
     if {[string match -nocase "version_override=*" [lindex $argv $i]]} {
@@ -223,6 +234,13 @@ if {[string match -nocase "init" $xdc]} {
     return -code ok
 }
 
+if {![string match -nocase "init" $fmc_board]} {
+    puts "FMC Board defined as $fmc_board"
+    set use_intr "yes"
+} else {
+    puts "FMC Board not defined, proceeding without FMC configuration"
+}
+
 set scriptdir "${top}/myir"
 set avnet_dir "${top}/avnet"
 
@@ -279,6 +297,20 @@ set_property -dict [ list \
     CONFIG.PCW_TTC0_TTC0_IO {EMIO} \
     CONFIG.PCW_TTC_PERIPHERAL_FREQMHZ {50} \
 ] [get_bd_cells processing_system7_0]
+
+# enable interupt if using axi iic
+if {[string match -nocase "yes" $use_intr]} {
+    # connect interrupt if using axi iic
+    set_property -dict [list \
+        CONFIG.PCW_IRQ_F2P_INTR {1} \
+        CONFIG.PCW_USE_FABRIC_INTERRUPT {1} \
+    ] [get_bd_cells processing_system7_0]
+    set INTR [create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconcat:1.0 INTR]
+    set_property -dict [list \
+        CONFIG.NUM_PORTS {16} \
+    ] [get_bd_cells INTR]
+    connect_bd_net [get_bd_pins INTR/dout] [get_bd_pins processing_system7_0/IRQ_F2P]
+}
 
 if {[string match -nocase "ZYNQ_DEV" $board]} {
     #puts "Creating project for ZYNQ_DEV board"
@@ -368,11 +400,11 @@ if {[string match -nocase "ZYNQ_DEV" $board]} {
         CONFIG.PCW_UIPARAM_DDR_PARTNO {MT41K256M16 RE-125} \
     ] [get_bd_cells processing_system7_0]
 
-    # enable interupt if using axi iic
-    set_property -dict [list \
-        CONFIG.PCW_IRQ_F2P_INTR {1} \
-        CONFIG.PCW_USE_FABRIC_INTERRUPT {1} \
-    ] [get_bd_cells processing_system7_0]
+    # create AXI IIC if output port is HDMI2
+    if {[string match -nocase "HDMI2" $output_port]} {
+        set HDMI2_IIC [create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic:2.0 HDMI2_IIC]
+        connect_bd_net [get_bd_pins HDMI2_IIC/iic2intc_irpt] [get_bd_pins INTR/In2]
+    }
     #connect_bd_net [get_bd_pins HDMI2_IIC/iic2intc_irpt] [get_bd_pins processing_system7_0/IRQ_F2P]
 
     # PL clock 50MHz
@@ -536,6 +568,11 @@ if {[string match -nocase "ZYNQ_DEV" $board]} {
     create_bd_port -dir IO -from 7 -to 0 PMOD2
     create_bd_port -dir IO -from 7 -to 0 PMOD3
     create_bd_port -dir IO -from 7 -to 0 PMOD4
+
+    if {[string match -nocase "fmc_hdmi" $input_port] || [string match -nocase "fmc_python1300" $input_port] || [string match -nocase "fmc_hdmi" $output_port]} {
+        # HDMIIO_INTN
+        create_bd_port -dir I FMC_HDMIIO_INTN
+    }
 }
 
 # General Config
@@ -728,10 +765,11 @@ set_property -dict [ list \
 
 # Create instance: FMC_IIC_MUX, and set properties
 set FMC_IIC_MUX [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic FMC_IIC_MUX ]
-set_property -dict [ list \
-    CONFIG.IIC_BOARD_INTERFACE {Custom} \
-    CONFIG.USE_BOARD_FLOW {true} \
-] $FMC_IIC_MUX
+#set_property -dict [ list \
+#    CONFIG.IIC_BOARD_INTERFACE {Custom} \
+#    CONFIG.USE_BOARD_FLOW {true} \
+#] $FMC_IIC_MUX
+connect_bd_net [get_bd_pins FMC_IIC_MUX/iic2intc_irpt] [get_bd_pins INTR/In5]
 
 # Create instance: ONSEMI_PYTHON_CAM, and set properties
 set ONSEMI_PYTHON_CAM [ create_bd_cell -type ip -vlnv avnet:onsemi_vita:onsemi_vita_cam ONSEMI_PYTHON_CAM ]
@@ -745,7 +783,7 @@ set ONSEMI_PYTHON_SPI [ create_bd_cell -type ip -vlnv avnet:onsemi_vita:onsemi_v
 # Create instance: axi_periph, and set properties
 set axi_periph [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect axi_periph ]
 set_property -dict [ list \
-    CONFIG.NUM_MI {10} \
+    CONFIG.NUM_MI {11} \
 ] $axi_periph
 
 # Create instance: rst_148_5M, and set properties
@@ -963,7 +1001,7 @@ connect_bd_intf_net -intf_net onsemi_python_spi_0_IO_SPI_OUT [get_bd_intf_ports 
 #connect_bd_intf_net -intf_net processing_system7_0_DDR [get_bd_intf_ports DDR] [get_bd_intf_pins processing_system7_0/DDR]
 #connect_bd_intf_net -intf_net processing_system7_0_FIXED_IO [get_bd_intf_ports FIXED_IO] [get_bd_intf_pins processing_system7_0/FIXED_IO]
 connect_bd_intf_net -intf_net processing_system7_0_M_AXI_GP0 [get_bd_intf_pins processing_system7_0/M_AXI_GP0] [get_bd_intf_pins axi_periph/S00_AXI]
-connect_bd_intf_net -intf_net axi_periph_M07_AXI [get_bd_intf_pins FMC_IIC_MUX/S_AXI] [get_bd_intf_pins axi_periph/M07_AXI]
+connect_bd_intf_net -intf_net axi_periph_M08_AXI [get_bd_intf_pins FMC_IIC_MUX/S_AXI] [get_bd_intf_pins axi_periph/M08_AXI]
 if {[string match -nocase "yes" $enable_hdmii]} {
 connect_bd_intf_net -intf_net axi_periph_M00_AXI [get_bd_intf_pins axi_vdma_hdmii/S_AXI_LITE] [get_bd_intf_pins axi_periph/M00_AXI]
 }
@@ -973,9 +1011,9 @@ connect_bd_intf_net -intf_net axi_periph_M06_AXI \
 connect_bd_intf_net -intf_net axi_periph_M01_AXI [get_bd_intf_pins ONSEMI_PYTHON_CAM/S00_AXI] [get_bd_intf_pins axi_periph/M01_AXI]
 connect_bd_intf_net -intf_net axi_periph_M02_AXI [get_bd_intf_pins axi_periph/M02_AXI] [get_bd_intf_pins v_cfa_0/s_axi_CTRL]
 connect_bd_intf_net -intf_net axi_periph_M04_AXI [get_bd_intf_pins axi_vdma_cam/S_AXI_LITE] [get_bd_intf_pins axi_periph/M04_AXI]
-connect_bd_intf_net -intf_net axi_periph_M08_AXI [get_bd_intf_pins ONSEMI_PYTHON_SPI/S00_AXI] [get_bd_intf_pins axi_periph/M08_AXI]
-connect_bd_intf_net -intf_net axi_periph_M09_AXI \
-    [get_bd_intf_pins axi_gpio_vid_out_0/S_AXI] [get_bd_intf_pins axi_periph/M09_AXI]
+connect_bd_intf_net -intf_net axi_periph_M09_AXI [get_bd_intf_pins ONSEMI_PYTHON_SPI/S00_AXI] [get_bd_intf_pins axi_periph/M09_AXI]
+connect_bd_intf_net -intf_net axi_periph_M10_AXI \
+    [get_bd_intf_pins axi_gpio_vid_out_0/S_AXI] [get_bd_intf_pins axi_periph/M10_AXI]
 connect_bd_intf_net -intf_net axi_periph_M05_AXI \
     [get_bd_intf_pins v_tpg_0/s_axi_CTRL] \
     [get_bd_intf_pins axi_periph/M05_AXI]
@@ -1022,12 +1060,12 @@ connect_bd_net -net processing_system7_0_FCLK_CLK0 \
     [get_bd_pins processing_system7_0/FCLK_CLK0] \
     [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK] \
     [get_bd_pins axi_periph/ACLK] \
-    [get_bd_pins axi_periph/M07_ACLK] \
+    [get_bd_pins axi_periph/M08_ACLK] \
     [get_bd_pins axi_periph/M00_ACLK] \
     [get_bd_pins axi_periph/M01_ACLK] \
     [get_bd_pins axi_periph/M04_ACLK] \
-    [get_bd_pins axi_periph/M08_ACLK] \
     [get_bd_pins axi_periph/M09_ACLK] \
+    [get_bd_pins axi_periph/M10_ACLK] \
     [get_bd_pins axi_periph/S00_ACLK] \
     [get_bd_pins axi_gpio_vid_out_0/s_axi_aclk] \
     [get_bd_pins rst_76M/slowest_sync_clk]
@@ -1107,12 +1145,12 @@ connect_bd_net -net rst_76M_peripheral_aresetn \
     [get_bd_pins FMC_IIC_MUX/s_axi_aresetn] \
     [get_bd_pins ONSEMI_PYTHON_CAM/s00_axi_aresetn] \
     [get_bd_pins ONSEMI_PYTHON_SPI/s00_axi_aresetn] \
-    [get_bd_pins axi_periph/M07_ARESETN] \
+    [get_bd_pins axi_periph/M08_ARESETN] \
     [get_bd_pins axi_periph/M00_ARESETN] \
     [get_bd_pins axi_periph/M01_ARESETN] \
     [get_bd_pins axi_periph/M04_ARESETN] \
-    [get_bd_pins axi_periph/M08_ARESETN] \
     [get_bd_pins axi_periph/M09_ARESETN] \
+    [get_bd_pins axi_periph/M10_ARESETN] \
     [get_bd_pins axi_periph/S00_ARESETN] \
     [get_bd_pins rst_76M/peripheral_aresetn] \
     [get_bd_pins v_axi4s_vid_out_0/aresetn] \
@@ -1168,25 +1206,61 @@ connect_bd_net -net xlconcat_0_dout \
     [get_bd_pins xlconcat_0/dout] \
     [get_bd_pins axi_gpio_vid_out_0/gpio_io_i]
 
+# create and connect FMC IIC
+if {![string match -nocase "init" $fmc_board]} {
+    create_bd_intf_port -mode Master -vlnv xilinx.com:interface:iic_rtl:1.0 FMC_IIC
+    set FMC_IIC [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_iic FMC_IIC ]
+    connect_bd_intf_net [get_bd_intf_ports FMC_IIC] [get_bd_intf_pins FMC_IIC/IIC]
+    connect_bd_intf_net -intf_net axi_periph_M07_AXI [get_bd_intf_pins FMC_IIC/S_AXI] [get_bd_intf_pins axi_periph/M07_AXI]
+    connect_bd_net \
+        [get_bd_pins FMC_IIC/s_axi_aclk] \
+        [get_bd_pins processing_system7_0/FCLK_CLK0] \
+        [get_bd_pins axi_periph/M07_ACLK]
+
+    connect_bd_net -net rst_76M_peripheral_aresetn \
+        [get_bd_pins FMC_IIC/s_axi_aresetn] \
+        [get_bd_pins axi_periph/M07_ARESETN] \
+        [get_bd_pins rst_76M/peripheral_aresetn]
+
+    connect_bd_net [get_bd_pins FMC_IIC/iic2intc_irpt] [get_bd_pins INTR/In4]
+}
+
 # Create address segments
 if {[string match -nocase "yes" $enable_hdmii]} {
-create_bd_addr_seg -range 0x20000000 -offset 0x00000000 [get_bd_addr_spaces axi_vdma_hdmii/Data_MM2S] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM] SEG_processing_system7_0_HP0_DDR_LOWOCM
-create_bd_addr_seg -range 0x20000000 -offset 0x00000000 [get_bd_addr_spaces axi_vdma_hdmii/Data_S2MM] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM] SEG_processing_system7_0_HP0_DDR_LOWOCM
+#create_bd_addr_seg -range 0x20000000 -offset 0x00000000 [get_bd_addr_spaces axi_vdma_hdmii/Data_MM2S] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM] SEG_processing_system7_0_HP0_DDR_LOWOCM
+assign_bd_address -target_address_space [get_bd_addr_spaces axi_vdma_hdmii/Data_MM2S] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM]
+#create_bd_addr_seg -range 0x20000000 -offset 0x00000000 [get_bd_addr_spaces axi_vdma_hdmii/Data_S2MM] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM] SEG_processing_system7_0_HP0_DDR_LOWOCM
+assign_bd_address -target_address_space [get_bd_addr_spaces axi_vdma_hdmii/Data_S2MM] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM]
 }
-create_bd_addr_seg -range 0x20000000 -offset 0x00000000 [get_bd_addr_spaces axi_vdma_cam/Data_MM2S] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM] SEG_processing_system7_0_HP0_DDR_LOWOCM
-create_bd_addr_seg -range 0x20000000 -offset 0x00000000 [get_bd_addr_spaces axi_vdma_cam/Data_S2MM] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM] SEG_processing_system7_0_HP0_DDR_LOWOCM
-create_bd_addr_seg -range 0x00010000 -offset 0x43000000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_vdma_cam/S_AXI_LITE/Reg] SEG_axi_vdma_cam_Reg
+#create_bd_addr_seg -range 0x20000000 -offset 0x00000000 [get_bd_addr_spaces axi_vdma_cam/Data_MM2S] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM] SEG_processing_system7_0_HP0_DDR_LOWOCM
+assign_bd_address -target_address_space [get_bd_addr_spaces axi_vdma_cam/Data_MM2S] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM]
+#create_bd_addr_seg -range 0x20000000 -offset 0x00000000 [get_bd_addr_spaces axi_vdma_cam/Data_S2MM] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM] SEG_processing_system7_0_HP0_DDR_LOWOCM
+assign_bd_address -target_address_space [get_bd_addr_spaces axi_vdma_cam/Data_S2MM] [get_bd_addr_segs processing_system7_0/S_AXI_HP0/HP0_DDR_LOWOCM]
+#create_bd_addr_seg -range 0x00010000 -offset 0x43000000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_vdma_cam/S_AXI_LITE/Reg] SEG_axi_vdma_cam_Reg
+assign_bd_address -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_vdma_cam/S_AXI_LITE/Reg]
 if {[string match -nocase "yes" $enable_hdmii]} {
-create_bd_addr_seg -range 0x00010000 -offset 0x43010000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_vdma_hdmii/S_AXI_LITE/Reg] SEG_axi_vdma_hdmii_Reg
+#create_bd_addr_seg -range 0x00010000 -offset 0x43010000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_vdma_hdmii/S_AXI_LITE/Reg] SEG_axi_vdma_hdmii_Reg
+assign_bd_address -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_vdma_hdmii/S_AXI_LITE/Reg]
 }
-create_bd_addr_seg -range 0x00010000 -offset 0x41600000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs FMC_IIC_MUX/S_AXI/Reg] SEG_FMC_IIC_MUX_Reg
-create_bd_addr_seg -range 0x00010000 -offset 0x41700000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_gpio_vid_out_0/S_AXI/Reg] SEG_axi_gpio_vid_out_0_Reg
-create_bd_addr_seg -range 0x00010000 -offset 0x43C20000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs ONSEMI_PYTHON_CAM/S00_AXI/Reg] SEG_onsemi_python_cam_0_Reg
-create_bd_addr_seg -range 0x00010000 -offset 0x43C40000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs ONSEMI_PYTHON_SPI/S00_AXI/Reg] SEG_onsemi_python_spi_0_Reg
-create_bd_addr_seg -range 0x00010000 -offset 0x43C30000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_cfa_0/s_axi_CTRL/Reg] SEG_v_cfa_0_Reg
-create_bd_addr_seg -range 0x00010000 -offset 0x43C10000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_mix_0/s_axi_CTRL/Reg] SEG_v_mix_0_Reg
-create_bd_addr_seg -range 0x00010000 -offset 0x43C50000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_csc_0/s_axi_ctrl/Reg] SEG_v_csc_0_Reg
-create_bd_addr_seg -range 0x00010000 -offset 0x43C60000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_tpg_0/s_axi_CTRL/Reg] SEG_v_tpg_0_Reg
+if {![string match -nocase "init" $fmc_board]} {
+    assign_bd_address -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs FMC_IIC/S_AXI/Reg]
+}
+#create_bd_addr_seg -range 0x00010000 -offset 0x41600000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs FMC_IIC_MUX/S_AXI/Reg] SEG_FMC_IIC_MUX_Reg
+assign_bd_address -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs FMC_IIC_MUX/S_AXI/Reg]
+#create_bd_addr_seg -range 0x00010000 -offset 0x41700000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_gpio_vid_out_0/S_AXI/Reg] SEG_axi_gpio_vid_out_0_Reg
+assign_bd_address -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_gpio_vid_out_0/S_AXI/Reg]
+#create_bd_addr_seg -range 0x00010000 -offset 0x43C20000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs ONSEMI_PYTHON_CAM/S00_AXI/Reg] SEG_onsemi_python_cam_0_Reg
+assign_bd_address -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs ONSEMI_PYTHON_CAM/S00_AXI/Reg]
+#create_bd_addr_seg -range 0x00010000 -offset 0x43C40000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs ONSEMI_PYTHON_SPI/S00_AXI/Reg] SEG_onsemi_python_spi_0_Reg
+assign_bd_address -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs ONSEMI_PYTHON_SPI/S00_AXI/Reg]
+#create_bd_addr_seg -range 0x00010000 -offset 0x43C30000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_cfa_0/s_axi_CTRL/Reg] SEG_v_cfa_0_Reg
+assign_bd_address -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_cfa_0/s_axi_CTRL/Reg]
+#create_bd_addr_seg -range 0x00010000 -offset 0x43C10000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_mix_0/s_axi_CTRL/Reg] SEG_v_mix_0_Reg
+assign_bd_address -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_mix_0/s_axi_CTRL/Reg]
+#create_bd_addr_seg -range 0x00010000 -offset 0x43C50000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_csc_0/s_axi_ctrl/Reg] SEG_v_csc_0_Reg
+assign_bd_address -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_csc_0/s_axi_ctrl/Reg]
+#create_bd_addr_seg -range 0x00010000 -offset 0x43C60000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_tpg_0/s_axi_CTRL/Reg] SEG_v_tpg_0_Reg
+assign_bd_address -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_tpg_0/s_axi_CTRL/Reg]
 
 # Restore current instance
 current_bd_instance $oldCurInst

@@ -10,10 +10,10 @@ endif
 .PHONY: fmchc_python1300c_myir7020 fmchc_python1300c_zynqdev rpi_mipi_dp_kv260 rpi_mipi_dp_me_st1_xu6
 
 fmchc_python1300c_myir7020:
-	make -C ${TOP}/myir/ TOP=${TOP} BOARD=MYIR7020 INPUT_PORT=FMC_PYTHON1300 OUTPUT_PORT=FMC_HDMI all
+	make -C ${TOP}/myir/ TOP=${TOP} BOARD=MYIR7020 FMC_BOARD=fmchc_python1300c INPUT_PORT=FMC_PYTHON1300 OUTPUT_PORT=FMC_HDMI all
 
 fmchc_python1300c_zynqdev:
-	make -C ${TOP}/myir/ TOP=${TOP} BOARD=ZYNQ_DEV INPUT_PORT=FMC_PYTHON1300 OUTPUT_PORT=FMC_HDMI all
+	make -C ${TOP}/myir/ TOP=${TOP} BOARD=ZYNQ_DEV FMC_BOARD=fmchc_python1300c INPUT_PORT=FMC_PYTHON1300 OUTPUT_PORT=FMC_HDMI all
 
 rpi_mipi_dp_kv260:
 	make -C ${TOP}/kv260 TOP=${TOP} INPUT=rpi_mipi OUTPUT=dp BOARD=kv260 all

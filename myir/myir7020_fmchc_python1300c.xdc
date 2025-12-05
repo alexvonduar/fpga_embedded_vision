@@ -3,20 +3,11 @@
 ########################
 
 # I2C Chain on FMC-HDMI-CAM
-set_property PACKAGE_PIN F16    [get_ports FMC_IIC_MUX_scl_io]
-set_property IOSTANDARD LVCMOS25 [get_ports FMC_IIC_MUX_scl_io]
-set_property SLEW SLOW [get_ports FMC_IIC_MUX_scl_io]
-set_property DRIVE 8 [get_ports FMC_IIC_MUX_scl_io]
-
-set_property PACKAGE_PIN F17    [get_ports FMC_IIC_MUX_sda_io]
-set_property IOSTANDARD LVCMOS25 [get_ports FMC_IIC_MUX_sda_io]
-set_property SLEW SLOW [get_ports FMC_IIC_MUX_sda_io]
-set_property DRIVE 8 [get_ports FMC_IIC_MUX_sda_io]
-
-set_property PACKAGE_PIN L17    [get_ports {FMC_IIC_MUX_rst_n[0]}]
-set_property IOSTANDARD LVCMOS25 [get_ports {FMC_IIC_MUX_rst_n[0]}]
-set_property SLEW SLOW [get_ports {FMC_IIC_MUX_rst_n[0]}]
-set_property DRIVE 8 [get_ports {FMC_IIC_MUX_rst_n[0]}]
+set_property -dict {PACKAGE_PIN G14 IOSTANDARD LVCMOS25 SLEW SLOW DRIVE 8} [get_ports {FMC_IIC_scl_io}]
+set_property -dict {PACKAGE_PIN J15 IOSTANDARD LVCMOS25 SLEW SLOW DRIVE 8} [get_ports {FMC_IIC_sda_io}]
+set_property -dict {PACKAGE_PIN F16 IOSTANDARD LVCMOS25 SLEW SLOW DRIVE 8} [get_ports {FMC_IIC_MUX_scl_io}]
+set_property -dict {PACKAGE_PIN F17 IOSTANDARD LVCMOS25 SLEW SLOW DRIVE 8} [get_ports {FMC_IIC_MUX_sda_io}]
+set_property -dict {PACKAGE_PIN L17 IOSTANDARD LVCMOS25 SLEW SLOW DRIVE 8} [get_ports {FMC_IIC_MUX_rst_n[0]}]
 
 # HDMI Input (ADV7611) on FMC-HDMI-CAM
 set_property PACKAGE_PIN H16   [get_ports FMC_HDMII_clk]
@@ -67,6 +58,7 @@ set_property IOSTANDARD LVCMOS25 [get_ports FMC_HDMIO_data*]
 set_property IOB TRUE [get_ports FMC_HDMIO_data*]
 set_property IOSTANDARD LVCMOS25 [get_ports FMC_HDMIO_spdif]
 
+set_property -dict {PACKAGE_PIN L16 IOSTANDARD LVCMOS25} [get FMC_HDMIIO_INTN]
 
 # Camera interface (PYTHON-1300) on FMC-HDMI-CAM
 set_property PACKAGE_PIN N15   [get_ports FMC_CAM_clk_pll]

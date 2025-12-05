@@ -4,6 +4,7 @@ INPUT_PORT ?=
 OUTPUT_PORT ?=
 KEEP_VIVADO_HW ?= 1
 KEEP_VIVADO_CACHE ?= 1
+FMC_BOARD ?=
 
 ifeq (${TOP},)
 $(error TOP directory not set)
@@ -29,7 +30,7 @@ VIVADO_HW := $(TARGET_DIR)/${PROJECT_NAME}.xsa
 
 AVNET_IP_SOURCES := $(shell find ${TOP}/avnet/IP -type f)
 
-$(info ${BOARD})
+#$(info ${BOARD})
 ifeq (${BOARD}, MYIR7020)
 	#$(info ${BOARD} is MYIR7020)
 	XDC_FILE=${CURDIR}/myir7020_fmchc_python1300c.xdc
@@ -40,11 +41,11 @@ endif
 
 
 $(VIVADO_PRJ): ${CURDIR}/bd.tcl ${CURDIR}/utils.tcl ${XDC_FILE} $(AVNET_IP_SOURCES)
-	vivado -mode batch -notrace -source $< -tclargs project_name=${PROJECT_NAME} project_dir=${VIVADO_DIR} board=${BOARD} input_port=${INPUT_PORT} output_port=${OUTPUT_PORT} top=${TOP} xdc=${XDC_FILE} vivado_ver=${VIVADO_VER}
+	vivado -mode batch -notrace -source $< -tclargs project_name=${PROJECT_NAME} project_dir=${VIVADO_DIR} board=${BOARD} fmc_board=${FMC_BOARD} input_port=${INPUT_PORT} output_port=${OUTPUT_PORT} top=${TOP} xdc=${XDC_FILE} vivado_ver=${VIVADO_VER}
 
 $(VIVADO_HW) : ${CURDIR}/run.tcl $(VIVADO_PRJ)
 	#faketime -f "-1y" vivado -mode batch -notrace -source $< -tclargs project=$(PROJECT_NAME) board=${BOARD} top=${TOP} vivado_ver=${VIVADO_VER} output=${VIVADO_HW}
-	vivado -mode batch -notrace -source $< -tclargs project_name=${PROJECT_NAME} project_dir=${VIVADO_DIR} top=${TOP} board=${BOARD} vivado_ver=${VIVADO_VER} output=${VIVADO_HW}
+	vivado -mode batch -notrace -source $< -tclargs project_name=${PROJECT_NAME} project_dir=${VIVADO_DIR} top=${TOP} board=${BOARD} fmc_board=${FMC_BOARD} vivado_ver=${VIVADO_VER} output=${VIVADO_HW}
 
 AVNET_SW_BSP_SOURCES := $(shell find ${TOP}/avnet/Projects/fmchc_python1300c/software/sw_repository -type f)
 AVNET_SW_APP_SOURCES := $(shell find ${TOP}/avnet/Projects/fmchc_python1300c/software/fmchc_python1300c_app -type f)
