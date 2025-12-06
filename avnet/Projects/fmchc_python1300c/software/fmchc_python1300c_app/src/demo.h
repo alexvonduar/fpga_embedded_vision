@@ -75,6 +75,7 @@ typedef struct _demo_t {
     //XVtc_Timing vtctiming;
     const XVidC_VideoTiming * pvtiming;
     fmc_iic_t fmc_hdmi_cam_iic;
+    fmc_iic_t fmc_hdmi_eeprom_iic;
     fmc_hdmi_cam_t fmc_hdmi_cam;
     onsemi_python_t python_receiver;
     onsemi_python_status_t python_status_t1;
@@ -91,6 +92,7 @@ typedef struct _demo_t {
     XVprocSs *pcsc;//, *pcresample;
     //XVtc *pvtc;
     fmc_iic_t *pfmc_hdmi_cam_iic;
+    fmc_iic_t *pfmc_hdmi_eeprom_iic;
     fmc_hdmi_cam_t *pfmc_hdmi_cam;
     onsemi_python_t *ppython_receiver;
 

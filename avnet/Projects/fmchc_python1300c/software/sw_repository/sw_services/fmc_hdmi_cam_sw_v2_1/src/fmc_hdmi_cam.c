@@ -72,12 +72,14 @@
 * @note     None.
 *
 ******************************************************************************/
-int fmc_hdmi_cam_init( fmc_hdmi_cam_t *pContext, char szName[], fmc_iic_t *pIIC )
+int fmc_hdmi_cam_init( fmc_hdmi_cam_t *pContext, char szName[], fmc_iic_t *pIIC, fmc_iic_t *pEEPROM_IIC, u32 FMC_GA )
 {
     u8 reg_addr;
     u8 reg_data;
     u8 num_bytes;
 
+    pContext->EEPROM_ADDRESS = 0x50 + FMC_GA;
+    pContext->pEEPROM_IIC = pEEPROM_IIC;
     pContext->pIIC = pIIC;
     strcpy( pContext->szName, szName );
 
@@ -1430,7 +1432,7 @@ int fmc_hdmi_cam_hdmio_get_hpd( fmc_hdmi_cam_t *pContext, u32 *pHotPlugDetect )
 ******************************************************************************/
 int fmc_hdmi_cam_hdmii_read_edid( fmc_hdmi_cam_t *pContext, u8 pData[256] )
 {
-    u8 num_bytes = 0;
+    int num_bytes = 0;
     int    idx;
 
     // Mux Selection
@@ -1458,7 +1460,7 @@ int fmc_hdmi_cam_hdmii_read_edid( fmc_hdmi_cam_t *pContext, u8 pData[256] )
 ******************************************************************************/
 int fmc_hdmi_cam_hdmii_write_edid( fmc_hdmi_cam_t *pContext, u8 pData[256] )
 {
-    u8 num_bytes = 0;
+    int num_bytes = 0;
     //u8 dummy_data;
     int    idx;
 
@@ -1490,18 +1492,32 @@ int fmc_hdmi_cam_hdmii_write_edid( fmc_hdmi_cam_t *pContext, u8 pData[256] )
 * @note     None.
 *
 ******************************************************************************/
-int fmc_hdmi_cam_hdmio_read_edid( fmc_hdmi_cam_t *pContext, u8 pData[256] )
+int fmc_hdmi_cam_hdmio_read_edid( fmc_hdmi_cam_t *pContext, u8 * pData, u32 size )
 {
-    u8 num_bytes = 0;
+    int num_bytes = 0;
     int    idx;
 
     // Mux Selection
     fmc_hdmi_cam_iic_mux( pContext, FMC_HDMI_CAM_I2C_SELECT_DDCEDID );
 
     // Read contents of EDID EEPROM
-    for ( idx = 0; idx < 256; idx++ )
+    for ( idx = 0; idx < size; idx++ )
     {
         num_bytes += pContext->pIIC->fpIicRead( pContext->pIIC, FMC_HDMI_CAM_DDCEDID_ADDR, idx, &pData[idx], 1);
+    }
+
+    return num_bytes;
+}
+
+int fmc_hdmi_cam_read_eeprom( fmc_hdmi_cam_t *pContext, u8 * data, u32 length )
+{
+    int num_bytes = 0;
+    int    idx;
+
+    // Read contents of EEPROM
+    for ( idx = 0; idx < length; idx++ )
+    {
+        num_bytes += pContext->pEEPROM_IIC->fpIicRead( pContext->pEEPROM_IIC, pContext->EEPROM_ADDRESS, idx, &data[idx], 1);
     }
 
     return num_bytes;

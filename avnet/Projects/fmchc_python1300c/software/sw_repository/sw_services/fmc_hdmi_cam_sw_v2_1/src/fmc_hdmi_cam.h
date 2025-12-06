@@ -79,6 +79,12 @@
 #define FMC_HDMI_CAM_HDMI_OUT_ADDR (IIC_ADV7511_BASE_ADDR>>1) // 0x72/0x73 (ADV7511)
 #define FMC_HDMI_CAM_DDCEDID_ADDR  0x50 // 0xA0/0xA1
 
+#define FMC_HDMI_CAM_EEPROM_ADDR    0x50 // 0xA8/0xA9 (24LC256)
+
+#define FMC_GA00 0
+#define FMC_GA01 1
+#define FMC_GA10 2
+#define FMC_GA11 3
 
 struct struct_fmc_hdmi_cam_t
 {
@@ -90,6 +96,10 @@ struct struct_fmc_hdmi_cam_t
 
     // pointer to FMC-IIC instance
     fmc_iic_t *pIIC;
+
+    // pointer to FMC-EEPROM-IIC instance
+    fmc_iic_t *pEEPROM_IIC;
+    u8 EEPROM_ADDRESS;
 
     // GPIO value
     u32 GpioData;
@@ -126,7 +136,7 @@ struct struct_fmc_hdmi_cam_video_timing_t
 typedef struct struct_fmc_hdmi_cam_video_timing_t fmc_hdmi_cam_video_timing_t;
 
 
-int fmc_hdmi_cam_init( fmc_hdmi_cam_t *pContext, char szName[], fmc_iic_t *pIIC );
+int fmc_hdmi_cam_init( fmc_hdmi_cam_t *pContext, char szName[], fmc_iic_t *pIIC, fmc_iic_t *pEEPROM_IIC, u32 FMC_GA );
 
 // I2C MUX Functions
 void fmc_hdmi_cam_iic_mux_reset( fmc_hdmi_cam_t *pContext );
@@ -178,7 +188,9 @@ int fmc_hdmi_cam_hdmio_get_hpd( fmc_hdmi_cam_t *pContext, u32 *pHotPlugDetect );
 // DDC/EDID Functions
 int fmc_hdmi_cam_hdmii_read_edid( fmc_hdmi_cam_t *pContext, u8 data[256] );
 int fmc_hdmi_cam_hdmii_write_edid( fmc_hdmi_cam_t *pContext, u8 data[256] );
-int fmc_hdmi_cam_hdmio_read_edid( fmc_hdmi_cam_t *pContext, u8 data[256] );
+//int fmc_hdmi_cam_hdmio_read_edid( fmc_hdmi_cam_t *pContext, u8 data[256] );
+int fmc_hdmi_cam_hdmio_read_edid( fmc_hdmi_cam_t *pContext, u8 * data, u32 length );
+int fmc_hdmi_cam_read_eeprom( fmc_hdmi_cam_t *pContext, u8 * data, u32 length );
 
 // Delay Functions
 void fmc_hdmi_cam_wait_usec(unsigned int delay);

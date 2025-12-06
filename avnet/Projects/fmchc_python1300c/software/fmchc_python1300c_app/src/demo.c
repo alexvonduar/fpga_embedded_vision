@@ -72,6 +72,7 @@ int demo_init( demo_t *pdemo )
     //pdemo->pvtc = &(pdemo->vtc);
     pdemo->pcsc = &(pdemo->csc);
     pdemo->pfmc_hdmi_cam_iic = &(pdemo->fmc_hdmi_cam_iic);
+    pdemo->pfmc_hdmi_eeprom_iic = &(pdemo->fmc_hdmi_eeprom_iic);
     pdemo->pfmc_hdmi_cam = &(pdemo->fmc_hdmi_cam);
     pdemo->ppython_receiver = &(pdemo->python_receiver);
 
@@ -185,8 +186,18 @@ int demo_init( demo_t *pdemo )
         exit(0);
     }
 
-    fmc_hdmi_cam_init(pdemo->pfmc_hdmi_cam, "FMC-HDMI-CAM", pdemo->pfmc_hdmi_cam_iic);
+    status = fmc_iic_xps_init(pdemo->pfmc_hdmi_eeprom_iic,"FMC-HDMI-EEPROM I2C Controller", XPAR_FMC_IIC_BASEADDR );
+    if ( !status )
+    {
+        xil_printf( "ERROR : Failed to open FMC-EEPROM-IIC driver\n\r");
+        exit(0);
+    }
+
+    fmc_hdmi_cam_init(pdemo->pfmc_hdmi_cam, "FMC-HDMI-CAM", pdemo->pfmc_hdmi_cam_iic, pdemo->pfmc_hdmi_eeprom_iic, 0);
+
     pdemo->pfmc_hdmi_cam->bVerbose = pdemo->bVerbose;
+    fmc_eeprom_parse(pdemo->pfmc_hdmi_cam);
+    fmc_hdmio_edid_parse(pdemo->pfmc_hdmi_cam);
 
     // Configure Video Clock Synthesizer
     xil_printf( "Video Clock Synthesizer Configuration ...\n\r" );
