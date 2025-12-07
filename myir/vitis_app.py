@@ -179,8 +179,10 @@ def build_app(args):
         user_compile_defs.append('-DFMC_BOARD='+args.fmc_board)
     if USE_EDID_DECODE:
         user_compile_defs.append('__EMSCRIPTEN__=1')
+    if args.fmc_board:
+        user_compile_defs.append('-D'+args.fmc_board.upper())
+    user_compile_defs.append('-D'+args.board.upper())
     if args.board.lower() == 'myir7020':
-        user_compile_defs.append('-DMYIR7020=1')
         if args.input_port.lower() == 'fmc_hdmi':
             user_compile_defs.append('-DFMC_HDMI_IN=1')
         elif args.input_port.lower() == 'fmc_python1300':
@@ -191,16 +193,24 @@ def build_app(args):
         if args.output_port.lower() == 'fmc_hdmi':
             user_compile_defs.append('-DFMC_HDMI_OUT=1')
     elif args.board.lower() == 'zynq_dev':
-        user_compile_defs.append('-DZYNQ_DEV=1')
         if args.input_port.lower() == 'fmc_python1300':
             user_compile_defs.append('-DPYTHON1300=1')
         elif args.input_port.lower() == 'fmc_hdmi':
             user_compile_defs.append('-DFMC_HDMI_IN=1')
+        elif args.input_port.lower() == 'mipi':
+            user_compile_defs.append('-DMIPI_IN=1')
         else:
             print("Error: Invalid input port selected")
             exit(1)
         if args.output_port.lower() == 'fmc_hdmi':
             user_compile_defs.append('-DFMC_HDMI_OUT=1')
+        elif args.output_port.lower() == 'hdmi2':
+            user_compile_defs.append('-DHDMI2_OUT=1')
+        elif args.output_port.lower() == 'hdmi1':
+            user_compile_defs.append('-DHDMI1_OUT=1')
+        else:
+            print("Error: Invalid output port selected")
+            exit(1)
     else:
         print("No board selected or unsupported board.")
         exit(1)

@@ -57,6 +57,11 @@
 
 #include "adv7511_control.h"
 
+#if defined(ZYNQ_DEV) && defined(HDMI2_OUT)
+#define USE_1080P30 1
+#include "fmc_iic.h"
+#endif
+
 int demo_init( demo_t *pdemo )
 {
     int status;
@@ -103,7 +108,11 @@ int demo_init( demo_t *pdemo )
     XAxiVdma_Config *paxivdma_config;
     XV_demosaic_Config *pcfa_config;
 
+#if defined(USE_1080P30)
+    ret = XVidC_SetVideoStream(&pdemo->mixer_stream_in, XVIDC_VM_1080_30_P, XVIDC_CSF_RGB, XVIDC_BPC_8, XVIDC_PPC_1);
+#else
     ret = XVidC_SetVideoStream(&pdemo->mixer_stream_in, XVIDC_VM_1080_60_P, XVIDC_CSF_YCRCB_422, XVIDC_BPC_8, XVIDC_PPC_1);
+#endif
     if (ret != XST_SUCCESS) {
         xil_printf("Set Mixer Video stream In failed\n\r");
     }
@@ -155,7 +164,11 @@ int demo_init( demo_t *pdemo )
     //XVtc_Config *VTC_Config = XVtc_LookupConfig(XPAR_V_TC_0_DEVICE_ID);
     //XVtc_CfgInitialize(pdemo->pvtc, VTC_Config, VTC_Config->BaseAddress);
     //XVtc_ConvVideoMode2Timing(pdemo->pvtc, XVTC_VMODE_1080P, &(pdemo->vtctiming));
+#if defined(USE_1080P30)
+    pdemo->pvtiming = XVidC_GetTimingInfo(XVIDC_VM_1080_30_P);
+#else
     pdemo->pvtiming = XVidC_GetTimingInfo(XVIDC_VM_1080_60_P);
+#endif
 
 #if !defined(SDT)
     paxivdma_config = XAxiVdma_LookupConfig(XPAR_AXIVDMA_0_DEVICE_ID);
@@ -197,7 +210,52 @@ int demo_init( demo_t *pdemo )
 
     pdemo->pfmc_hdmi_cam->bVerbose = pdemo->bVerbose;
     fmc_eeprom_parse(pdemo->pfmc_hdmi_cam);
+#if defined(ZYNQ_DEV) && defined(HDMI2_OUT)
+    {
+        XGpio hdmi2_hpd;
+        XGpio_Config *gpio_config;
+        gpio_config = XGpio_LookupConfig(XPAR_HDMI2_HPD_BASEADDR);
+        XGpio_CfgInitialize(&hdmi2_hpd, gpio_config, gpio_config->BaseAddress);
+        XGpio_SetDataDirection(&hdmi2_hpd, 1, 0x1);
+        // Wait for HDMI2 Hot Plug Detect to go high
+        xil_printf("Waiting for HDMI2 Hot Plug Detect to go high...\n\r");
+        //while ( (XGpio_DiscreteRead(&hdmi2_hpd, 1) & 0x1) == 0 )
+        //{
+        //    usleep(100000);
+        //}
+        xil_printf("HDMI2 Hot Plug Detect is 0x%08x\n\r", XGpio_DiscreteRead(&hdmi2_hpd, 1));
+        fmc_iic_t iic;
+        int EDID_BLOCK_SIZE = 512;
+        unsigned char edid_buffer[EDID_BLOCK_SIZE+1];
+        int read = 0;
+        int idx = 0;
+        int status;
+        memset(edid_buffer, 0, EDID_BLOCK_SIZE+1);
+        status = fmc_iic_axi_init(&iic, "HDMI2 IIC", XPAR_HDMI2_IIC_BASEADDR);
+        //read = iic.fpIicERead(&iic, 0x50, 0x0000, edid_buffer, EDID_BLOCK_SIZE);
+        for ( idx = 0; idx < EDID_BLOCK_SIZE; idx++ )
+        {
+            read += iic.fpIicRead(&iic, 0x50, idx, &edid_buffer[idx], 1);
+        }
+        if (read != EDID_BLOCK_SIZE)
+        {
+            xil_printf("FMC EEPROM: Failed to read EDID data from EEPROM (read %d bytes)\n\r", read);
+            return -1;
+        }
+        xil_printf("RAW EDID DATA:");
+        for (int i = 0; i < EDID_BLOCK_SIZE; i++)
+        {
+            if (i % 16 == 0)
+                xil_printf("\r\n%04x: ", i);
+            xil_printf("%02x ", edid_buffer[i]);
+        }
+        xil_printf("\r\n");
+
+        status = parse_edid_from_array(edid_buffer, EDID_BLOCK_SIZE);
+    }
+#else
     fmc_hdmio_edid_parse(pdemo->pfmc_hdmi_cam);
+#endif
 
     // Configure Video Clock Synthesizer
     xil_printf( "Video Clock Synthesizer Configuration ...\n\r" );
@@ -532,7 +590,11 @@ int demo_start_frame_buffer( demo_t *pdemo )
 
     xil_printf("Video Test Pattern Initialization\r\n");
     //Configure the TPG
+#if defined(USE_1080P30)
+    tpg_set(pdemo->ptpg, 1080, 1920, XVIDC_CSF_RGB, XTPG_BKGND_COLOR_BARS);
+#else
     tpg_set(pdemo->ptpg, 1080, 1920, XVIDC_CSF_YCRCB_422, XTPG_BKGND_COLOR_BARS);
+#endif
 
     //Configure the moving box of the TPG
     tpg_set_box(pdemo->ptpg, 100, 3);

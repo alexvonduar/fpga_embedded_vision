@@ -32,6 +32,7 @@
 #include "demo.h"
 #include "avnet_console.h"
 #include "avnet_console_serial.h"
+#include "axi_stream_to_output_status.h"
 
 demo_t demo;
 demo_t *pdemo;
@@ -82,6 +83,7 @@ int main()
             break;
         }
         //demo_hdmi_out_status(pdemo);
+        //print_axi_stream_to_output_status();
         //usleep(100000);
     }
 

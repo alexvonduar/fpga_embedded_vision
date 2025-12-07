@@ -175,21 +175,21 @@ set_property -dict {PACKAGE_PIN W15  IOSTANDARD LVCMOS33 PULLUP true} [get_ports
 
 set_property INTERNAL_VREF 0.6 [get_iobanks 13]
 
-set_property -dict {PACKAGE_PIN U5   IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_clk_lp_rxn}]
-set_property -dict {PACKAGE_PIN U6   IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_clk_lp_rxp}]
+set_property -dict {PACKAGE_PIN U5   IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_clk_lp_n}]
+set_property -dict {PACKAGE_PIN U6   IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_clk_lp_p}]
 
-set_property -dict {PACKAGE_PIN T6   IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_data_lp_rxn[0]}]
-set_property -dict {PACKAGE_PIN R6   IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_data_lp_rxp[0]}]
-set_property -dict {PACKAGE_PIN W7   IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_data_lp_rxn[1]}]
-set_property -dict {PACKAGE_PIN V7   IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_data_lp_rxp[1]}]
+set_property -dict {PACKAGE_PIN T6   IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_data_lp_n[0]}]
+set_property -dict {PACKAGE_PIN R6   IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_data_lp_p[0]}]
+set_property -dict {PACKAGE_PIN W7   IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_data_lp_n[1]}]
+set_property -dict {PACKAGE_PIN V7   IOSTANDARD HSUL_12} [get_ports {MIPI_DPHY_data_lp_p[1]}]
 
-set_property -dict {PACKAGE_PIN Y8   IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_clk_hs_rxn}]
-set_property -dict {PACKAGE_PIN Y9   IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_clk_hs_rxp}]
+set_property -dict {PACKAGE_PIN Y8   IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_clk_hs_n}]
+set_property -dict {PACKAGE_PIN Y9   IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_clk_hs_p}]
 
-set_property -dict {PACKAGE_PIN W5   IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_data_hs_rxn[0]}]
-set_property -dict {PACKAGE_PIN W6   IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_data_hs_rxp[0]}]
-set_property -dict {PACKAGE_PIN U4   IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_data_hs_rxn[1]}]
-set_property -dict {PACKAGE_PIN T4   IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_data_hs_rxp[1]}]
+set_property -dict {PACKAGE_PIN W5   IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_data_hs_n[0]}]
+set_property -dict {PACKAGE_PIN W6   IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_data_hs_p[0]}]
+set_property -dict {PACKAGE_PIN U4   IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_data_hs_n[1]}]
+set_property -dict {PACKAGE_PIN T4   IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_data_hs_p[1]}]
 
 # HDMI1
 set_property -dict {PACKAGE_PIN V18  IOSTANDARD LVCMOS33} [get_ports {HDMI_OE[0]}]
@@ -204,15 +204,15 @@ set_property -dict {PACKAGE_PIN AA18 IOSTANDARD TMDS_33 } [get_ports {HDMI1_Clk_
 
 # HDMI2
 set_property -dict {PACKAGE_PIN W18  IOSTANDARD LVCMOS33} [get_ports {HDMI_OE[1]}]
-set_property -dict {PACKAGE_PIN U19  IOSTANDARD LVCMOS33 PULLUP true} [get_ports {HDMI2_HPD_tri_io}]
-set_property -dict {PACKAGE_PIN U15  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data_p[0]}]
-set_property -dict {PACKAGE_PIN U16  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data_n[0]}]
-set_property -dict {PACKAGE_PIN U17  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data_p[1]}]
-set_property -dict {PACKAGE_PIN V17  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data_n[1]}]
-set_property -dict {PACKAGE_PIN AA17 IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data_p[2]}]
-set_property -dict {PACKAGE_PIN AB17 IOSTANDARD TMDS_33 } [get_ports {HDMI2_Data_n[2]}]
-set_property -dict {PACKAGE_PIN W16  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Clk_p}]
-set_property -dict {PACKAGE_PIN Y16  IOSTANDARD TMDS_33 } [get_ports {HDMI2_Clk_n}]
+set_property -dict {PACKAGE_PIN U19  IOSTANDARD LVCMOS33} [get_ports {HDMI2_HPD_tri_io}]
+set_property -dict {PACKAGE_PIN U15  IOSTANDARD TMDS_33 } [get_ports {HDMI2_data_p[0]}]
+set_property -dict {PACKAGE_PIN U16  IOSTANDARD TMDS_33 } [get_ports {HDMI2_data_n[0]}]
+set_property -dict {PACKAGE_PIN U17  IOSTANDARD TMDS_33 } [get_ports {HDMI2_data_p[1]}]
+set_property -dict {PACKAGE_PIN V17  IOSTANDARD TMDS_33 } [get_ports {HDMI2_data_n[1]}]
+set_property -dict {PACKAGE_PIN AA17 IOSTANDARD TMDS_33 } [get_ports {HDMI2_data_p[2]}]
+set_property -dict {PACKAGE_PIN AB17 IOSTANDARD TMDS_33 } [get_ports {HDMI2_data_n[2]}]
+set_property -dict {PACKAGE_PIN W16  IOSTANDARD TMDS_33 } [get_ports {HDMI2_clk_p}]
+set_property -dict {PACKAGE_PIN Y16  IOSTANDARD TMDS_33 } [get_ports {HDMI2_clk_n}]
 
 # Bank 34
 set_property -dict {PACKAGE_PIN R16  IOSTANDARD LVCMOS25 SLEW SLOW DRIVE 8} [get_ports HDMI2_IIC_scl_io]
