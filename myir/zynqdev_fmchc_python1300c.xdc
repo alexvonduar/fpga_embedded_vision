@@ -193,14 +193,14 @@ set_property -dict {PACKAGE_PIN T4   IOSTANDARD LVDS_25} [get_ports {MIPI_DPHY_d
 
 # HDMI1
 set_property -dict {PACKAGE_PIN V18  IOSTANDARD LVCMOS33} [get_ports {HDMI_OE[0]}]
-set_property -dict {PACKAGE_PIN V13  IOSTANDARD TMDS_33 } [get_ports {HDMI1_Data_p[0]}]
-set_property -dict {PACKAGE_PIN W13  IOSTANDARD TMDS_33 } [get_ports {HDMI1_Data_n[0]}]
-set_property -dict {PACKAGE_PIN V14  IOSTANDARD TMDS_33 } [get_ports {HDMI1_Data_p[1]}]
-set_property -dict {PACKAGE_PIN V15  IOSTANDARD TMDS_33 } [get_ports {HDMI1_Data_n[1]}]
-set_property -dict {PACKAGE_PIN AA16 IOSTANDARD TMDS_33 } [get_ports {HDMI1_Data_p[2]}]
+set_property -dict {PACKAGE_PIN V13  IOSTANDARD TMDS_33 } [get_ports {HDMI1_data_p[0]}]
+set_property -dict {PACKAGE_PIN W13  IOSTANDARD TMDS_33 } [get_ports {HDMI1_data_n[0]}]
+set_property -dict {PACKAGE_PIN V14  IOSTANDARD TMDS_33 } [get_ports {HDMI1_data_p[1]}]
+set_property -dict {PACKAGE_PIN V15  IOSTANDARD TMDS_33 } [get_ports {HDMI1_data_n[1]}]
+set_property -dict {PACKAGE_PIN AA16 IOSTANDARD TMDS_33 } [get_ports {HDMI1_data_p[2]}]
 set_property -dict {PACKAGE_PIN AB16 IOSTANDARD TMDS_33 } [get_ports {HDMI1_Data_n[2]}]
-set_property -dict {PACKAGE_PIN Y18  IOSTANDARD TMDS_33 } [get_ports {HDMI1_Clk_p}]
-set_property -dict {PACKAGE_PIN AA18 IOSTANDARD TMDS_33 } [get_ports {HDMI1_Clk_n}]
+set_property -dict {PACKAGE_PIN Y18  IOSTANDARD TMDS_33 } [get_ports {HDMI1_clk_p}]
+set_property -dict {PACKAGE_PIN AA18 IOSTANDARD TMDS_33 } [get_ports {HDMI1_clk_n}]
 
 # HDMI2
 set_property -dict {PACKAGE_PIN W18  IOSTANDARD LVCMOS33} [get_ports {HDMI_OE[1]}]

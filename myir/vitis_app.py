@@ -92,6 +92,7 @@ def build_app(args):
         ]
         fru_sources_dir = os.path.join(args.top, "fru")
         fru.import_files(from_loc=fru_sources_dir, files=fru_sources, dest_dir_in_cmp='src', is_skip_copy_sources = False)
+        #fru.import_files(from_loc=fru_sources_dir, dest_dir_in_cmp='src', is_skip_copy_sources = True)
         fru.append_app_config(key="USER_INCLUDE_DIRECTORIES", values=['./'])
         VERSION_STR='\"VERSION=\\\"0.8.1.9\\\"\"'
         VERSION_DATE_STR = '\"VERSION_DATE=\\\"' + now.strftime("%d%b%Y") +'\\\"\"'
@@ -146,7 +147,7 @@ def build_app(args):
     print("app source: {}".format(app_src))
 
     app = client.create_app_component(name=app_name, platform=exported_plaftorm, domain="standalone_ps7_cortexa9_0")
-    app.import_files(from_loc=app_src, dest_dir_in_cmp='src')
+    app.import_files(from_loc=app_src, dest_dir_in_cmp='src', is_skip_copy_sources = True)
     if USE_EDID_DECODE:
         ldscript = app.get_ld_script()
         ldscript.set_heap_size(size='0x100000')  # 1 MB
@@ -155,13 +156,13 @@ def build_app(args):
     app.append_app_config(
         key="USER_INCLUDE_DIRECTORIES",
         values=[
-            '.',
-            './adi_adv7511_hal/',
-            './adi_adv7511_hal/TX/',
-            './adi_adv7511_hal/TX/HAL/COMMON/',
-            './adi_adv7511_hal/TX/HAL/WIRED/ADV7511/',
-            './adi_adv7511_hal/TX/HAL/WIRED/ADV7511/MACROS/',
-            './adi_adv7511_hal/TX/LIB/']
+            app_src,
+            os.path.join(app_src, 'adi_adv7511_hal/'),
+            os.path.join(app_src, 'adi_adv7511_hal/TX/'),
+            os.path.join(app_src, 'adi_adv7511_hal/TX/HAL/COMMON/'),
+            os.path.join(app_src, 'adi_adv7511_hal/TX/HAL/WIRED/ADV7511/'),
+            os.path.join(app_src, 'adi_adv7511_hal/TX/HAL/WIRED/ADV7511/MACROS/'),
+            os.path.join(app_src, 'adi_adv7511_hal/TX/LIB/')]
     )
     if USE_EDID_DECODE:
         app.append_app_config(
@@ -215,6 +216,9 @@ def build_app(args):
         print("No board selected or unsupported board.")
         exit(1)
 
+    if USE_EDID_DECODE:
+        user_compile_defs.append('-DUSE_EDID_DECODE=1')
+
     app.append_app_config(
         key = "USER_COMPILE_DEFINITIONS",
         values = user_compile_defs
@@ -225,21 +229,22 @@ def build_app(args):
         app.set_app_config(key='USER_COMPILE_DEBUG_LEVEL', values=['-g3'])
         app.set_app_config(key='USER_COMPILE_DEBUG_OTHER_FLAGS', values=['-DDEBUG=1'])
     if USE_EDID_DECODE or args.build_type.lower() == "debug":
-        app.append_app_config(key='USER_LINK_LIBRARIES', values=['-lm'])
+        app.append_app_config(key='USER_LINK_LIBRARIES', values=['m'])
     if USE_EDID_DECODE:
-        #linkpath = app.get_app_config(key='USER_LINK_DIRECTORIES')
-        #linkpath.append(os.path.join(vitis_workspace, 'edid_decode', 'build'))
-        #print("EDID DECODE link path: {}".format(linkpath))
-        #app.set_app_config(key='USER_LINK_DIRECTORIES', values=linkpath)
+        linkpath = app.get_app_config(key='USER_LINK_DIRECTORIES')
+        linkpath.append(os.path.join(vitis_workspace, 'edid_decode', 'build'))
+        print("EDID DECODE link path: {}".format(linkpath))
+        app.set_app_config(key='USER_LINK_DIRECTORIES', values=linkpath)
         #app.append_app_config(key='USER_LINK_FLAGS', values=['-L' + os.path.join(vitis_workspace, 'edid_decode', 'build')])
-        app.append_app_config(key='USER_LINK_LIBRARIES', values=['-L' + os.path.join(vitis_workspace, 'edid_decode', 'build') + ' -ledid_decode', '-lstdc++'])
+        app.append_app_config(key='USER_LINK_LIBRARIES', values=['edid_decode', 'stdc++'])
         #app.get_app_config()
     if args.fmc_board:
-        #linkpath = app.get_app_config(key='USER_LINK_DIRECTORIES')
-        #linkpath.append(os.path.join(vitis_workspace, 'fru', 'build'))
-        #app.set_app_config(key='USER_LINK_DIRECTORIES', values=linkpath)
+        linkpath = app.get_app_config(key='USER_LINK_DIRECTORIES')
+        linkpath.append(os.path.join(vitis_workspace, 'fru', 'build'))
+        app.set_app_config(key='USER_LINK_DIRECTORIES', values=linkpath)
         #app.append_app_config(key='USER_LINK_FLAGS', values=['-L' +  os.path.join(vitis_workspace, 'fru', 'build')])
-        app.append_app_config(key='USER_LINK_LIBRARIES', values=['-L' + os.path.join(vitis_workspace, 'fru', 'build') + ' -lfru'])
+        app.append_app_config(key='USER_LINK_LIBRARIES', values=['fru'])
+    #app.get_app_config()
     app.report()
     app.build()
 

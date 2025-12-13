@@ -6,7 +6,9 @@
 #include "fru.h"
 #include "ipmi.h"
 
+#if defined(USE_EDID_DECODE) && USE_EDID_DECODE
 #include "edid-decode-export.h"
+#endif
 
 #define FRU_TOTAL_SIZE 256
 static unsigned char fmc_eeprom_fru_buffer[FRU_TOTAL_SIZE+1];
@@ -60,6 +62,7 @@ int fmc_eeprom_parse(fmc_hdmi_cam_t *pContext)
     return 0;
 }
 
+#if defined(USE_EDID_DECODE) && USE_EDID_DECODE
 /*
  * gettimeofday  -- Used to get the time of the day.
  * Declared as an empty function with __weak attribute to avoid build
@@ -103,3 +106,4 @@ int fmc_hdmio_edid_parse(fmc_hdmi_cam_t *pContext)
 
     return 0;
 }
+#endif

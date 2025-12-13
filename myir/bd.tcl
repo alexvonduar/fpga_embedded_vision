@@ -955,7 +955,6 @@ connect_bd_net -net clk_wiz_0_clk_out1 [get_bd_pins v_tc_0/clk]
 
 if {[string match -nocase "ZYNQ_DEV" $board]} {
     if {[string match -nocase "HDMI2" $output_port]} {
-
         set HDMI_OE [create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconcat HDMI_OE]
         set_property -dict [list \
             CONFIG.NUM_PORTS {2} \
@@ -1020,7 +1019,53 @@ if {[string match -nocase "ZYNQ_DEV" $board]} {
         ] [get_bd_cells v_axi4s_vid_out_0]
         connect_bd_intf_net [get_bd_intf_pins v_mix_0/m_axis_video ] [get_bd_intf_pins v_axi4s_vid_out_0/video_in]
     } elseif {[string match -nocase "HDMI1" $output_port]} {
-        puts "set HDMI1 as output port, no need to create AXI IIC instance"
+        set HDMI_OE [create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconcat HDMI_OE]
+        set_property -dict [list \
+            CONFIG.NUM_PORTS {2} \
+            CONFIG.IN1_WIDTH.VALUE_SRC USER \
+            CONFIG.IN1_WIDTH {1} \
+            CONFIG.IN0_WIDTH.VALUE_SRC USER \
+            CONFIG.IN0_WIDTH {1} \
+        ] [get_bd_cells HDMI_OE]
+        connect_bd_net [get_bd_pins HDMI_OE/dout] [get_bd_ports HDMI_OE]
+        connect_bd_net -net xlconstant_1_dout [get_bd_pins HDMI_OE/In0]
+        connect_bd_net -net xlconstant_1_dout [get_bd_pins HDMI_OE/In1]
+
+        # onboard hdmi output only support 1080p30 and below
+        set_property -dict [list \
+            CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {74.25} \
+        ] [get_bd_cells clk_wiz_0]
+
+        set RGB2DVI [create_bd_cell -type ip -vlnv digilentinc.com:ip:rgb2dvi:1.4 RGB2DVI]
+        set_property -dict [list \
+            CONFIG.kClkRange {2} \
+            CONFIG.kGenerateSerialClk {true} \
+            CONFIG.kRstActiveHigh {false} \
+        ] [get_bd_cells RGB2DVI]
+        connect_bd_intf_net [get_bd_intf_pins RGB2DVI/TMDS] [get_bd_intf_ports HDMI1]
+        connect_bd_intf_net [get_bd_intf_pins RGB2DVI/RGB] [get_bd_intf_pins v_axi4s_vid_out_0/vid_io_out]
+        connect_bd_net -net clk_wiz_0_clk_out1 [get_bd_pins RGB2DVI/PixelClk]
+        connect_bd_net -net rst_148_5M_peripheral_aresetn [get_bd_pins RGB2DVI/aRst_n]
+
+        # set video mixer layer1 format yuv422
+        # set video mixer output format rgb888
+        set_property -dict [list \
+            CONFIG.LAYER1_VIDEO_FORMAT {2} \
+            CONFIG.VIDEO_FORMAT {0} \
+            CONFIG.AXIMM_ADDR_WIDTH {32} \
+            CONFIG.MAX_COLS {1920} \
+            CONFIG.MAX_ROWS {1080} \
+            CONFIG.SAMPLES_PER_CLOCK {1} \
+        ] [get_bd_cells v_mix_0]
+        set_property -dict [list \
+            CONFIG.C_ADDR_WIDTH {10} \
+            CONFIG.C_HAS_ASYNC_CLK {1} \
+            CONFIG.C_NATIVE_COMPONENT_WIDTH {8} \
+            CONFIG.C_PIXELS_PER_CLOCK {1} \
+            CONFIG.C_S_AXIS_VIDEO_FORMAT {2} \
+            CONFIG.C_VTG_MASTER_SLAVE {1} \
+        ] [get_bd_cells v_axi4s_vid_out_0]
+        connect_bd_intf_net [get_bd_intf_pins v_mix_0/m_axis_video ] [get_bd_intf_pins v_axi4s_vid_out_0/video_in]
     } elseif {[string match -nocase "fmc_hdmi" $output_port]} {
         puts "select hdmi output on fmc board as output"
     }

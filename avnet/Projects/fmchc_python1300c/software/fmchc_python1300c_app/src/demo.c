@@ -253,7 +253,7 @@ int demo_init( demo_t *pdemo )
 
         status = parse_edid_from_array(edid_buffer, EDID_BLOCK_SIZE);
     }
-#else
+#elif defined(FMCHC_PYTHON1300C) && defined(FMC_HDMI)
     fmc_hdmio_edid_parse(pdemo->pfmc_hdmi_cam);
 #endif
 
