@@ -21,9 +21,14 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
         set fmc_board [string range [lindex $argv $i] 10 end]
     }
 
-    # check for MIPI port selection
-    if {[string match -nocase "mipi_port=*" [lindex $argv $i]]} {
-        set mipi_port [string range [lindex $argv $i] 10 end]
+    # check for input port selection
+    if {[string match -nocase "input_port=*" [lindex $argv $i]]} {
+        set input_port [string range [lindex $argv $i] 11 end]
+    }
+
+    # check for TARGET_DIR
+    if {[string match -nocase "target_dir=*" [lindex $argv $i]]} {
+        set target_dir [string range [lindex $argv $i] 11 end]
     }
 }
 
@@ -33,11 +38,11 @@ for {set i 0} {$i < [llength $argv]} {incr i} {
 # other FMC camera boards do not supported right now
 if {[info exists fmc_board]} {
     if {[string equal $fmc_board "opsero"]} {
-        if {![string match "1" $mipi_port] && ![string match "2" $mipi_port]} {
+        if {![string match -nocase "fmc_mipi1" $input_port] && ![string match -nocase "fmc_mipi2" $input_port]} {
             puts "ERROR: For FMC board 'opsero', only MIPI port selection '1' and '2' are supported!"
             exit 1
         }
-        set generics [list FMC_BOARD=$fmc_board MIPI_PORT=$mipi_port]
+        set generics [list FMC_BOARD=$fmc_board INPUT_PORT=$input_port]
     } else {
         # other FMC boards are not supported right now
         puts "ERROR: FMC board '$fmc_board' not supported right now! Settings will be ignored."
@@ -49,11 +54,11 @@ if {[info exists fmc_board]} {
 }
 
 if { ${fmc_board} eq "none"} {
-    if {![string match "0" $mipi_port] && ![string match "1" $mipi_port]} {
-        puts "ERROR: Unsupported onboard '$mipi_port', only '0' and '1' are supported!"
+    if {![string match -nocase "mipi0" $input_port] && ![string match -nocase "mipi1" $input_port]} {
+        puts "ERROR: Unsupported onboard '$input_port', only '0' and '1' are supported!"
         exit 1
     }
-    set generics [list MIPI_PORT=$mipi_port]
+    set generics [list INPUT_PORT=$input_port]
 }
 
 if {[file exists [file join scripts settings.tcl]] } { source [file join scripts settings.tcl] }
@@ -68,7 +73,10 @@ set proj_dir [get_property directory [current_project]]
 set_property "default_lib"        "xil_defaultlib" [current_project]
 set_property "part"               "${part}"        [current_project]
 set_property "simulator_language" "Mixed"          [current_project]
-set_property "target_language"    "VHDL"           [current_project]
+set_property "target_language"    "Verilog"        [current_project]
+
+config_ip_cache -import_from_project -use_cache_location ${target_dir}/ipcache
+update_ip_catalog
 
 # Create filesets (if not found)
 if {[string equal [get_filesets -quiet sources_1] ""]} {

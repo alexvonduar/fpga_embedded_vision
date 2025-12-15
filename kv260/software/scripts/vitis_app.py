@@ -56,16 +56,16 @@ def build_app(args):
     exported_plaftorm = os.path.join(args.workspace, platform_name, "export", platform_name, platform_name + ".xpfm")
     print("exported plaftorm: " + exported_plaftorm)
     app = client.create_app_component(name=app_name, platform=exported_plaftorm, domain="standalone_ps7_cortexa9_0")
-    app.import_files(from_loc=args.source, dest_dir_in_cmp='src', is_skip_copy_sources = False)
+    app.import_files(from_loc=args.source, dest_dir_in_cmp='src', is_skip_copy_sources = True)
     app.generate_build_files()
-    
+
     app.append_app_config(
         key="USER_INCLUDE_DIRECTORIES",
         values=[
-            '.',
-            './SENSORS_CONFIG'
-        ]
+            args.source,
+            os.path.join(args.source, 'SENSORS_CONFIG')]
     )
+
     app.append_app_config(
         key = "USER_COMPILE_DEFINITIONS",
         values = [
@@ -78,7 +78,7 @@ def build_app(args):
         app.set_app_config(key='USER_COMPILE_OPTIMIZATION_LEVEL', values=['-O0'])
         app.set_app_config(key='USER_COMPILE_DEBUG_LEVEL', values=['-g3'])
         app.set_app_config(key='USER_COMPILE_DEBUG_OTHER_FLAGS', values=['-DDEBUG=1'])
-        app.append_app_config(key='USER_LINK_LIBRARIES', values=['-lm'])
+        app.append_app_config(key='USER_LINK_LIBRARIES', values=['m'])
 
     values = app.get_app_config()
     print("Application configuration before build:")

@@ -38,7 +38,7 @@ use unisim.vcomponents.all;
 entity Mercury_XU6_ST1 is
   generic (
     FMC_BOARD : string := "opsero";
-    MIPI_PORT : string := "1"
+    INPUT_PORT : string := "fmc_mipi1"
   );
   port (
 
@@ -371,6 +371,7 @@ architecture rtl of Mercury_XU6_ST1 is
       mipi_phy_if_0_clk_p  : in     std_logic;
       mipi_phy_if_0_data_n : in     std_logic_vector(1 downto 0);
       mipi_phy_if_0_data_p : in     std_logic_vector(1 downto 0);
+      bg3_pin0_nc          : in     std_logic;
       -- inferface for opsero fmc adapter
       FMC_CAM_IIC_scl_i    : in     std_logic;
       FMC_CAM_IIC_scl_o    : out    std_logic;
@@ -430,8 +431,9 @@ architecture rtl of Mercury_XU6_ST1 is
   signal LedCount         : unsigned(23 downto 0);
   signal mipi_phy_if_0_data_n : std_logic_vector(1 downto 0);
   signal mipi_phy_if_0_data_p : std_logic_vector(1 downto 0);
-  signal mipi_phy_if_0_clk_n : std_logic;
-  signal mipi_phy_if_0_clk_p : std_logic;
+  signal mipi_phy_if_0_clk_n  : std_logic;
+  signal mipi_phy_if_0_clk_p  : std_logic;
+  signal bg3_pin0_nc          : std_logic;
   -- opsero fmc adapter signals
   signal FMC_CAM_IIC_scl_i : std_logic;
   signal FMC_CAM_IIC_scl_o : std_logic;
@@ -477,6 +479,7 @@ begin
       mipi_phy_if_0_clk_p  => mipi_phy_if_0_clk_p,
       mipi_phy_if_0_data_n => mipi_phy_if_0_data_n,
       mipi_phy_if_0_data_p => mipi_phy_if_0_data_p,
+      bg3_pin0_nc          => bg3_pin0_nc,
       -- opsero fmc adapter port map
       FMC_CAM_IIC_scl_i    => FMC_CAM_IIC_scl_i,
       FMC_CAM_IIC_scl_o    => FMC_CAM_IIC_scl_o,
@@ -544,23 +547,6 @@ begin
       T => IIC_FPGA_sda_t
     );
 
-  FMC_CAM_IIC_scl_iobuf: component IOBUF
-    port map (
-      I => FMC_CAM_IIC_scl_o,
-      IO => FMC_CAM1_SCL,
-      O => FMC_CAM_IIC_scl_i,
-      T => FMC_CAM_IIC_scl_t
-    );
-
-  FMC_CAM_IIC_sda_iobuf: component IOBUF
-    port map (
-      I => FMC_CAM_IIC_sda_o,
-      IO => FMC_CAM1_SDA,
-      O => FMC_CAM_IIC_sda_i,
-      T => FMC_CAM_IIC_sda_t
-    );
-
-
   process (Clk50)
   begin
     if rising_edge (Clk50) then
@@ -587,54 +573,88 @@ begin
   FMC_CAM3_CLK_SEL <= FMC_CAM_CLK_SEL(1);
 
 fmc_mipi_gen: if FMC_BOARD = "opsero" generate
-  mipi_port1_gen: if MIPI_PORT = "1" generate
+  mipi_port1_gen: if INPUT_PORT = "fmc_mipi1" generate
     mipi_phy_if_0_data_n(0) <= FMC_CAM1_DATA0_N;
     mipi_phy_if_0_data_n(1) <= FMC_CAM1_DATA1_N;
     mipi_phy_if_0_data_p(0) <= FMC_CAM1_DATA0_P;
     mipi_phy_if_0_data_p(1) <= FMC_CAM1_DATA1_P;
     mipi_phy_if_0_clk_n <= FMC_CAM1_LA01_CLK_N;
     mipi_phy_if_0_clk_p <= FMC_CAM1_LA01_CLK_P;
-    FMC_CAM_IO0_iobuf: component IOBUF
+    bg3_pin0_nc         <= '0';
+    FMC_CAM1_IO0_iobuf: component IOBUF
       port map (
         I => FMC_CAM_IO_tri_o(0),
         IO => FMC_CAM1_IO0,
         O => FMC_CAM_IO_tri_i(0),
         T => FMC_CAM_IO_tri_t(0)
       );
-    FMC_CAM_IO1_iobuf: component IOBUF
+    FMC_CAM1_IO1_iobuf: component IOBUF
       port map (
         I => FMC_CAM_IO_tri_o(1),
         IO => FMC_CAM1_IO1,
         O => FMC_CAM_IO_tri_i(1),
         T => FMC_CAM_IO_tri_t(1)
       );
+    FMC_CAM1_IIC_scl_iobuf: component IOBUF
+      port map (
+        I => FMC_CAM_IIC_scl_o,
+        IO => FMC_CAM1_SCL,
+        O => FMC_CAM_IIC_scl_i,
+        T => FMC_CAM_IIC_scl_t
+      );
+
+    FMC_CAM1_IIC_sda_iobuf: component IOBUF
+      port map (
+        I => FMC_CAM_IIC_sda_o,
+        IO => FMC_CAM1_SDA,
+        O => FMC_CAM_IIC_sda_i,
+        T => FMC_CAM_IIC_sda_t
+      );
   end generate;
-  mipi_port2_gen: if MIPI_PORT = "2" generate
+  mipi_port2_gen: if INPUT_PORT = "fmc_mipi2" generate
     mipi_phy_if_0_data_n(0) <= FMC_CAM2_DATA0_N;
     mipi_phy_if_0_data_n(1) <= FMC_CAM2_DATA1_N;
     mipi_phy_if_0_data_p(0) <= FMC_CAM2_DATA0_P;
     mipi_phy_if_0_data_p(1) <= FMC_CAM2_DATA1_P;
     mipi_phy_if_0_clk_n <= FMC_CAM2_CLK_N;
     mipi_phy_if_0_clk_p <= FMC_CAM2_CLK_P;
-    FMC_CAM0_IO0_iobuf: component IOBUF
+    -- set bg3_pin0_nc to B5
+    bg3_pin0_nc         <= FMC_CAM3_DATA1_P;
+    FMC_CAM2_IO0_iobuf: component IOBUF
       port map (
         I => FMC_CAM_IO_tri_o(0),
         IO => FMC_CAM2_IO0,
         O => FMC_CAM_IO_tri_i(0),
         T => FMC_CAM_IO_tri_t(0)
       );
-    FMC_CAM0_IO1_iobuf: component IOBUF
+    FMC_CAM2_IO1_iobuf: component IOBUF
       port map (
         I => FMC_CAM_IO_tri_o(1),
         IO => FMC_CAM2_IO1,
         O => FMC_CAM_IO_tri_i(1),
         T => FMC_CAM_IO_tri_t(1)
       );
+
+    FMC_CAM2_IIC_scl_iobuf: component IOBUF
+      port map (
+        I => FMC_CAM_IIC_scl_o,
+        IO => FMC_CAM2_SCL,
+        O => FMC_CAM_IIC_scl_i,
+        T => FMC_CAM_IIC_scl_t
+      );
+
+    FMC_CAM2_IIC_sda_iobuf: component IOBUF
+      port map (
+        I => FMC_CAM_IIC_sda_o,
+        IO => FMC_CAM2_SDA,
+        O => FMC_CAM_IIC_sda_i,
+        T => FMC_CAM_IIC_sda_t
+      );
   end generate;
 end generate;
 
 non_fmc_mipi_gen: if FMC_BOARD /= "opsero" generate
-  non_fmc_mipi_port0_gen: if MIPI_PORT = "0" generate
+  non_fmc_mipi_port0_gen: if INPUT_PORT = "mipi0" generate
     mipi_phy_if_0_data_n(0) <= MIPI0_D0_N;
     mipi_phy_if_0_data_n(1) <= MIPI0_D1_N;
     mipi_phy_if_0_data_p(0) <= MIPI0_D0_P;
@@ -642,7 +662,7 @@ non_fmc_mipi_gen: if FMC_BOARD /= "opsero" generate
     mipi_phy_if_0_clk_n <= MIPI0_CLK_D0LP_N;
     mipi_phy_if_0_clk_p <= MIPI0_CLK_D0LP_P;
   end generate;
-  non_fmc_mipi_port1_gen: if MIPI_PORT = "1" generate
+  non_fmc_mipi_port1_gen: if INPUT_PORT = "mipi1" generate
     mipi_phy_if_0_data_n(0) <= MIPI1_D0_N;
     mipi_phy_if_0_data_n(1) <= MIPI1_D1_N;
     mipi_phy_if_0_data_p(0) <= MIPI1_D0_P;

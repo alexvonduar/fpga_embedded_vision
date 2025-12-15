@@ -38,7 +38,7 @@ uname_O := $(shell sh -c 'uname -o 2>/dev/null || echo not')
 # set to ultra96v2 or kv260
 BOARD := kv260
 HDL_DIR = ${SOURCE_DIR}/fpga
-VIVADO_DIR = ${PROJECT_DIR}/vivado
+VIVADO_DIR = ${PROJECT_DIR}
 
 RTL_SRC = \
 
@@ -92,9 +92,11 @@ place: ${VIVADO_DIR}/post_place.dcp
 
 route: ${VIVADO_DIR}/post_route.dcp
 
-bitstream: ${VIVADO_DIR}/${PROJECT_NAME}.xsa
+HW_FILE := ${TARGET_DIR}/${PROJECT_NAME}.xsa
 
-program: ${VIVADO_DIR}/${PROJECT_NAME}.xsa
+bitstream: ${HW_FILE}
+
+program: ${bitstream}
 	test -e ${VIVADO_DIR} || mkdir -p ${VIVADO_DIR}
 	cd ${VIVADO_DIR}
 	vivado -mode batch -source ${SOURCE_DIR}/scripts/vivado_program.tcl -log ${VIVADO_DIR}/program_log.txt -nojournal
@@ -111,11 +113,11 @@ clean:
 ${VIVADO_DIR}:
 	test -e ${VIVADO_DIR} || mkdir -p ${VIVADO_DIR}
 
-${VIVADO_DIR}/${PROJECT_NAME}.xsa: $(BD_SRC) $(XDC_SRC)
+${HW_FILE}: $(BD_SRC) $(XDC_SRC)
 	test -e ${VIVADO_DIR} || mkdir -p ${VIVADO_DIR}
 	cd ${VIVADO_DIR}
 	vivado -mode batch -notrace -source ${HDL_DIR}/scripts/vivado_run.tcl -nojournal \
-	-log ${VIVADO_DIR}/bd_log.txt -tclargs "$(BD_SRC)" " $(XDC_SRC)" "${BOARD}" "${VIVADO_DIR}" "${PROJECT_NAME}"
+	-log ${VIVADO_DIR}/bd_log.txt -tclargs "$(BD_SRC)" " $(XDC_SRC)" "${BOARD}" "${VIVADO_DIR}" "${PROJECT_NAME}" "${TARGET_DIR}"
 	cd -
 
 ${VIVADO_DIR}/design_1/design_1.bd: $(BD_SRC)

@@ -256,7 +256,7 @@ puts "*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*\n\n"
 # Create Vivado project
 puts "***** Creating Vivado Project..."
 
-if {[string match -nocase "ZYNQ_DEV" $board]} {
+if {[string match -nocase "zynqdev" $board]} {
     puts "Creating project for ZYNQ_DEV board"
     create_project $project_name $project_dir -part xc7z020clg484-2 -force
 } else {
@@ -321,7 +321,7 @@ if {[string match -nocase "yes" $use_intr]} {
     connect_bd_net [get_bd_pins INTR/dout] [get_bd_pins processing_system7_0/IRQ_F2P]
 }
 
-if {[string match -nocase "ZYNQ_DEV" $board]} {
+if {[string match -nocase "zynqdev" $board]} {
     #puts "Creating project for ZYNQ_DEV board"
     #create_project $project_name $project_dir -part xc7z020clg484-2 -force
     apply_bd_automation -rule xilinx.com:bd_rule:processing_system7 -config \
@@ -571,7 +571,7 @@ if {[string match -nocase "ZYNQ_DEV" $board]} {
     create_bd_port -dir IO -from 7 -to 0 PMOD3
     create_bd_port -dir IO -from 7 -to 0 PMOD4
 
-    if {[string match -nocase "fmc_hdmi" $input_port] || [string match -nocase "fmc_python1300" $input_port] || [string match -nocase "fmc_hdmi" $output_port]} {
+    if {[string match -nocase "fmc_hdmi" $input_port] || [string match -nocase "fmc_python1300c" $input_port] || [string match -nocase "fmc_hdmi" $output_port]} {
         # HDMIIO_INTN
         create_bd_port -dir I FMC_HDMIIO_INTN
     }
@@ -953,7 +953,7 @@ connect_bd_net -net clk_wiz_0_clk_out1 [get_bd_pins v_tc_0/clk]
 
 
 
-if {[string match -nocase "ZYNQ_DEV" $board]} {
+if {[string match -nocase "zynqdev" $board]} {
     if {[string match -nocase "HDMI2" $output_port]} {
         set HDMI_OE [create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconcat HDMI_OE]
         set_property -dict [list \
@@ -1267,8 +1267,8 @@ assign_bd_address -target_address_space [get_bd_addr_spaces processing_system7_0
 #create_bd_addr_seg -range 0x00010000 -offset 0x43C60000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_tpg_0/s_axi_CTRL/Reg] SEG_v_tpg_0_Reg
 assign_bd_address -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs v_tpg_0/s_axi_CTRL/Reg]
 
-if {[string match -nocase "ZYNQ_DEV" $board]} {
-    if {[string match -nocase "HDMI2" $output_port]} {
+if {[string match -nocase "zynqdev" $board]} {
+    if {[string match -nocase "hdmi2" $output_port]} {
 assign_bd_address -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs HDMI2_HPD/S_AXI/Reg]
 assign_bd_address -target_address_space [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs HDMI2_IIC/S_AXI/Reg]
     }

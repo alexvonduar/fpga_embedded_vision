@@ -201,7 +201,7 @@ set_property -dict [ list \
 ] [get_bd_cells zynq_ultra_ps_e]
 
 # create display video clock 1080p@60
-set CLK_148M5 [ create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz:6.0 CLK_148M5 ]
+set CLK_148M5 [ create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz CLK_148M5 ]
 set_property -dict [list \
   CONFIG.PRIM_IN_FREQ.VALUE_SRC PROPAGATED \
   CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {148.5} \
@@ -210,7 +210,7 @@ set_property -dict [list \
 ] [get_bd_cells CLK_148M5]
 
 # create instance: clk_wiz_1, and set properties
-set CLK_200M [ create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz:6.0 CLK_200M ]
+set CLK_200M [ create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz CLK_200M ]
 set_property -dict [ list \
   CONFIG.PRIM_IN_FREQ.VALUE_SRC PROPAGATED \
   CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {200} \
@@ -218,7 +218,7 @@ set_property -dict [ list \
   CONFIG.USE_RESET {false} \
 ] [get_bd_cells CLK_200M]
 
-set mipi_csi2_rx_subsyst_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:mipi_csi2_rx_subsystem:6.0 mipi_csi2_rx_subsyst_0 ]
+set mipi_csi2_rx_subsyst_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:mipi_csi2_rx_subsystem mipi_csi2_rx_subsyst_0 ]
 set_property -dict [list \
   CONFIG.AXIS_TDEST_WIDTH {4} \
   CONFIG.CMN_NUM_PIXELS {1} \
@@ -233,7 +233,8 @@ set_property -dict [list \
 ] [get_bd_cells mipi_csi2_rx_subsyst_0]
 
 if { $fmc_board == "opsero"} {
-  if { $mipi_port == "1" }  {
+  set bg3_pin0_nc [ create_bd_port -dir I bg3_pin0_nc ]
+  if { $input_port == "fmc_mipi1" }  {
     set_property -dict [list \
       CONFIG.HP_IO_BANK_SELECTION {65} \
       CONFIG.CLK_LANE_IO_LOC {L7} \
@@ -243,7 +244,7 @@ if { $fmc_board == "opsero"} {
       CONFIG.DATA_LANE1_IO_LOC {J1} \
       CONFIG.DATA_LANE1_IO_LOC_NAME {IO_L8P_T1L_N2_AD5P_65} \
     ] [get_bd_cells mipi_csi2_rx_subsyst_0]
-  } elseif { $mipi_port == "2" } {
+  } elseif { $input_port == "fmc_mipi2" } {
     set_property -dict [list \
       CONFIG.HP_IO_BANK_SELECTION {66} \
       CONFIG.CLK_LANE_IO_LOC {D7} \
@@ -253,9 +254,10 @@ if { $fmc_board == "opsero"} {
       CONFIG.DATA_LANE1_IO_LOC {E5} \
       CONFIG.DATA_LANE1_IO_LOC_NAME {IO_L14P_T2L_N2_GC_66} \
     ] [get_bd_cells mipi_csi2_rx_subsyst_0]
+    connect_bd_net [get_bd_ports bg3_pin0_nc] [get_bd_pins mipi_csi2_rx_subsyst_0/bg3_pin0_nc]
   }
 } else {
-  if { $mipi_port == "0" }  {
+  if { $input_port == "mipi0" }  {
     set_property -dict [list \
       CONFIG.HP_IO_BANK_SELECTION {64} \
       CONFIG.CLK_LANE_IO_LOC {AC9} \
@@ -265,21 +267,21 @@ if { $fmc_board == "opsero"} {
       CONFIG.DATA_LANE1_IO_LOC {AB8} \
       CONFIG.DATA_LANE1_IO_LOC_NAME {IO_L3P_T0L_N4_AD15P_64} \
     ] [get_bd_cells mipi_csi2_rx_subsyst_0]
-  } elseif { $mipi_port == "1" } {
+  } elseif { $input_port == "mipi1" } {
     set_property -dict [list \
       CONFIG.HP_IO_BANK_SELECTION {64} \
       CONFIG.CLK_LANE_IO_LOC {AD7} \
       CONFIG.CLK_LANE_IO_LOC_NAME {IO_L4P_T0U_N6_DBC_AD7P_64} \
-      CONFIG.DATA_LANE0_IO_LOC {AB6} \
+      CONFIG.DATA_LANE0_IO_LOC {AB7} \
       CONFIG.DATA_LANE0_IO_LOC_NAME {IO_L6P_T0U_N10_AD6P_64} \
-      CONFIG.DATA_LANE1_IO_LOC {AB7} \
+      CONFIG.DATA_LANE1_IO_LOC {AB6} \
       CONFIG.DATA_LANE1_IO_LOC_NAME {IO_L5P_T0U_N8_AD14P_64} \
     ] [get_bd_cells mipi_csi2_rx_subsyst_0]
   }
 }
 
 # Create instance: axi_vdma_0, and set properties
-set axi_vdma_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_vdma:6.3 axi_vdma_0 ]
+set axi_vdma_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_vdma axi_vdma_0 ]
 set_property -dict [ list \
   CONFIG.c_include_mm2s_dre {1} \
   CONFIG.c_include_s2mm_dre {1} \
@@ -287,7 +289,7 @@ set_property -dict [ list \
   CONFIG.c_s2mm_linebuffer_depth {4096} \
 ] [get_bd_cells axi_vdma_0]
 
-set v_axi4s_vid_out_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_axi4s_vid_out:4.0 v_axi4s_vid_out_0 ]
+set v_axi4s_vid_out_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_axi4s_vid_out v_axi4s_vid_out_0 ]
 set_property -dict [list \
   CONFIG.C_HAS_ASYNC_CLK {1} \
   CONFIG.C_NATIVE_COMPONENT_WIDTH {12} \
@@ -296,7 +298,7 @@ set_property -dict [list \
 ] [get_bd_cells v_axi4s_vid_out_0]
 
 # Create instance: v_demosaic_0, and set properties
-set v_demosaic_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_demosaic:1.1 v_demosaic_0 ]
+set v_demosaic_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_demosaic v_demosaic_0 ]
 set_property -dict [ list \
   CONFIG.MAX_COLS {1920} \
   CONFIG.MAX_DATA_WIDTH {10} \
@@ -305,24 +307,32 @@ set_property -dict [ list \
 ] [get_bd_cells v_demosaic_0]
 
 # Create instance: v_gamma_lut_0, and set properties
-set v_gamma_lut_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_gamma_lut:1.1 v_gamma_lut_0 ]
+set v_gamma_lut_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_gamma_lut v_gamma_lut_0 ]
 set_property -dict [ list \
   CONFIG.MAX_COLS {1920} \
   CONFIG.MAX_DATA_WIDTH {10} \
   CONFIG.MAX_ROWS {1080} \
 ] [get_bd_cells v_gamma_lut_0]
 
-set v_tc_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_tc:6.2 v_tc_0 ]
+set v_tc_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_tc v_tc_0 ]
 set_property -dict [list \
   CONFIG.enable_detection {false} \
   CONFIG.VIDEO_MODE {1080p} \
 ] [get_bd_cells v_tc_0]
 
-set v_tpg_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_tpg:8.2 v_tpg_0 ]
+set v_tpg_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_tpg v_tpg_0 ]
 set_property -dict [list \
   CONFIG.DISPLAY_PORT {1} \
+  CONFIG.COLOR_BAR {1} \
+  CONFIG.COLOR_SWEEP {1} \
+  CONFIG.FOREGROUND {1} \
+  CONFIG.RAMP {1} \
+  CONFIG.SOLID_COLOR {1} \
+  CONFIG.ZONE_PLATE {1} \
   CONFIG.HAS_AXI4S_SLAVE {0} \
+  CONFIG.HAS_AXI4_YUV422_YUV420 {0} \
   CONFIG.MAX_DATA_WIDTH {10} \
+  CONFIG.SAMPLES_PER_CLOCK {1} \
   CONFIG.MAX_COLS {1920} \
   CONFIG.MAX_ROWS {1080} \
 ] [get_bd_cells v_tpg_0]
@@ -339,20 +349,20 @@ set_property -dict [ list \
   CONFIG.NR_LAYERS {2} \
 ] [get_bd_cells v_mix_0]
 
-set CONST1 [ create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconstant:1.0 CONST1 ]
+set CONST1 [ create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconstant CONST1 ]
 set_property -dict [list \
   CONFIG.CONST_VAL {1} \
   CONFIG.CONST_WIDTH {1} \
 ] [get_bd_cells CONST1]
 
-set CONST0 [ create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconstant:1.0 CONST0 ]
+set CONST0 [ create_bd_cell -type inline_hdl -vlnv xilinx.com:inline_hdl:ilconstant CONST0 ]
 set_property -dict [list \
   CONFIG.CONST_VAL {0} \
   CONFIG.CONST_WIDTH {1} \
 ] [get_bd_cells CONST0]
 
 # Create instance: axi_smc, and set properties
-set axi_smc [ create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect:1.0 axi_smc ]
+set axi_smc [ create_bd_cell -type ip -vlnv xilinx.com:ip:smartconnect axi_smc ]
 set_property -dict [ list \
   CONFIG.NUM_SI {2} \
 ] [get_bd_cells axi_smc]
@@ -423,7 +433,11 @@ connect_bd_intf_net [get_bd_intf_ports IIC_FPGA] [get_bd_intf_pins zynq_ultra_ps
 
 set CLK_100_CAL [ create_bd_port -dir I -type clk -freq_hz 100000000 CLK_100_CAL ]
 set I2C_MIPI_SEL [ create_bd_port -dir O -from 0 -to 0 I2C_MIPI_SEL ]
+if { $input_port == "mipi1" }  {
+connect_bd_net [get_bd_pins CONST1/dout] [get_bd_pins I2C_MIPI_SEL]
+} else {
 connect_bd_net [get_bd_pins CONST0/dout] [get_bd_pins I2C_MIPI_SEL]
+}
 set mipi_phy_if_0 [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:mipi_phy_rtl:1.0 mipi_phy_if_0 ]
 
 #connect

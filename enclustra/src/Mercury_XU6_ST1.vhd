@@ -36,7 +36,9 @@ use unisim.vcomponents.all;
 -- entity declaration
 ----------------------------------------------------------------------------------------------------
 entity Mercury_XU6_ST1 is
-
+  generic (
+    INPUT_PORT : string := "mipi0"
+  );
   port (
 
     -- Anios 0
@@ -412,6 +414,8 @@ architecture rtl of Mercury_XU6_ST1 is
   signal LED_N            : std_logic_vector(2 downto 0);
   signal dp_aux_data_oe_n : std_logic;
   signal LedCount         : unsigned(23 downto 0);
+  signal mipi_phy_if_0_clk_n  : std_logic;
+  signal mipi_phy_if_0_clk_p  : std_logic;
   signal mipi_phy_if_0_data_n : std_logic_vector(1 downto 0);
   signal mipi_phy_if_0_data_p : std_logic_vector(1 downto 0);
 
@@ -442,38 +446,38 @@ begin
       IIC_FPGA_scl_t       => IIC_FPGA_scl_t,
       LED_N                => LED_N,
       I2C_MIPI_SEL         => I2C_MIPI_SEL,
-      mipi_phy_if_0_clk_n  => MIPI0_CLK_D0LP_N,
-      mipi_phy_if_0_clk_p  => MIPI0_CLK_D0LP_P,
+      mipi_phy_if_0_clk_n  => mipi_phy_if_0_clk_n,
+      mipi_phy_if_0_clk_p  => mipi_phy_if_0_clk_p,
       mipi_phy_if_0_data_n => mipi_phy_if_0_data_n,
       mipi_phy_if_0_data_p => mipi_phy_if_0_data_p
     );
 
   CLK_REF_buf: component IBUFDS
   port map (
-  	O => open,
-  	I => CLK_REF_P,
-  	IB => CLK_REF_N
+    O => open,
+    I => CLK_REF_P,
+    IB => CLK_REF_N
   );
 
   CLK_REF1_buf: component IBUFDS
   port map (
-  	O => open,
-  	I => CLK_REF1_P,
-  	IB => CLK_REF1_N
+    O => open,
+    I => CLK_REF1_P,
+    IB => CLK_REF1_N
   );
 
   CLK_REF2_buf: component IBUFDS
   port map (
-  	O => open,
-  	I => CLK_REF2_P,
-  	IB => CLK_REF2_N
+    O => open,
+    I => CLK_REF2_P,
+    IB => CLK_REF2_N
   );
 
   CLK_USR_buf: component IBUFDS
   port map (
-  	O => open,
-  	I => CLK_USR_P,
-  	IB => CLK_USR_N
+    O => open,
+    I => CLK_USR_P,
+    IB => CLK_USR_N
   );
 
   DP_AUX_OE <= not dp_aux_data_oe_n;
@@ -517,9 +521,22 @@ begin
   LED2 <= 'Z';
   LED3 <= 'Z';
 
+  mipi0_gen: if INPUT_PORT = "mipi0" generate
+  mipi_phy_if_0_clk_n     <= MIPI0_CLK_D0LP_N;
+  mipi_phy_if_0_clk_p     <= MIPI0_CLK_D0LP_P;
   mipi_phy_if_0_data_n(0) <= MIPI0_D0_N;
   mipi_phy_if_0_data_n(1) <= MIPI0_D1_N;
   mipi_phy_if_0_data_p(0) <= MIPI0_D0_P;
   mipi_phy_if_0_data_p(1) <= MIPI0_D1_P;
+  end generate;
+
+  mipi1_gen: if INPUT_PORT = "mipi1" generate
+  mipi_phy_if_0_clk_n     <= MIPI1_CLK_D0LP_N;
+  mipi_phy_if_0_clk_p     <= MIPI1_CLK_D0LP_P;
+  mipi_phy_if_0_data_n(0) <= MIPI1_D0_N;
+  mipi_phy_if_0_data_n(1) <= MIPI1_D1_N;
+  mipi_phy_if_0_data_p(0) <= MIPI1_D0_P;
+  mipi_phy_if_0_data_p(1) <= MIPI1_D1_P;
+  end generate;
 
 end rtl;

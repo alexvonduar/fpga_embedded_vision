@@ -4,7 +4,12 @@ INPUT_PORT ?=
 OUTPUT_PORT ?=
 KEEP_VIVADO_HW ?= 1
 KEEP_VIVADO_CACHE ?= 1
-FMC_BOARD ?=
+FMC_BOARD ?= none
+
+BOARDS ?= myir7020 zynqdev
+FMC_BOARDS ?= fmchc_python1300c none
+INPUT_PORTS ?= fmc_python1300c fmc_hdmi mipi1
+OUTPUT_PORTS ?= fmc_hdmi hdmi1 hdmi2
 
 ifeq (${TOP},)
 $(error TOP directory not set)
@@ -12,13 +17,45 @@ endif
 
 #PROJECT ?= fmchc_python1300c
 #BOARD ?= MYIR7020
-VIVADO_VER ?= 2025.1
+VIVADO_VER = $(shell vivado -version | grep -oP 'vivado\s+v\K[0-9]+\.[0-9]+' | head -1)
+
+ifeq (${VIVADO_VER},)
+$(error Vivado not found in PATH)
+endif
 
 ifeq ("$(wildcard ${TOP})", "")
 $(error TOP ${TOP} does not exist)
 endif
 
+ifeq ($(filter $(BOARD), $(BOARDS)),)
+$(error BOARD $(BOARD) is not supported. Supported BOARDS: $(BOARDS))
+endif
+
+ifeq ($(filter $(FMC_BOARD), $(FMC_BOARDS)),)
+$(error FMC_BOARD $(FMC_BOARD) is not supported. Supported FMC_BOARDS: $(FMC_BOARDS))
+endif
+
+ifeq ($(filter $(INPUT_PORT), $(INPUT_PORTS)),)
+$(error INPUT_PORT $(INPUT_PORT) is not supported. Supported INPUT_PORTS: $(INPUT_PORTS))
+endif
+
+ifeq ($(filter $(OUTPUT_PORT), $(OUTPUT_PORTS)),)
+$(error OUTPUT_PORT $(OUTPUT_PORT) is not supported. Supported OUTPUT_PORTS: $(OUTPUT_PORTS))
+endif
+
+ifeq ($(FMC_BOARD), none)
 PROJECT_NAME := ${INPUT_PORT}_${OUTPUT_PORT}
+else
+ifeq ($(FMC_BOARD), fmchc_python1300c)
+ifeq ($(INPUT_PORT), fmc_python1300c)
+PROJECT_NAME := ${FMC_BOARD}_${OUTPUT_PORT}
+else
+PROJECT_NAME := ${FMC_BOARD}_${INPUT_PORT}_${OUTPUT_PORT}
+endif
+else
+PROJECT_NAME := ${FMC_BOARD}_${INPUT_PORT}_${OUTPUT_PORT}
+endif
+endif
 
 WS_DIR := ${TOP}/projects
 TARGET_DIR :=${WS_DIR}/${BOARD}
@@ -31,15 +68,15 @@ VIVADO_HW := $(TARGET_DIR)/${PROJECT_NAME}.xsa
 AVNET_IP_SOURCES := $(shell find ${TOP}/avnet/IP -type f)
 
 #$(info ${BOARD})
-ifeq (${BOARD}, MYIR7020)
+ifeq (${BOARD}, myir7020)
 	#$(info ${BOARD} is MYIR7020)
 	XDC_FILE=${CURDIR}/myir7020_fmchc_python1300c.xdc
-else ifeq (${BOARD}, ZYNQ_DEV)
+else ifeq (${BOARD}, zynqdev)
 	#$(info ${BOARD} is ZYNQ_DEV)
 	XDC_FILE=${CURDIR}/zynqdev_fmchc_python1300c.xdc
 endif
 
-ifeq ($(FMC_BOARD), )
+ifeq ($(FMC_BOARD), none)
 $(VIVADO_PRJ): ${CURDIR}/bd.tcl ${CURDIR}/utils.tcl ${XDC_FILE} $(AVNET_IP_SOURCES)
 	vivado -mode batch -notrace -source $< -tclargs project_name=${PROJECT_NAME} project_dir=${VIVADO_DIR} board=${BOARD} input_port=${INPUT_PORT} output_port=${OUTPUT_PORT} top=${TOP} xdc=${XDC_FILE} vivado_ver=${VIVADO_VER}
 else

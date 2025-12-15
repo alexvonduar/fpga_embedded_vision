@@ -3,6 +3,7 @@ set XDC_SRC [lindex $argv 1]
 set BOARD [lindex $argv 2]
 set OUTPUT_DIR [lindex $argv 3]
 set PROJECT_NAME [lindex $argv 4]
+set TARGET_DIR [lindex $argv 5]
 
 proc numberOfCPUs {} {
     # Windows puts it in an environment variable
@@ -56,6 +57,9 @@ add_files -fileset constrs_1 -norecurse ${XDC_SRC}
 
 create_bd_design -dir ${OUTPUT_DIR} -name designe_1
 
+config_ip_cache -import_from_project -use_cache_location ${TARGET_DIR}/ipcache
+update_ip_catalog
+
 source ${BD_SRC}
 
 make_wrapper -files [get_files ${OUTPUT_DIR}/designe_1/designe_1.bd] -top
@@ -98,4 +102,4 @@ if {![file exists ${bit_stream_file} ]} {
 }
 
 puts "**** export xsa ****"
-write_hw_platform -fixed -include_bit -force -file ${OUTPUT_DIR}/${PROJECT_NAME}.xsa
+write_hw_platform -fixed -include_bit -force -file ${TARGET_DIR}/${PROJECT_NAME}.xsa
