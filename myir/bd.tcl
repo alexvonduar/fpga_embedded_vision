@@ -688,16 +688,6 @@ set_property -dict [ list \
     CONFIG.c_s2mm_max_burst_length {256} \
 ] $axi_vdma_cam
 
-# Create instance: axis_conv_vdma_cam_2_3
-set axis_conv_vdma_cam_2_3 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axis_subset_converter axis_conv_vdma_cam_2_3 ]
-set_property -dict [ list \
-    CONFIG.M_TDATA_NUM_BYTES.VALUE_SRC USER \
-    CONFIG.S_TDATA_NUM_BYTES.VALUE_SRC USER \
-    CONFIG.S_TDATA_NUM_BYTES {2} \
-    CONFIG.M_TDATA_NUM_BYTES {3} \
-    CONFIG.TDATA_REMAP {8'b00000000,tdata[15:0]} \
-] $axis_conv_vdma_cam_2_3
-
 # Create instance: v_axi4s_vid_out_0, and set properties
 set v_axi4s_vid_out_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_axi4s_vid_out v_axi4s_vid_out_0 ]
 set_property -dict [ list \
@@ -831,8 +821,6 @@ connect_bd_intf_net [get_bd_intf_pins axi_periph/M05_AXI] [get_bd_intf_pins v_tp
 connect_bd_intf_net [get_bd_intf_pins axi_periph/M06_AXI] [get_bd_intf_pins v_mix_0/s_axi_CTRL]
 connect_bd_intf_net [get_bd_intf_pins axi_periph/M10_AXI] [get_bd_intf_pins axi_gpio_vid_out_0/S_AXI]
 
-connect_bd_intf_net [get_bd_intf_pins axi_vdma_cam/M_AXIS_MM2S]  [get_bd_intf_pins axis_conv_vdma_cam_2_3/S_AXIS]
-connect_bd_intf_net [get_bd_intf_pins axis_conv_vdma_cam_2_3/M_AXIS] [get_bd_intf_pins v_mix_0/s_axis_video1]
 connect_bd_intf_net [get_bd_intf_pins v_tpg_0/m_axis_video] [get_bd_intf_pins v_mix_0/s_axis_video]
 connect_bd_intf_net [get_bd_intf_pins v_cfa_0/m_axis_video] [get_bd_intf_pins v_csc_0/s_axis]
 connect_bd_intf_net [get_bd_intf_pins v_csc_0/m_axis] [get_bd_intf_pins axis_conv_csc_3_2/s_axis]
@@ -870,7 +858,6 @@ connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins axi_vdma_cam/m_a
 connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins axi_vdma_cam/m_axi_s2mm_aclk]
 connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins axi_vdma_cam/m_axis_mm2s_aclk]
 connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins axi_vdma_cam/s_axis_s2mm_aclk]
-connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins axis_conv_vdma_cam_2_3/aclk]
 connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins rst_149M/slowest_sync_clk]
 connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins v_axi4s_vid_out_0/aclk]
 connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins v_cfa_0/ap_clk]
@@ -899,7 +886,7 @@ connect_bd_net -net rst_149M_peripheral_aresetn [get_bd_pins v_tpg_0/ap_rst_n]
 connect_bd_net -net rst_149M_peripheral_aresetn [get_bd_pins axi_periph/M06_ARESETN]
 connect_bd_net -net rst_149M_peripheral_aresetn [get_bd_pins v_mix_0/ap_rst_n]
 connect_bd_net -net rst_149M_peripheral_aresetn [get_bd_pins axis_conv_csc_3_2/aresetn]
-connect_bd_net -net rst_149M_peripheral_aresetn [get_bd_pins axis_conv_vdma_cam_2_3/aresetn]
+
 
 connect_bd_net -net rst_76M_interconnect_aresetn [get_bd_pins rst_76M/interconnect_aresetn] [get_bd_pins axi_periph/ARESETN]
 connect_bd_net -net rst_76M_peripheral_aresetn [get_bd_pins rst_76M/peripheral_aresetn] [get_bd_pins axi_periph/S00_ARESETN]
@@ -918,7 +905,7 @@ connect_bd_net -net rst_76M_peripheral_aresetn [get_bd_pins axi_gpio_vid_out_0/s
 
 
 #connect_bd_net -net rst_76M_peripheral_reset [get_bd_pins rst_76M/peripheral_reset] [get_bd_pins v_axi4s_vid_out_0/vid_io_out_reset]
-connect_bd_net -net rst_148_5M_peripheral_reset [get_bd_pins v_axi4s_vid_out_0/vid_io_out_reset]
+connect_bd_net -net rst_148_5M_peripheral_reset [get_bd_pins v_axi4s_vid_out_0/vid_io_out_reset] [get_bd_pins rst_148_5M/peripheral_reset]
 
 
 connect_bd_net -net xlconstant_1_dout [get_bd_pins xlconstant_1/dout] [get_bd_pins v_axi4s_vid_out_0/aclken]
@@ -1069,6 +1056,59 @@ if {[string match -nocase "zynqdev" $board]} {
     } elseif {[string match -nocase "fmc_hdmi" $output_port]} {
         puts "select hdmi output on fmc board as output"
     }
+
+    if {[string match -nocase "mipi1" $input_port]} {
+        puts "select onboard mipi input"
+        set MIPI_CSI_RX [ create_bd_cell -type ip -vlnv xilinx.com:ip:mipi_csi2_rx_subsystem MIPI_CSI_RX ]
+        set_property -dict [list \
+            CONFIG.CMN_NUM_LANES {2} \
+            CONFIG.CMN_PXL_FORMAT {RAW10} \
+            CONFIG.C_CSI_EN_CRC {false} \
+            CONFIG.DPY_LINE_RATE {800} \
+        ] [get_bd_cells MIPI_CSI_RX]
+        connect_bd_intf_net [get_bd_intf_ports MIPI_DPHY] [get_bd_intf_pins MIPI_CSI_RX/mipi_phy_if]
+        connect_bd_net [get_bd_pins MIPI_CSI_RX/dphy_clk_200M] [get_bd_pins processing_system7_0/FCLK_CLK2]
+        connect_bd_intf_net [get_bd_intf_pins MIPI_CSI_RX/video_out] [get_bd_intf_pins v_cfa_0/s_axis_video]
+        connect_bd_intf_net [get_bd_intf_pins MIPI_CSI_RX/csirxss_s_axi] -boundary_type upper [get_bd_intf_pins axi_periph/M01_AXI]
+        connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_pins MIPI_CSI_RX/lite_aclk]
+        connect_bd_net -net rst_76M_peripheral_aresetn [get_bd_pins MIPI_CSI_RX/lite_aresetn]
+
+        connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins MIPI_CSI_RX/video_aclk]
+        connect_bd_net -net rst_149M_peripheral_aresetn    [get_bd_pins MIPI_CSI_RX/video_aresetn]
+
+        if {![string match -nocase "fmchc_python1300c" $fmc_board]} {
+            # set clk_wiz input from processing system fclk1
+            connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins clk_wiz_0/clk_in1]
+            set_property -dict [list CONFIG.PRIM_IN_FREQ.VALUE_SRC PROPAGATED] [get_bd_cells clk_wiz_0]
+        }
+
+        set_property -dict [list \
+            CONFIG.MAX_COLS {1920} \
+            CONFIG.MAX_DATA_WIDTH {10} \
+            CONFIG.MAX_ROWS {1080} \
+        ] [get_bd_cells v_cfa_0]
+
+        set_property -dict [list \
+            CONFIG.C_MAX_COLS {1920} \
+            CONFIG.C_MAX_DATA_WIDTH {10} \
+            CONFIG.C_MAX_ROWS {1080} \
+        ] [get_bd_cells v_csc_0]
+
+        set_property -dict [list \
+            CONFIG.M_TDATA_NUM_BYTES {3} \
+            CONFIG.S_TDATA_NUM_BYTES {4} \
+        ] [get_bd_cells axis_conv_csc_3_2]
+
+        set_property -dict [list \
+            CONFIG.c_m_axis_mm2s_tdata_width {24} \
+        ] [get_bd_cells axi_vdma_cam]
+
+        set_property -dict [list \
+            CONFIG.LAYER1_VIDEO_FORMAT {0} \
+        ] [get_bd_cells v_mix_0]
+
+        connect_bd_intf_net [get_bd_intf_pins axi_vdma_cam/M_AXIS_MM2S] [get_bd_intf_pins v_mix_0/s_axis_video1]
+    }
 }
 
 # create fmchc_python1300c FMC related ports and ip instance
@@ -1102,41 +1142,58 @@ if {[string match -nocase "fmchc_python1300c" $fmc_board]} {
     connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_pins FMC_IIC_MUX/s_axi_aclk]
     connect_bd_net -net rst_76M_peripheral_aresetn [get_bd_pins FMC_IIC_MUX/s_axi_aresetn]
 
-    # Create instance: v_vid_in_axi4s_cam, and set properties
-    set v_vid_in_axi4s_cam [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_vid_in_axi4s v_vid_in_axi4s_cam ]
-    set_property -dict [ list \
-        CONFIG.C_HAS_ASYNC_CLK {1} \
-        CONFIG.C_M_AXIS_VIDEO_FORMAT {12} \
-    ] $v_vid_in_axi4s_cam
-    connect_bd_intf_net [get_bd_intf_pins v_vid_in_axi4s_cam/video_out] [get_bd_intf_pins v_cfa_0/s_axis_video]
-    connect_bd_net -net rst_76M_peripheral_aresetn [get_bd_pins v_vid_in_axi4s_cam/aresetn]
-    connect_bd_net -net clk_wiz_0_clk_out2 [get_bd_pins clk_wiz_0/clk_out2] [get_bd_pins v_vid_in_axi4s_cam/vid_io_in_clk]
-    connect_bd_net -net xlconstant_1_dout [get_bd_pins v_vid_in_axi4s_cam/aclken]
-    connect_bd_net -net xlconstant_1_dout [get_bd_pins v_vid_in_axi4s_cam/axis_enable]
-    connect_bd_net -net xlconstant_1_dout [get_bd_pins v_vid_in_axi4s_cam/vid_io_in_ce]
-    connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins v_vid_in_axi4s_cam/aclk]
-    connect_bd_net -net rst_76M_peripheral_reset [get_bd_pins rst_76M/peripheral_reset] [get_bd_pins v_vid_in_axi4s_cam/vid_io_in_reset]
+    if {[string match -nocase "fmc_python1300c" $input_port]} {
+        puts "select fmc_python1300c camera input"
+        # Create instance: v_vid_in_axi4s_cam, and set properties
+        set v_vid_in_axi4s_cam [ create_bd_cell -type ip -vlnv xilinx.com:ip:v_vid_in_axi4s v_vid_in_axi4s_cam ]
+        set_property -dict [ list \
+            CONFIG.C_HAS_ASYNC_CLK {1} \
+            CONFIG.C_M_AXIS_VIDEO_FORMAT {12} \
+        ] $v_vid_in_axi4s_cam
+        connect_bd_intf_net [get_bd_intf_pins v_vid_in_axi4s_cam/video_out] [get_bd_intf_pins v_cfa_0/s_axis_video]
+        connect_bd_net -net rst_76M_peripheral_aresetn [get_bd_pins v_vid_in_axi4s_cam/aresetn]
+        connect_bd_net -net clk_wiz_0_clk_out2 [get_bd_pins clk_wiz_0/clk_out2] [get_bd_pins v_vid_in_axi4s_cam/vid_io_in_clk]
+        connect_bd_net -net xlconstant_1_dout [get_bd_pins v_vid_in_axi4s_cam/aclken]
+        connect_bd_net -net xlconstant_1_dout [get_bd_pins v_vid_in_axi4s_cam/axis_enable]
+        connect_bd_net -net xlconstant_1_dout [get_bd_pins v_vid_in_axi4s_cam/vid_io_in_ce]
+        connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins v_vid_in_axi4s_cam/aclk]
+        connect_bd_net -net rst_76M_peripheral_reset [get_bd_pins rst_76M/peripheral_reset] [get_bd_pins v_vid_in_axi4s_cam/vid_io_in_reset]
 
-    # Create instance: ONSEMI_PYTHON_CAM, and set properties
-    set ONSEMI_PYTHON_CAM [ create_bd_cell -type ip -vlnv avnet:onsemi_vita:onsemi_vita_cam ONSEMI_PYTHON_CAM ]
-    connect_bd_intf_net [get_bd_intf_pins ONSEMI_PYTHON_CAM/IO_CAM_IN] [get_bd_intf_ports FMC_CAM]
-    connect_bd_intf_net [get_bd_intf_pins ONSEMI_PYTHON_CAM/VID_IO_OUT] [get_bd_intf_pins v_vid_in_axi4s_cam/vid_io_in]
-    connect_bd_intf_net [get_bd_intf_pins ONSEMI_PYTHON_CAM/S00_AXI] [get_bd_intf_pins axi_periph/M01_AXI]
-    connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_pins ONSEMI_PYTHON_CAM/s00_axi_aclk]
-    connect_bd_net -net rst_148_5M_peripheral_reset [get_bd_pins ONSEMI_PYTHON_CAM/reset] [get_bd_pins rst_148_5M/peripheral_reset]
-    connect_bd_net -net processing_system7_0_FCLK_CLK2 [get_bd_pins ONSEMI_PYTHON_CAM/clk200] [get_bd_pins processing_system7_0/FCLK_CLK2]
-    connect_bd_net -net rst_76M_peripheral_aresetn [get_bd_pins ONSEMI_PYTHON_CAM/s00_axi_aresetn]
-    connect_bd_net -net clk_wiz_0_clk_out2 [get_bd_pins ONSEMI_PYTHON_CAM/clk]
-    connect_bd_net -net xlconstant_0_dout [get_bd_pins ONSEMI_PYTHON_CAM/trigger1] [get_bd_pins xlconstant_0/dout]
-    connect_bd_net -net xlconstant_1_dout [get_bd_pins ONSEMI_PYTHON_CAM/oe]
+        # Create instance: ONSEMI_PYTHON_CAM, and set properties
+        set ONSEMI_PYTHON_CAM [ create_bd_cell -type ip -vlnv avnet:onsemi_vita:onsemi_vita_cam ONSEMI_PYTHON_CAM ]
+        connect_bd_intf_net [get_bd_intf_pins ONSEMI_PYTHON_CAM/IO_CAM_IN] [get_bd_intf_ports FMC_CAM]
+        connect_bd_net      [get_bd_pins ONSEMI_PYTHON_CAM/clk200] [get_bd_pins processing_system7_0/FCLK_CLK2]
+        connect_bd_intf_net [get_bd_intf_pins ONSEMI_PYTHON_CAM/VID_IO_OUT] [get_bd_intf_pins v_vid_in_axi4s_cam/vid_io_in]
+        connect_bd_intf_net [get_bd_intf_pins ONSEMI_PYTHON_CAM/S00_AXI] [get_bd_intf_pins axi_periph/M01_AXI]
+        connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_pins ONSEMI_PYTHON_CAM/s00_axi_aclk]
+        connect_bd_net -net rst_148_5M_peripheral_reset [get_bd_pins ONSEMI_PYTHON_CAM/reset]
+        connect_bd_net -net rst_76M_peripheral_aresetn [get_bd_pins ONSEMI_PYTHON_CAM/s00_axi_aresetn]
+        connect_bd_net -net clk_wiz_0_clk_out2 [get_bd_pins ONSEMI_PYTHON_CAM/clk]
+        connect_bd_net -net xlconstant_0_dout [get_bd_pins ONSEMI_PYTHON_CAM/trigger1] [get_bd_pins xlconstant_0/dout]
+        connect_bd_net -net xlconstant_1_dout [get_bd_pins ONSEMI_PYTHON_CAM/oe]
 
-    # Create instance: ONSEMI_PYTHON_SPI, and set properties
-    set ONSEMI_PYTHON_SPI [ create_bd_cell -type ip -vlnv avnet:onsemi_vita:onsemi_vita_spi ONSEMI_PYTHON_SPI ]
-    connect_bd_intf_net [get_bd_intf_pins ONSEMI_PYTHON_SPI/IO_SPI_OUT] [get_bd_intf_ports FMC_SPI]
-    connect_bd_intf_net [get_bd_intf_pins ONSEMI_PYTHON_SPI/S00_AXI] [get_bd_intf_pins axi_periph/M09_AXI]
-    connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_pins ONSEMI_PYTHON_SPI/s00_axi_aclk]
-    connect_bd_net -net rst_76M_peripheral_aresetn [get_bd_pins ONSEMI_PYTHON_SPI/s00_axi_aresetn]
-    connect_bd_net -net xlconstant_1_dout [get_bd_pins ONSEMI_PYTHON_SPI/oe]
+        # Create instance: ONSEMI_PYTHON_SPI, and set properties
+        set ONSEMI_PYTHON_SPI [ create_bd_cell -type ip -vlnv avnet:onsemi_vita:onsemi_vita_spi ONSEMI_PYTHON_SPI ]
+        connect_bd_intf_net [get_bd_intf_pins ONSEMI_PYTHON_SPI/IO_SPI_OUT] [get_bd_intf_ports FMC_SPI]
+        connect_bd_intf_net [get_bd_intf_pins ONSEMI_PYTHON_SPI/S00_AXI] [get_bd_intf_pins axi_periph/M09_AXI]
+        connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_pins ONSEMI_PYTHON_SPI/s00_axi_aclk]
+        connect_bd_net -net rst_76M_peripheral_aresetn [get_bd_pins ONSEMI_PYTHON_SPI/s00_axi_aresetn]
+        connect_bd_net -net xlconstant_1_dout [get_bd_pins ONSEMI_PYTHON_SPI/oe]
+
+        # Create instance: axis_conv_vdma_cam_2_3
+        set axis_conv_vdma_cam_2_3 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axis_subset_converter axis_conv_vdma_cam_2_3 ]
+        set_property -dict [ list \
+            CONFIG.M_TDATA_NUM_BYTES.VALUE_SRC USER \
+            CONFIG.S_TDATA_NUM_BYTES.VALUE_SRC USER \
+            CONFIG.S_TDATA_NUM_BYTES {2} \
+            CONFIG.M_TDATA_NUM_BYTES {3} \
+            CONFIG.TDATA_REMAP {8'b00000000,tdata[15:0]} \
+        ] $axis_conv_vdma_cam_2_3
+        connect_bd_net -net rst_149M_peripheral_aresetn [get_bd_pins axis_conv_vdma_cam_2_3/aresetn]
+        connect_bd_net -net processing_system7_0_FCLK_CLK1 [get_bd_pins axis_conv_vdma_cam_2_3/aclk]
+        connect_bd_intf_net [get_bd_intf_pins axis_conv_vdma_cam_2_3/S_AXIS] [get_bd_intf_pins axi_vdma_cam/M_AXIS_MM2S]
+        connect_bd_intf_net [get_bd_intf_pins axis_conv_vdma_cam_2_3/M_AXIS] [get_bd_intf_pins v_mix_0/s_axis_video1]
+    }
 
     if {[string match -nocase "FMC_HDMI" $output_port]} {
         # Create instance: AVNET_HDMIO, and set properties
