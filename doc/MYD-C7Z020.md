@@ -16,7 +16,7 @@ This project is now updated to **2025.1**.
 
 ```shell
 source $(VITIS_PATH)/settings64.sh
-make fmchc_python1300c_myir7020
+make BOARDS=myir7020 FMC_BOARDS=fmchc_python1300c INPUT_PORTS=fmc_python1300 OUTPUT_PORTS=fmc_hdmi
 ```
 
 <p align="center">

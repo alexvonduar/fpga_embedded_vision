@@ -16,7 +16,9 @@ This project is now updated to **2024.2**.
 
 ```shell
 source $(VITIS_PATH)/settings64.sh
-make fmchc_python1300c_zynqdev
+make BOARDS=zynqdev FMC_BOARDS=fmchc_python1300c INPUT_PORTS=fmc_python1300c OUTPUT_PORTS=fmc_hdmi
+make BOARDS=zynqdev FMC_BOARDS=fmchc_python1300c INPUT_PORTS=fmc_python1300c OUTPUT_PORTS=hdmi1
+make BOARDS=zynqdev FMC_BOARDS=fmchc_python1300c INPUT_PORTS=fmc_python1300c OUTPUT_PORTS=hdmi2
 ```
 
 <p align="center">

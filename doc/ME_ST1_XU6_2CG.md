@@ -3,11 +3,14 @@
 ##Board
 [Mercury+ ST1 + XU6](Boards.md######Mercury+-ST1-+-XU6)
 
-##Onboard RPi Camera MIPI0
+##Onboard RPi Camera
 
 ```shell
 source $(VITIS_PATH)/settings64.sh
-make rpi_mipi_dp_me_st1_xu6
+# build MIPI0
+make BOARDS=me_st1_xu6_2cg INPUT_PORTS=MIPI0 OUTPUT_PORTS=ps_dp
+# build MIPI1
+make BOARDS=me_st1_xu6_2cg INPUT_PORTS=MIPI1 OUTPUT_PORTS=ps_dp
 ```
 
 imx219 module tested, video out 1080p at 60fps.
@@ -28,6 +31,8 @@ Opsero RPi Camera FMC adapter have 4 RPI 15 pin mipi camera ports, only port 1 w
 |MIPI2|66|CLK(D7/D6) D0(C8/B8) D1(E5/D5)|-|
 |MIPI3|66|-|-|
 
+For MIPI2, since Xilinx MIPI CSI RX subsystem using BIT_SLICE resource and MIPI2 signals are not in same byte group, generated bg_* ports should be connected to the pin which defined in the generated xdc file [link](https://adaptivesupport.amd.com/s/question/0D54U00006hw47QSAQ/place-30687-error-when-using-the-mipi-rx-subsystem-on-zcu102-evaluation-board?language=zh_CN).
+
 According to [opsero detail description](https://camerafmc.com/docs/rpi-camera-fmc/detailed-description/), use 2bit constans(0x3) set IO dir as output and 2bit constans(0x2) to set IO0 output enabled, IO1 Hi-Z.
 
 |Net name|FMC Pin|Purpose|
@@ -44,18 +49,18 @@ According to Opsero documents, it is recommended to set FMC VAD_J as 1.2V. Conne
 <img title="jumper setting" src="pictures/mercury_st1_vadj.jpg" alt="Resizable Image" class="resizable-image" width="640"/>
 </p>
 
-###Build and rund
+###Build and run
 
 At top dir, run
 
 ```shell
 source $(VITIS_PATH)/settings64.sh
-make rpi_mipi_opsero_dp_me_st1_xu6
+make BOARDS=me_st1_xu6_2cg FMC_BOARDS=opsero INPUT_PORTS=fmc_mipi1 OUTPUT_PORTS=ps_dp
 ```
 default project using MIPI port 1, you can specify using MIPI2.
 At top dir
 ```shell
-make -C ${PWD}/enclustra TOP=${PWD} INPUT=rpi_mipi_opsero OUTPUT=dp FMC_BOARD=opsero MIPI_PORT=2 all
+make BOARDS=me_st1_xu6_2cg FMC_BOARDS=opsero INPUT_PORTS=fmc_mipi2 OUTPUT_PORTS=ps_dp
 ```
 Default build is debug build, you can use BUILD=Release change to release build for Vitis bsp and apps.
 imx219 module tested, video out 1080p at 60fps.
