@@ -107,7 +107,7 @@ def build_app(args):
     USE_EDID_DECODE = False
     if (args.board.lower() == "myir7020" and (args.output_port.lower() == "fmc_hdmi" or args.output_port.lower() == "hdmi")):
         USE_EDID_DECODE = True
-    elif (args.board.lower() == "zynq_dev" and (args.output_port.lower() == "fmc_hdmi" or args.output_port.lower() == "hdmi2")):
+    elif (args.board.lower() == "zynqdev" and (args.output_port.lower() == "fmc_hdmi" or args.output_port.lower() == "hdmi2")):
         USE_EDID_DECODE = True
 
     if (USE_EDID_DECODE):

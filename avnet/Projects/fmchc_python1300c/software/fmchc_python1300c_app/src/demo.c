@@ -57,10 +57,12 @@
 
 #include "adv7511_control.h"
 
-#if defined(ZYNQ_DEV) && defined(HDMI2_OUT)
+#if defined(ZYNQDEV) && defined(HDMI_OUT) && HDMI_OUT == 2
 #define USE_1080P30 1
 #include "fmc_iic.h"
 #endif
+
+#define NUM_VDMA_BUFF 5
 
 int demo_init( demo_t *pdemo )
 {
@@ -210,7 +212,7 @@ int demo_init( demo_t *pdemo )
 
     pdemo->pfmc_hdmi_cam->bVerbose = pdemo->bVerbose;
     fmc_eeprom_parse(pdemo->pfmc_hdmi_cam);
-#if defined(ZYNQ_DEV) && defined(HDMI2_OUT)
+#if defined(ZYNQDEV) && defined(HDMI_OUT) && HDMI_OUT == 2
     {
         XGpio hdmi2_hpd;
         XGpio_Config *gpio_config;
@@ -253,7 +255,7 @@ int demo_init( demo_t *pdemo )
 
         status = parse_edid_from_array(edid_buffer, EDID_BLOCK_SIZE);
     }
-#elif defined(FMCHC_PYTHON1300C) && defined(FMC_HDMI)
+#elif defined(FMCHC_PYTHON1300C) && defined(FMC_HDMI_OUT)
     fmc_hdmio_edid_parse(pdemo->pfmc_hdmi_cam);
 #endif
 
